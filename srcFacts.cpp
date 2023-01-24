@@ -469,6 +469,8 @@ int main(int argc, char* argv[]) {
                 ++unitCount;
             } else if (localName == "class"sv) {
                 ++classCount;
+            } else if (localName == "return"sv) {
+                ++returnCount;
             }
             content.remove_prefix(nameEndPosition);
             content.remove_prefix(content.find_first_not_of(WHITESPACE));
