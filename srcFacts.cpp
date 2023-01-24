@@ -112,6 +112,7 @@ int main(int argc, char* argv[]) {
     int declCount = 0;
     int commentCount = 0;
     long totalBytes = 0;
+    int returnCount = 0;
     std::string_view content;
     TRACE("START DOCUMENT");
     int bytesRead = refillContent(content);
