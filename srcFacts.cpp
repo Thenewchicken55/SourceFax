@@ -634,6 +634,7 @@ int main(int argc, char* argv[]) {
     std::cout << "| Declarations | " << std::setw(valueWidth) << declCount     << " |\n";
     std::cout << "| Expressions  | " << std::setw(valueWidth) << exprCount     << " |\n";
     std::cout << "| Comments     | " << std::setw(valueWidth) << commentCount  << " |\n";
+    std::cout << "| Returns      | " << std::setw(valueWidth) << returnCount   << " |\n";
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';
