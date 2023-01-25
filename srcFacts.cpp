@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <bitset>
 #include <cassert>
+#include "refillContent.hpp"
 
 #if !defined(_MSC_VER)
 #include <sys/uio.h>
