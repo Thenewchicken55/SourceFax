@@ -1,6 +1,8 @@
 #ifndef INCLUDED_REFILLCONTENT_HPP
 #define INCLUDED_REFILLCONTENT_HPP
 
+#include<string_view>
+
 /*
     Refill the content preserving the existing data.
 
