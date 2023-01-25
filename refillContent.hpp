@@ -1,3 +1,9 @@
+/*
+    refillContent.hpp
+
+    Include file for the refillContent function
+*/
+
 #ifndef INCLUDED_REFILLCONTENT_HPP
 #define INCLUDED_REFILLCONTENT_HPP
 
