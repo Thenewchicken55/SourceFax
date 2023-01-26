@@ -53,38 +53,6 @@ const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111
 constexpr auto WHITESPACE = " \n\t\r"sv;
 constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 
-/*
-    Refill the content preserving the existing data.
-
-    @param[in, out] content View of the content
-    @return Number of bytes read
-    @retval 0 EOF
-    @retval -1 Read error
-*/
-[[nodiscard]] int refillContent(std::string_view& content) {
-
-    // initialize the internal buffer at first use
-    static char buffer[BUFFER_SIZE];
-
-    // preserve prefix of unprocessed characters to start of the buffer
-    std::copy(content.cbegin(), content.cend(), buffer);
-
-    // read in multiple of whole blocks
-    ssize_t bytesRead = 0;
-    while (((bytesRead = READ(0, (buffer + content.size()),
-        BUFFER_SIZE - BLOCK_SIZE)) == -1) && (errno == EINTR)) {
-    }
-    if (bytesRead == -1) {
-        // error in read
-        return -1;
-    }
-
-    // set content to the start of the buffer
-    content = std::string_view(buffer, content.size() + bytesRead);
-
-    return bytesRead;
-}
-
 // trace parsing
 #ifdef TRACE
 #undef TRACE
