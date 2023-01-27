@@ -378,7 +378,7 @@ int main(int argc, char* argv[]) {
                 std::cerr << "parser error : Unterminated end tag '" << content.substr(0, nameEndPosition) << "'\n";
                 return 1;
             }
-            size_t colonPosition = 0;
+            std::size_t colonPosition = 0;
             if (content[nameEndPosition] == ':') {
                 colonPosition = nameEndPosition;
                 nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
@@ -411,7 +411,7 @@ int main(int argc, char* argv[]) {
                 std::cerr << "parser error : Unterminated start tag '" << content.substr(0, nameEndPosition) << "'\n";
                 return 1;
             }
-            size_t colonPosition = 0;
+            std::size_t colonPosition = 0;
             if (content[nameEndPosition] == ':') {
                 colonPosition = nameEndPosition;
                 nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
@@ -490,7 +490,7 @@ int main(int argc, char* argv[]) {
                         std::cerr << "parser error : Empty attribute name" << '\n';
                         return 1;
                     }
-                    size_t colonPosition = 0;
+                    std::size_t colonPosition = 0;
                     if (content[nameEndPosition] == ':') {
                         colonPosition = nameEndPosition;
                         nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
