@@ -82,6 +82,7 @@ int main(int argc, char* argv[]) {
     long totalBytes = 0;
     int returnCount = 0;
     std::string_view content;
+
     TRACE("START DOCUMENT");
     int bytesRead = refillContent(content);
     if (bytesRead < 0) {
@@ -93,12 +94,14 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     totalBytes += bytesRead;
+
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
     if (content[0] == '<' && content[1] == '?' && content[2] == 'x' && content[3] == 'm' && content[4] == 'l' && content[5] == ' ') {
         // parse XML declaration
         assert(content.compare(0, "<?xml "sv.size(), "<?xml "sv) == 0);
         content.remove_prefix("<?xml"sv.size());
         content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        
         // parse required version
         auto nameEndPosition = content.find_first_of("= ");
         const std::string_view attr(content.substr(0, nameEndPosition));
@@ -125,6 +128,7 @@ int main(int argc, char* argv[]) {
         content.remove_prefix(valueEndPosition);
         content.remove_prefix("\""sv.size());
         content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        
         // parse optional encoding and standalone attributes
         std::optional<std::string_view> encoding;
         std::optional<std::string_view> standalone;
@@ -525,6 +529,7 @@ int main(int argc, char* argv[]) {
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qname", qName, "prefix", prefix, "localName", localName, "value", value);
+                    
                     // convert special srcML escaped element to characters
                     if (inEscape && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
