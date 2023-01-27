@@ -7,7 +7,17 @@
 #include "refillContent.hpp"
 #include <errno.h>
 #include <sys/types.h>
+#if !defined(_MSC_VER)
+#include <sys/uio.h>
 #include <unistd.h>
+#define READ read
+#else
+#include <BaseTsd.h>
+#include <io.h>
+typedef SSIZE_T ssize_t;
+#define READ _read
+#endif
+
 
 #define READ read
 
