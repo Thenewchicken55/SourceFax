@@ -18,9 +18,6 @@ typedef SSIZE_T ssize_t;
 #define READ _read
 #endif
 
-
-#define READ read
-
 const int BLOCK_SIZE = 4096;
 const int BUFFER_SIZE = 16 * 16 * BLOCK_SIZE;
 
