@@ -30,6 +30,7 @@
 #include <bitset>
 #include <cassert>
 #include "refillContent.hpp"
+#include "xml_parser.hpp"
 
 #if !defined(_MSC_VER)
 #include <sys/uio.h>
@@ -97,11 +98,9 @@ int main(int argc, char* argv[]) {
 
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
     if (content[0] == '<' && content[1] == '?' && content[2] == 'x' && content[3] == 'm' && content[4] == 'l' && content[5] == ' ') {
-        // parse XML declaration
-        assert(content.compare(0, "<?xml "sv.size(), "<?xml "sv) == 0);
-        content.remove_prefix("<?xml"sv.size());
-        content.remove_prefix(content.find_first_not_of(WHITESPACE));
-        
+        // parse XML Declaration
+        parseXMLDeclaration(content);
+
         // parse required version
         auto nameEndPosition = content.find_first_of("= ");
         const std::string_view attr(content.substr(0, nameEndPosition));
