@@ -121,9 +121,7 @@ int main(int argc, char* argv[]) {
             ++textSize;
         } else if (content[0] != '<') {
             // parse character non-entity references
-            auto result = parseCharNonER(content);
-            loc = result.first;
-            textSize = result.second;
+            parseCharNonER(content, loc, textSize);
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '-' && content[3] == '-') {
             // parse XML comment
             assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);

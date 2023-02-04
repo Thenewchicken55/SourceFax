@@ -28,7 +28,7 @@ void refillPreserve(std::string_view& content, bool& doneReading, long& totalByt
 void parseCharER(std::string_view& content);
 
 // parse character non-entity references
-std::pair<int, int> parseCharNonER(std::string_view& content);
+void parseCharNonER(std::string_view& content, int& loc, int& textSize);
 
 
 #endif
