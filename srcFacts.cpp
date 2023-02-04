@@ -134,34 +134,7 @@ int main(int argc, char* argv[]) {
             parseProcessing(content);
         } else if (content[1] == '/' /* && content[0] == '<' */) {
             // parse end tag
-            assert(content.compare(0, "</"sv.size(), "</"sv) == 0);
-            content.remove_prefix("</"sv.size());
-            if (content[0] == ':') {
-                std::cerr << "parser error : Invalid end tag name\n";
-                return 1;
-            }
-            auto nameEndPosition = content.find_first_of(NAMEEND);
-            if (nameEndPosition == content.size()) {
-                std::cerr << "parser error : Unterminated end tag '" << content.substr(0, nameEndPosition) << "'\n";
-                return 1;
-            }
-            std::size_t colonPosition = 0;
-            if (content[nameEndPosition] == ':') {
-                colonPosition = nameEndPosition;
-                nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
-            }
-            const std::string_view qName(content.substr(0, nameEndPosition));
-            if (qName.empty()) {
-                std::cerr << "parser error: EndTag: invalid element name\n";
-                return 1;
-            }
-            [[maybe_unused]] const std::string_view prefix(qName.substr(0, colonPosition));
-            [[maybe_unused]] const std::string_view localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
-            TRACE("END TAG", "qName", qName, "prefix", prefix, "localName", localName);
-            content.remove_prefix(nameEndPosition);
-            content.remove_prefix(content.find_first_not_of(WHITESPACE));
-            assert(content.compare(0, ">"sv.size(), ">"sv) == 0);
-            content.remove_prefix(">"sv.size());
+            parseEndTag(content);
             --depth;
             if (depth == 0)
                 break;

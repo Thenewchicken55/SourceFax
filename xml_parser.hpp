@@ -39,4 +39,7 @@ void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, 
 // parse processing instruction
 void parseProcessing(std::string_view& content);
 
+// parse end tag
+void parseEndTag(std::string_view& content);
+
 #endif
