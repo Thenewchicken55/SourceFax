@@ -252,7 +252,6 @@ void parseComment(std::string_view& content, bool& doneReading, long& totalBytes
     [[maybe_unused]] const std::string_view comment(content.substr(0, tagEndPosition));
     TRACE("COMMENT", "content", comment);
     content.remove_prefix(tagEndPosition);
-    content.remove_prefix("-->"sv.size());
 }
 
 // parse CDATA

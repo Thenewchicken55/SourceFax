@@ -126,6 +126,7 @@ int main(int argc, char* argv[]) {
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '-' && content[3] == '-') {
             // parse XML comment
             parseComment(content, doneReading, totalBytes);
+            content.remove_prefix("-->"sv.size());
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' &&
                    content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[') {
             // parse CDATA
@@ -173,7 +174,7 @@ int main(int argc, char* argv[]) {
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qname", qName, "prefix", prefix, "localName", localName, "value", value);
-                    
+
                     // convert special srcML escaped element to characters
                     if (inEscape && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
@@ -202,21 +203,7 @@ int main(int argc, char* argv[]) {
     content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
     while (!content.empty() && content[0] == '<' && content[1] == '!' && content[2] == '-' && content[3] == '-') {
         // parse XML comment
-        assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
-        content.remove_prefix("<!--"sv.size());
-        auto tagEndPosition = content.find("-->"sv);
-        if (tagEndPosition == content.npos) {
-            // refill content preserving unprocessed
-            refillPreserve(content, doneReading, totalBytes);
-            tagEndPosition = content.find("-->"sv);
-            if (tagEndPosition == content.npos) {
-                std::cerr << "parser error : Unterminated XML comment\n";
-                return 1;
-            }
-        }
-        [[maybe_unused]] const std::string_view comment(content.substr(0, tagEndPosition));
-        TRACE("COMMENT", "content", comment);
-        content.remove_prefix(tagEndPosition);
+        parseComment(content, doneReading, totalBytes);
         assert(content.compare(0, "-->"sv.size(), "-->"sv) == 0);
         content.remove_prefix("-->"sv.size());
         content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
