@@ -403,3 +403,44 @@ void parseNamespace(std::string_view& content) {
     content.remove_prefix("\""sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
 }
+
+// parse attribute
+std::size_t parseAttribute(std::string_view& content) {
+    auto nameEndPosition = content.find_first_of(NAMEEND);
+    if (nameEndPosition == content.size()) {
+        std::cerr << "parser error : Empty attribute name" << '\n';
+        exit(1);
+    }
+    std::size_t colonPosition = 0;
+    if (content[nameEndPosition] == ':') {
+        colonPosition = nameEndPosition;
+        nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
+    }
+    const std::string_view qName(content.substr(0, nameEndPosition));
+    [[maybe_unused]] const std::string_view prefix(qName.substr(0, colonPosition));
+    const std::string_view localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
+    content.remove_prefix(nameEndPosition);
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    if (content.empty()) {
+        std::cerr << "parser error : attribute " << qName << " incomplete attribute\n";
+        exit(1);
+    }
+    if (content[0] != '=') {
+        std::cerr << "parser error : attribute " << qName << " missing =\n";
+        exit(1);
+    }
+    content.remove_prefix("="sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    const char delimiter = content[0];
+    if (delimiter != '"' && delimiter != '\'') {
+        std::cerr << "parser error : attribute " << qName << " missing delimiter\n";
+        exit(1);
+    }
+    content.remove_prefix("\""sv.size());
+    auto valueEndPosition = content.find(delimiter);
+    if (valueEndPosition == content.npos) {
+        std::cerr << "parser error : attribute " << qName << " missing delimiter\n";
+        exit(1);
+    }
+    return valueEndPosition;
+}
