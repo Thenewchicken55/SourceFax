@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <bitset>
 #include <cassert>
+#include <utility>
 #include "refillContent.hpp"
 #include "xml_parser.hpp"
 
@@ -140,30 +141,9 @@ int main(int argc, char* argv[]) {
                 break;
         } else if (content[0] == '<') {
             // parse start tag
-            assert(content.compare(0, "<"sv.size(), "<"sv) == 0);
-            content.remove_prefix("<"sv.size());
-            if (content[0] == ':') {
-                std::cerr << "parser error : Invalid start tag name\n";
-                return 1;
-            }
-            auto nameEndPosition = content.find_first_of(NAMEEND);
-            if (nameEndPosition == content.size()) {
-                std::cerr << "parser error : Unterminated start tag '" << content.substr(0, nameEndPosition) << "'\n";
-                return 1;
-            }
-            std::size_t colonPosition = 0;
-            if (content[nameEndPosition] == ':') {
-                colonPosition = nameEndPosition;
-                nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
-            }
-            const std::string_view qName(content.substr(0, nameEndPosition));
-            if (qName.empty()) {
-                std::cerr << "parser error: StartTag: invalid element name\n";
-                return 1;
-            }
-            [[maybe_unused]] const std::string_view prefix(qName.substr(0, colonPosition));
-            const std::string_view localName(qName.substr(colonPosition ? colonPosition + 1 : 0, nameEndPosition));
-            TRACE("START TAG", "qName", qName, "prefix", prefix, "localName", localName);
+            auto result = parseStartTag(content);
+            auto nameEndPosition = result.first;
+            auto localName = result.second;
             bool inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;

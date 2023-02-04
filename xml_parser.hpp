@@ -8,6 +8,7 @@
 #define INCLUDED_XML_PARSER_HPP
 
 #include <string_view>
+#include <utility>
 
 // parse XML declaration
 void parseXMLDeclaration(std::string_view& content);
@@ -42,4 +43,7 @@ void parseProcessing(std::string_view& content);
 // parse end tag
 void parseEndTag(std::string_view& content);
 
+// parse start tag
+std::pair<std::size_t, std::string_view> parseStartTag(std::string_view& content);
+    
 #endif

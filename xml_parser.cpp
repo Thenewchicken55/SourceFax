@@ -12,6 +12,7 @@
 #include <optional>
 #include <utility>
 #include <algorithm>
+#include <utility>
 
 #define TRACE(...)
 
@@ -329,4 +330,34 @@ void parseEndTag(std::string_view& content) {
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
     assert(content.compare(0, ">"sv.size(), ">"sv) == 0);
     content.remove_prefix(">"sv.size());
+}
+
+// parse start tag
+std::pair<std::size_t, std::string_view> parseStartTag(std::string_view& content) {
+    assert(content.compare(0, "<"sv.size(), "<"sv) == 0);
+    content.remove_prefix("<"sv.size());
+    if (content[0] == ':') {
+        std::cerr << "parser error : Invalid start tag name\n";
+        exit(1);
+    }
+    auto nameEndPosition = content.find_first_of(NAMEEND);
+    if (nameEndPosition == content.size()) {
+        std::cerr << "parser error : Unterminated start tag '" << content.substr(0, nameEndPosition) << "'\n";
+        exit(1);
+    }
+    std::size_t colonPosition = 0;
+    if (content[nameEndPosition] == ':') {
+        colonPosition = nameEndPosition;
+        nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
+    }
+    const std::string_view qName(content.substr(0, nameEndPosition));
+    if (qName.empty()) {
+        std::cerr << "parser error: StartTag: invalid element name\n";
+        exit(1);
+    }
+    [[maybe_unused]] const std::string_view prefix(qName.substr(0, colonPosition));
+    const std::string_view localName(qName.substr(colonPosition ? colonPosition + 1 : 0, nameEndPosition));
+    TRACE("START TAG", "qName", qName, "prefix", prefix, "localName", localName);
+
+    return std::make_pair(nameEndPosition, localName);
 }
