@@ -10,6 +10,8 @@
 #include <cassert>
 #include <iostream>
 #include <optional>
+#include <utility>
+#include <algorithm>
 
 #define TRACE(...)
 
@@ -223,3 +225,19 @@ void parseCharER(std::string_view& content)
     [[maybe_unused]] const std::string_view characters(unescapedCharacter);
     TRACE("CHARACTERS", "characters", characters);
 }
+
+// parse character non-entity references
+std::pair<int, int>  parseCharNonER(std::string_view& content)
+{
+    int loc;
+    int textSize;
+    assert(content[0] != '<' && content[0] != '&');
+    auto characterEndPosition = content.find_first_of("<&");
+    const std::string_view characters(content.substr(0, characterEndPosition));
+    TRACE("CHARACTERS", "characters", characters);
+    loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+    textSize += static_cast<int>(characters.size());
+    content.remove_prefix(characters.size());
+    return std::make_pair(loc, textSize); 
+}
+

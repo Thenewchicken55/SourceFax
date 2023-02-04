@@ -26,4 +26,8 @@ void refillPreserve(std::string_view& content, bool& doneReading);
 // parse character entity references
 void parseCharER(std::string_view& content);
 
+// parse character non-entity references
+std::pair<int, int> parseCharNonER(std::string_view& content);
+
+
 #endif
