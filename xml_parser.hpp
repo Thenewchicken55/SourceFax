@@ -23,4 +23,7 @@ void parseDOCTYPE(std::string_view& content);
 // refill content preserving unprocessed
 void refillPreserve(std::string_view& content, bool& doneReading);
 
+// parse character entity references
+void parseChar(std::string_view& content);
+
 #endif
