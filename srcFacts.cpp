@@ -102,31 +102,7 @@ int main(int argc, char* argv[]) {
         parseXMLDeclaration(content);
 
         // parse required version
-        auto nameEndPosition = content.find_first_of("= ");
-        const std::string_view attr(content.substr(0, nameEndPosition));
-        content.remove_prefix(nameEndPosition);
-        content.remove_prefix(content.find_first_not_of(WHITESPACE));
-        content.remove_prefix("="sv.size());
-        content.remove_prefix(content.find_first_not_of(WHITESPACE));
-        const char delimiter = content[0];
-        if (delimiter != '"' && delimiter != '\'') {
-            std::cerr << "parser error: Invalid start delimiter for version in XML declaration\n";
-            return 1;
-        }
-        content.remove_prefix("\""sv.size());
-        auto valueEndPosition = content.find(delimiter);
-        if (valueEndPosition == content.npos) {
-            std::cerr << "parser error: Invalid end delimiter for version in XML declaration\n";
-            return 1;
-        }
-        if (attr != "version"sv) {
-            std::cerr << "parser error: Missing required first attribute version in XML declaration\n";
-            return 1;
-        }
-        [[maybe_unused]] const std::string_view version(content.substr(0, valueEndPosition));
-        content.remove_prefix(valueEndPosition);
-        content.remove_prefix("\""sv.size());
-        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        parseVersion(content);
         
         // parse optional encoding and standalone attributes
         std::optional<std::string_view> encoding;
