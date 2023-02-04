@@ -138,3 +138,48 @@ void parseOptional(std::string_view& content) {
     content.remove_prefix("?>"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
 }
+
+//parse DOCTYPE
+void parseDOCTYPE(std::string_view& content)
+{
+    assert(content.compare(0, "<!DOCTYPE "sv.size(), "<!DOCTYPE "sv) == 0);
+    content.remove_prefix("<!DOCTYPE"sv.size());
+    int depthAngleBrackets = 1;
+    bool inSingleQuote = false;
+    bool inDoubleQuote = false;
+    bool inComment = false;
+    std::size_t p = 0;
+    while ((p = content.find_first_of("<>'\"-"sv, p)) != content.npos) {
+        if (content.compare(p, "<!--"sv.size(), "<!--"sv) == 0) {
+            inComment = true;
+            p += "<!--"sv.size();
+            continue;
+        } else if (content.compare(p, "-->"sv.size(), "-->"sv) == 0) {
+            inComment = false;
+            p += "-->"sv.size();
+            continue;
+        }
+        if (inComment) {
+            ++p;
+            continue;
+        }
+        if (content[p] == '<' && !inSingleQuote && !inDoubleQuote) {
+            ++depthAngleBrackets;
+        } else if (content[p] == '>' && !inSingleQuote && !inDoubleQuote) {
+            --depthAngleBrackets;
+        } else if (content[p] == '\'') {
+            inSingleQuote = !inSingleQuote;
+        } else if (content[p] == '"') {
+            inDoubleQuote = !inDoubleQuote;
+        }
+        if (depthAngleBrackets == 0)
+            break;
+        ++p;
+    }
+    [[maybe_unused]] const std::string_view contents(content.substr(0, p));
+    TRACE("DOCTYPE", "contents", contents);
+    content.remove_prefix(p);
+    assert(content[0] == '>');
+    content.remove_prefix(">"sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+}

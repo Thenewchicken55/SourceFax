@@ -18,4 +18,7 @@ void parseVersion(std::string_view& content);
 // parse optional encoding and standalone attributes
 void parseOptional(std::string_view& content);
 
+//parse DOCTYPE
+void parseDOCTYPE(std::string_view& content);
+
 #endif
