@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
         }
         if (content[0] == '&') {
             // parse character entity references
-            parseChar(content);
+            parseCharER(content);
             ++textSize;
         } else if (content[0] != '<') {
             // parse character non-entity references
