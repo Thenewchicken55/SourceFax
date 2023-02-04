@@ -361,3 +361,45 @@ std::pair<std::size_t, std::string_view> parseStartTag(std::string_view& content
 
     return std::make_pair(nameEndPosition, localName);
 }
+
+// parse XML namespace
+void parseNamespace(std::string_view& content) {
+    assert(content.compare(0, "xmlns"sv.size(), "xmlns"sv) == 0);
+    content.remove_prefix("xmlns"sv.size());
+    auto nameEndPosition = content.find('=');
+    if (nameEndPosition == content.npos) {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    std::size_t prefixSize = 0;
+    if (content[0] == ':') {
+        content.remove_prefix(":"sv.size());
+        --nameEndPosition;
+        prefixSize = nameEndPosition;
+    }
+    [[maybe_unused]] const std::string_view prefix(content.substr(0, prefixSize));
+    content.remove_prefix(nameEndPosition);
+    content.remove_prefix("="sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    if (content.empty()) {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    const char delimiter = content[0];
+    if (delimiter != '"' && delimiter != '\'') {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    content.remove_prefix("\""sv.size());
+    auto valueEndPosition = content.find(delimiter);
+    if (valueEndPosition == content.npos) {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    [[maybe_unused]] const std::string_view uri(content.substr(0, valueEndPosition));
+    TRACE("NAMESPACE", "prefix", prefix, "uri", uri);
+    content.remove_prefix(valueEndPosition);
+    assert(content.compare(0, "\""sv.size(), "\""sv) == 0);
+    content.remove_prefix("\""sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+}

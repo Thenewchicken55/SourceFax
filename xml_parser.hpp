@@ -46,4 +46,7 @@ void parseEndTag(std::string_view& content);
 // parse start tag
 std::pair<std::size_t, std::string_view> parseStartTag(std::string_view& content);
     
+// parse XML namespace
+void parseNamespace(std::string_view& content);
+
 #endif
