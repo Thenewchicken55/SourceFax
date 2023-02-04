@@ -124,22 +124,7 @@ int main(int argc, char* argv[]) {
             parseCharNonER(content, loc, textSize);
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '-' && content[3] == '-') {
             // parse XML comment
-            assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
-            content.remove_prefix("<!--"sv.size());
-            auto tagEndPosition = content.find("-->"sv);
-            if (tagEndPosition == content.npos) {
-                // refill content preserving unprocessed
-                refillPreserve(content, doneReading, totalBytes);
-                tagEndPosition = content.find("-->"sv);
-                if (tagEndPosition == content.npos) {
-                    std::cerr << "parser error : Unterminated XML comment\n";
-                    return 1;
-                }
-            }
-            [[maybe_unused]] const std::string_view comment(content.substr(0, tagEndPosition));
-            TRACE("COMMENT", "content", comment);
-            content.remove_prefix(tagEndPosition);
-            content.remove_prefix("-->"sv.size());
+            parseComment(content, doneReading, totalBytes);
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' &&
                    content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[') {
             // parse CDATA

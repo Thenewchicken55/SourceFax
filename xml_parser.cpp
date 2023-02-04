@@ -234,3 +234,24 @@ void parseCharNonER(std::string_view& content, int& loc, int& textSize) {
     textSize += static_cast<int>(characters.size());
     content.remove_prefix(characters.size());
 }
+
+// parse XML comment
+void parseComment(std::string_view& content, bool& doneReading, long& totalBytes)
+{
+    assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
+    content.remove_prefix("<!--"sv.size());
+    auto tagEndPosition = content.find("-->"sv);
+    if (tagEndPosition == content.npos) {
+        // refill content preserving unprocessed
+        
+        tagEndPosition = content.find("-->"sv);
+        if (tagEndPosition == content.npos) {
+            std::cerr << "parser error : Unterminated XML comment\n";
+            exit(1);
+        }
+    }
+    [[maybe_unused]] const std::string_view comment(content.substr(0, tagEndPosition));
+    TRACE("COMMENT", "content", comment);
+    content.remove_prefix(tagEndPosition);
+    content.remove_prefix("-->"sv.size());
+}

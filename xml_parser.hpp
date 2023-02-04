@@ -30,5 +30,7 @@ void parseCharER(std::string_view& content);
 // parse character non-entity references
 void parseCharNonER(std::string_view& content, int& loc, int& textSize);
 
+// parse XML comment
+void parseComment(std::string_view& content, bool& doneReading, long& totalBytes);
 
 #endif
