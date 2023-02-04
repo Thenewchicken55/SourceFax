@@ -20,5 +20,7 @@ void parseOptional(std::string_view& content);
 
 //parse DOCTYPE
 void parseDOCTYPE(std::string_view& content);
+// refill content preserving unprocessed
+void refillPreserve(std::string_view& content, bool& doneReading);
 
 #endif

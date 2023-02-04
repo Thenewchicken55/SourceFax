@@ -5,6 +5,7 @@
 */
 
 #include "xml_parser.hpp"
+#include "refillContent.hpp"
 #include <string_view>
 #include <cassert>
 #include <iostream>
@@ -182,4 +183,17 @@ void parseDOCTYPE(std::string_view& content)
     assert(content[0] == '>');
     content.remove_prefix(">"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
+}
+
+// refill content preserving unprocessed
+void refillPreserve(std::string_view& content, bool& doneReading)
+{
+    int bytesRead = refillContent(content);
+    if (bytesRead < 0) {
+        std::cerr << "parser error : File input error\n";
+        exit(1);
+    }
+    if (bytesRead == 0) {
+        doneReading = true;
+    }
 }
