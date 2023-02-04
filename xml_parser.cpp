@@ -241,7 +241,7 @@ void parseComment(std::string_view& content, bool& doneReading, long& totalBytes
     auto tagEndPosition = content.find("-->"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        
+        refillPreserve(content, doneReading, totalBytes);        
         tagEndPosition = content.find("-->"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated XML comment\n";
