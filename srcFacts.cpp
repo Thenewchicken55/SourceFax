@@ -131,24 +131,7 @@ int main(int argc, char* argv[]) {
             parseCDATA(content, doneReading, totalBytes, textSize, loc);
         } else if (content[1] == '?' /* && content[0] == '<' */) {
             // parse processing instruction
-            assert(content.compare(0, "<?"sv.size(), "<?"sv) == 0);
-            content.remove_prefix("<?"sv.size());
-            auto tagEndPosition = content.find("?>"sv);
-            if (tagEndPosition == content.npos) {
-                std::cerr << "parser error: Incomplete XML declaration\n";
-                return 1;
-            }
-            auto nameEndPosition = content.find_first_of(NAMEEND);
-            if (nameEndPosition == content.npos) {
-                std::cerr << "parser error : Unterminated processing instruction\n";
-                return 1;
-            }
-            [[maybe_unused]] const std::string_view target(content.substr(0, nameEndPosition));
-            [[maybe_unused]] const std::string_view data(content.substr(nameEndPosition, tagEndPosition - nameEndPosition));
-            TRACE("PI", "target", target, "data", data);
-            content.remove_prefix(tagEndPosition);
-            assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
-            content.remove_prefix("?>"sv.size());
+            parseProcessing(content);
         } else if (content[1] == '/' /* && content[0] == '<' */) {
             // parse end tag
             assert(content.compare(0, "</"sv.size(), "</"sv) == 0);

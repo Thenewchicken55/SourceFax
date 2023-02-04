@@ -36,4 +36,7 @@ void parseComment(std::string_view& content, bool& doneReading, long& totalBytes
 // parse CDATA
 void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, int& textSize, int& loc);
 
+// parse processing instruction
+void parseProcessing(std::string_view& content);
+
 #endif
