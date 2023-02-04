@@ -38,7 +38,7 @@ void parseXMLDeclaration(std::string_view& content)
 }
 
 // parse required version
-void parseVersion(std::string_view& content){
+void parseVersion(std::string_view& content) {
     auto nameEndPosition = content.find_first_of("= ");
     const std::string_view attr(content.substr(0, nameEndPosition));
     content.remove_prefix(nameEndPosition);
@@ -143,8 +143,7 @@ void parseOptional(std::string_view& content) {
 }
 
 //parse DOCTYPE
-void parseDOCTYPE(std::string_view& content)
-{
+void parseDOCTYPE(std::string_view& content) {
     assert(content.compare(0, "<!DOCTYPE "sv.size(), "<!DOCTYPE "sv) == 0);
     content.remove_prefix("<!DOCTYPE"sv.size());
     int depthAngleBrackets = 1;
@@ -188,8 +187,7 @@ void parseDOCTYPE(std::string_view& content)
 }
 
 // refill content preserving unprocessed
-void refillPreserve(std::string_view& content, bool& doneReading)
-{
+void refillPreserve(std::string_view& content, bool& doneReading) {
     int bytesRead = refillContent(content);
     if (bytesRead < 0) {
         std::cerr << "parser error : File input error\n";
@@ -204,8 +202,7 @@ std::string_view unescapedCharacter;
 std::string_view escapedCharacter;
 
 // parse character entity references
-void parseCharER(std::string_view& content)
-{
+void parseCharER(std::string_view& content) {
 
     if (content[1] == 'l' && content[2] == 't' && content[3] == ';') {
         unescapedCharacter = "<";
@@ -227,8 +224,7 @@ void parseCharER(std::string_view& content)
 }
 
 // parse character non-entity references
-std::pair<int, int>  parseCharNonER(std::string_view& content)
-{
+std::pair<int, int>  parseCharNonER(std::string_view& content) {
     int loc;
     int textSize;
     assert(content[0] != '<' && content[0] != '&');
@@ -240,4 +236,3 @@ std::pair<int, int>  parseCharNonER(std::string_view& content)
     content.remove_prefix(characters.size());
     return std::make_pair(loc, textSize); 
 }
-
