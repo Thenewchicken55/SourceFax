@@ -16,6 +16,8 @@
 using namespace std::literals::string_view_literals;
 
 constexpr auto WHITESPACE = " \n\t\r"sv;
+std::optional<std::string_view> encoding;
+std::optional<std::string_view> standalone;
 
 // parse XML declaration
 void parseXMLDeclaration(std::string_view& content)
@@ -23,6 +25,13 @@ void parseXMLDeclaration(std::string_view& content)
     assert(content.compare(0, "<?xml "sv.size(), "<?xml "sv) == 0);
     content.remove_prefix("<?xml"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
+
+    // parse required version
+    parseVersion(content);
+    
+    // parse optional encoding and standalone attributes
+    parseOptional(content);
+
 }
 
 // parse required version
@@ -54,8 +63,6 @@ void parseVersion(std::string_view& content){
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
 }
 
-std::optional<std::string_view> encoding;
-std::optional<std::string_view> standalone;
 
 // parse optional encoding and standalone attributes
 void parseOptional(std::string_view& content) {

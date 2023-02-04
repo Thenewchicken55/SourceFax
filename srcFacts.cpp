@@ -101,11 +101,6 @@ int main(int argc, char* argv[]) {
         // parse XML Declaration
         parseXMLDeclaration(content);
 
-        // parse required version
-        parseVersion(content);
-        
-        // parse optional encoding and standalone attributes
-        parseOptional(content);
     }
     if (content[1] == '!' && content[0] == '<' && content[2] == 'D' && content[3] == 'O' && content[4] == 'C' && content[5] == 'T' && content[6] == 'Y' && content[7] == 'P' && content[8] == 'E' && content[9] == ' ') {
         // parse DOCTYPE
