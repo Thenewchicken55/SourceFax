@@ -255,3 +255,25 @@ void parseComment(std::string_view& content, bool& doneReading, long& totalBytes
     content.remove_prefix(tagEndPosition);
     content.remove_prefix("-->"sv.size());
 }
+
+// parse CDATA
+void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, int& textSize, int& loc)
+{
+    content.remove_prefix("<![CDATA["sv.size());
+    auto tagEndPosition = content.find("]]>"sv);
+    if (tagEndPosition == content.npos) {
+        // refill content preserving unprocessed
+        refillPreserve(content, doneReading, totalBytes);
+        tagEndPosition = content.find("]]>"sv);
+        if (tagEndPosition == content.npos) {
+            std::cerr << "parser error : Unterminated CDATA\n";
+            exit(1);
+        }
+    }
+    const std::string_view characters(content.substr(0, tagEndPosition));
+    TRACE("CDATA", "characters", characters);
+    textSize += static_cast<int>(characters.size());
+    loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+    content.remove_prefix(tagEndPosition);
+    content.remove_prefix("]]>"sv.size());
+}

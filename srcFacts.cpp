@@ -128,23 +128,7 @@ int main(int argc, char* argv[]) {
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' &&
                    content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[') {
             // parse CDATA
-            content.remove_prefix("<![CDATA["sv.size());
-            auto tagEndPosition = content.find("]]>"sv);
-            if (tagEndPosition == content.npos) {
-                // refill content preserving unprocessed
-                refillPreserve(content, doneReading, totalBytes);
-                tagEndPosition = content.find("]]>"sv);
-                if (tagEndPosition == content.npos) {
-                    std::cerr << "parser error : Unterminated CDATA\n";
-                    return 1;
-                }
-            }
-            const std::string_view characters(content.substr(0, tagEndPosition));
-            TRACE("CDATA", "characters", characters);
-            textSize += static_cast<int>(characters.size());
-            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-            content.remove_prefix(tagEndPosition);
-            content.remove_prefix("]]>"sv.size());
+            parseCDATA(content, doneReading, totalBytes, textSize, loc);
         } else if (content[1] == '?' /* && content[0] == '<' */) {
             // parse processing instruction
             assert(content.compare(0, "<?"sv.size(), "<?"sv) == 0);

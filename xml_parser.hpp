@@ -33,4 +33,7 @@ void parseCharNonER(std::string_view& content, int& loc, int& textSize);
 // parse XML comment
 void parseComment(std::string_view& content, bool& doneReading, long& totalBytes);
 
+// parse CDATA
+void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, int& textSize, int& loc);
+
 #endif
