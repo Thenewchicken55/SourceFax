@@ -113,8 +113,7 @@ int main(int argc, char* argv[]) {
                 break;
         } else if (content.size() < BLOCK_SIZE) {
             // refill content preserving unprocessed
-            refillPreserve(content, doneReading);
-            totalBytes += bytesRead;
+            refillPreserve(content, doneReading, totalBytes);
         }
         if (content[0] == '&') {
             // parse character entity references
@@ -132,15 +131,7 @@ int main(int argc, char* argv[]) {
             auto tagEndPosition = content.find("-->"sv);
             if (tagEndPosition == content.npos) {
                 // refill content preserving unprocessed
-                int bytesRead = refillContent(content);
-                if (bytesRead < 0) {
-                    std::cerr << "parser error : File input error\n";
-                    return 1;
-                }
-                if (bytesRead == 0) {
-                    doneReading = true;
-                }
-                totalBytes += bytesRead;
+                refillPreserve(content, doneReading, totalBytes);
                 tagEndPosition = content.find("-->"sv);
                 if (tagEndPosition == content.npos) {
                     std::cerr << "parser error : Unterminated XML comment\n";
@@ -158,15 +149,7 @@ int main(int argc, char* argv[]) {
             auto tagEndPosition = content.find("]]>"sv);
             if (tagEndPosition == content.npos) {
                 // refill content preserving unprocessed
-                int bytesRead = refillContent(content);
-                if (bytesRead < 0) {
-                    std::cerr << "parser error : File input error\n";
-                    return 1;
-                }
-                if (bytesRead == 0) {
-                    doneReading = true;
-                }
-                totalBytes += bytesRead;
+                refillPreserve(content, doneReading, totalBytes);
                 tagEndPosition = content.find("]]>"sv);
                 if (tagEndPosition == content.npos) {
                     std::cerr << "parser error : Unterminated CDATA\n";
@@ -393,15 +376,7 @@ int main(int argc, char* argv[]) {
         auto tagEndPosition = content.find("-->"sv);
         if (tagEndPosition == content.npos) {
             // refill content preserving unprocessed
-            int bytesRead = refillContent(content);
-            if (bytesRead < 0) {
-                std::cerr << "parser error : File input error\n";
-                return 1;
-            }
-            if (bytesRead == 0) {
-                doneReading = true;
-            }
-            totalBytes += bytesRead;
+            refillPreserve(content, doneReading, totalBytes);
             tagEndPosition = content.find("-->"sv);
             if (tagEndPosition == content.npos) {
                 std::cerr << "parser error : Unterminated XML comment\n";

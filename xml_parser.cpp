@@ -187,7 +187,7 @@ void parseDOCTYPE(std::string_view& content) {
 }
 
 // refill content preserving unprocessed
-void refillPreserve(std::string_view& content, bool& doneReading) {
+void refillPreserve(std::string_view& content, bool& doneReading, long& totalBytes) {
     int bytesRead = refillContent(content);
     if (bytesRead < 0) {
         std::cerr << "parser error : File input error\n";
@@ -196,6 +196,7 @@ void refillPreserve(std::string_view& content, bool& doneReading) {
     if (bytesRead == 0) {
         doneReading = true;
     }
+    totalBytes += bytesRead;
 }
 
 std::string_view unescapedCharacter;
