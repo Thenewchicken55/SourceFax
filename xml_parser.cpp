@@ -23,8 +23,7 @@ std::optional<std::string_view> encoding;
 std::optional<std::string_view> standalone;
 
 // parse XML declaration
-void parseXMLDeclaration(std::string_view& content)
-{
+void parseXMLDeclaration(std::string_view& content) {
     assert(content.compare(0, "<?xml "sv.size(), "<?xml "sv) == 0);
     content.remove_prefix("<?xml"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
@@ -236,8 +235,7 @@ void parseCharNonER(std::string_view& content, int& loc, int& textSize) {
 }
 
 // parse XML comment
-void parseComment(std::string_view& content, bool& doneReading, long& totalBytes)
-{
+void parseComment(std::string_view& content, bool& doneReading, long& totalBytes) {
     assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
     content.remove_prefix("<!--"sv.size());
     auto tagEndPosition = content.find("-->"sv);
@@ -257,8 +255,7 @@ void parseComment(std::string_view& content, bool& doneReading, long& totalBytes
 }
 
 // parse CDATA
-void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, int& textSize, int& loc)
-{
+void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, int& textSize, int& loc) {
     content.remove_prefix("<![CDATA["sv.size());
     auto tagEndPosition = content.find("]]>"sv);
     if (tagEndPosition == content.npos) {
@@ -281,8 +278,7 @@ void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, 
 constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 
 // parse processing instruction
-void parseProcessing(std::string_view& content)
-{
+void parseProcessing(std::string_view& content) {
     assert(content.compare(0, "<?"sv.size(), "<?"sv) == 0);
     content.remove_prefix("<?"sv.size());
     auto tagEndPosition = content.find("?>"sv);
@@ -304,8 +300,7 @@ void parseProcessing(std::string_view& content)
 }
 
 // parse end tag
-void parseEndTag(std::string_view& content)
-{
+void parseEndTag(std::string_view& content) {
     assert(content.compare(0, "</"sv.size(), "</"sv) == 0);
     content.remove_prefix("</"sv.size());
     if (content[0] == ':') {
