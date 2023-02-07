@@ -35,7 +35,7 @@ void parseCharNonER(std::string_view& content, int& loc, int& textSize);
 int parseComment(std::string_view& content, bool& doneReading);
 
 // parse CDATA
-int parseCDATA(std::string_view& content, bool& doneReading, int& textSize, int& loc);
+std::pair<int, std::string_view> parseCDATA(std::string_view& content, bool& doneReading);
 
 // parse processing instruction
 void parseProcessing(std::string_view& content);

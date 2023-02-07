@@ -132,8 +132,13 @@ int main(int argc, char* argv[]) {
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' &&
                    content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[') {
             // parse CDATA
-            bytesRead = parseCDATA(content, doneReading, textSize, loc);
+            auto result = parseCDATA(content, doneReading);
+            totalBytes = result.first;
+            auto characters = result.second;
             totalBytes += bytesRead;
+            TRACE("CDATA", "characters", characters);
+            textSize += static_cast<int>(characters.size());
+            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         } else if (content[1] == '?' /* && content[0] == '<' */) {
             // parse processing instruction
             parseProcessing(content);

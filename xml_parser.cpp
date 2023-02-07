@@ -271,7 +271,7 @@ int parseComment(std::string_view& content, bool& doneReading) {
 }
 
 // parse CDATA
-int parseCDATA(std::string_view& content, bool& doneReading, int& textSize, int& loc) {
+std::pair<int, std::string_view> parseCDATA(std::string_view& content, bool& doneReading) {
     int bytesRead = 0;
     content.remove_prefix("<![CDATA["sv.size());
     auto tagEndPosition = content.find("]]>"sv);
@@ -285,12 +285,9 @@ int parseCDATA(std::string_view& content, bool& doneReading, int& textSize, int&
         }
     }
     const std::string_view characters(content.substr(0, tagEndPosition));
-    TRACE("CDATA", "characters", characters);
-    textSize += static_cast<int>(characters.size());
-    loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     content.remove_prefix(tagEndPosition);
     content.remove_prefix("]]>"sv.size());
-    return bytesRead;
+    return std::make_pair(bytesRead, characters);
 }
 
 constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
