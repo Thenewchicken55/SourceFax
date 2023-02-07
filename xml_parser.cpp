@@ -37,6 +37,7 @@ using namespace std::literals::string_view_literals;
 constexpr auto WHITESPACE = " \n\t\r"sv;
 std::optional<std::string_view> encoding;
 std::optional<std::string_view> standalone;
+[[maybe_unused]] const std::string_view version;
 
 // parse XML declaration
 void parseXMLDeclaration(std::string_view content) {
