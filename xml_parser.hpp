@@ -23,7 +23,7 @@ void parseOptional(std::string_view& content);
 void parseDOCTYPE(std::string_view& content);
 
 // refill content preserving unprocessed
-void refillPreserve(std::string_view& content, bool& doneReading, long& totalBytes);
+int refillPreserve(std::string_view& content, bool& doneReading);
 
 // parse character entity references
 void parseCharER(std::string_view& content);
@@ -32,10 +32,10 @@ void parseCharER(std::string_view& content);
 void parseCharNonER(std::string_view& content, int& loc, int& textSize);
 
 // parse XML comment
-void parseComment(std::string_view& content, bool& doneReading, long& totalBytes);
+int parseComment(std::string_view& content, bool& doneReading);
 
 // parse CDATA
-void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, int& textSize, int& loc);
+int parseCDATA(std::string_view& content, bool& doneReading, int& textSize, int& loc);
 
 // parse processing instruction
 void parseProcessing(std::string_view& content);

@@ -114,7 +114,8 @@ int main(int argc, char* argv[]) {
                 break;
         } else if (content.size() < BLOCK_SIZE) {
             // refill content preserving unprocessed
-            refillPreserve(content, doneReading, totalBytes);
+            bytesRead = refillPreserve(content, doneReading);
+            totalBytes += bytesRead;
         }
         if (content[0] == '&') {
             // parse character entity references
@@ -125,12 +126,14 @@ int main(int argc, char* argv[]) {
             parseCharNonER(content, loc, textSize);
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '-' && content[3] == '-') {
             // parse XML comment
-            parseComment(content, doneReading, totalBytes);
+            bytesRead = parseComment(content, doneReading);
+            totalBytes += bytesRead;
             content.remove_prefix("-->"sv.size());
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' &&
                    content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[') {
             // parse CDATA
-            parseCDATA(content, doneReading, totalBytes, textSize, loc);
+            bytesRead = parseCDATA(content, doneReading, textSize, loc);
+            totalBytes += bytesRead;
         } else if (content[1] == '?' /* && content[0] == '<' */) {
             // parse processing instruction
             parseProcessing(content);
@@ -203,7 +206,8 @@ int main(int argc, char* argv[]) {
     content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
     while (!content.empty() && content[0] == '<' && content[1] == '!' && content[2] == '-' && content[3] == '-') {
         // parse XML comment
-        parseComment(content, doneReading, totalBytes);
+        bytesRead = parseComment(content, doneReading);
+        totalBytes += bytesRead;
         assert(content.compare(0, "-->"sv.size(), "-->"sv) == 0);
         content.remove_prefix("-->"sv.size());
         content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));

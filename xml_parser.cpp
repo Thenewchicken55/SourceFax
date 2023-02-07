@@ -187,7 +187,7 @@ void parseDOCTYPE(std::string_view& content) {
 }
 
 // refill content preserving unprocessed
-void refillPreserve(std::string_view& content, bool& doneReading, long& totalBytes) {
+int refillPreserve(std::string_view& content, bool& doneReading) {
     int bytesRead = refillContent(content);
     if (bytesRead < 0) {
         std::cerr << "parser error : File input error\n";
@@ -196,7 +196,8 @@ void refillPreserve(std::string_view& content, bool& doneReading, long& totalByt
     if (bytesRead == 0) {
         doneReading = true;
     }
-    totalBytes += bytesRead;
+    
+    return bytesRead;
 }
 
 std::string_view unescapedCharacter;
@@ -236,13 +237,14 @@ void parseCharNonER(std::string_view& content, int& loc, int& textSize) {
 }
 
 // parse XML comment
-void parseComment(std::string_view& content, bool& doneReading, long& totalBytes) {
+int parseComment(std::string_view& content, bool& doneReading) {
+    int bytesRead;
     assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
     content.remove_prefix("<!--"sv.size());
     auto tagEndPosition = content.find("-->"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        refillPreserve(content, doneReading, totalBytes);        
+        bytesRead = refillPreserve(content, doneReading);     
         tagEndPosition = content.find("-->"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated XML comment\n";
@@ -252,15 +254,17 @@ void parseComment(std::string_view& content, bool& doneReading, long& totalBytes
     [[maybe_unused]] const std::string_view comment(content.substr(0, tagEndPosition));
     TRACE("COMMENT", "content", comment);
     content.remove_prefix(tagEndPosition);
+    return bytesRead;
 }
 
 // parse CDATA
-void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, int& textSize, int& loc) {
+int parseCDATA(std::string_view& content, bool& doneReading, int& textSize, int& loc) {
+    int bytesRead;
     content.remove_prefix("<![CDATA["sv.size());
     auto tagEndPosition = content.find("]]>"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        refillPreserve(content, doneReading, totalBytes);
+        bytesRead = refillPreserve(content, doneReading);
         tagEndPosition = content.find("]]>"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated CDATA\n";
@@ -273,6 +277,7 @@ void parseCDATA(std::string_view& content, bool& doneReading, long& totalBytes, 
     loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     content.remove_prefix(tagEndPosition);
     content.remove_prefix("]]>"sv.size());
+    return bytesRead;
 }
 
 constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
