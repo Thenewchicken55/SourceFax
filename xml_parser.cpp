@@ -48,7 +48,7 @@ void parseXMLDeclaration(std::string_view content) {
     parseVersion(content);
     
     // parse optional encoding and standalone attributes
-    parseOptional(content);
+    parseEncodingAndStandalone(content);
 
     TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
     assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
@@ -88,7 +88,7 @@ void parseVersion(std::string_view& content) {
 
 
 // parse optional encoding and standalone attributes
-void parseOptional(std::string_view& content) {
+void parseEncodingAndStandalone(std::string_view& content) {
     
     if (content[0] != '?') {
         auto nameEndPosition = content.find_first_of("= ");
