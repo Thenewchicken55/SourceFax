@@ -251,7 +251,7 @@ void parseCharNonER(std::string_view& content, int& loc, int& textSize) {
 
 // parse XML comment
 int parseComment(std::string_view& content, bool& doneReading) {
-    int bytesRead;
+    int bytesRead = 0;
     assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
     content.remove_prefix("<!--"sv.size());
     auto tagEndPosition = content.find("-->"sv);
@@ -272,7 +272,7 @@ int parseComment(std::string_view& content, bool& doneReading) {
 
 // parse CDATA
 int parseCDATA(std::string_view& content, bool& doneReading, int& textSize, int& loc) {
-    int bytesRead;
+    int bytesRead = 0;
     content.remove_prefix("<![CDATA["sv.size());
     auto tagEndPosition = content.find("]]>"sv);
     if (tagEndPosition == content.npos) {
