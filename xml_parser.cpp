@@ -39,7 +39,7 @@ std::optional<std::string_view> encoding;
 std::optional<std::string_view> standalone;
 
 // parse XML declaration
-void parseXMLDeclaration(std::string_view& content) {
+void parseXMLDeclaration(std::string_view content) {
     assert(content.compare(0, "<?xml "sv.size(), "<?xml "sv) == 0);
     content.remove_prefix("<?xml"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
