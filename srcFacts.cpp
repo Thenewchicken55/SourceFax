@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
                     const std::string_view value(content.substr(0, valueEndPosition));
                     if (localName == "url"sv)
                         url = value;
-                    TRACE("ATTRIBUTE", "qname", qName, "prefix", prefix, "localName", localName, "value", value);
+                    TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix, "localName", localName, "value", value);
 
                     // convert special srcML escaped element to characters
                     if (inEscape && localName == "char"sv /* && inUnit */) {
