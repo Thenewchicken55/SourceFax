@@ -123,7 +123,11 @@ int main(int argc, char* argv[]) {
             ++textSize;
         } else if (content[0] != '<') {
             // parse character non-entity references
-            parseCharNonER(content, loc, textSize);
+            auto characters = parseCharNonER(content);
+            TRACE("CHARACTERS", "characters", characters);
+            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+            textSize += static_cast<int>(characters.size());
+            content.remove_prefix(characters.size());
         } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '-' && content[3] == '-') {
             // parse XML comment
             bytesRead = parseComment(content, doneReading);

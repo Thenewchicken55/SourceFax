@@ -29,7 +29,7 @@ int refillPreserve(std::string_view& content, bool& doneReading);
 void parseCharER(std::string_view& content);
 
 // parse character non-entity references
-void parseCharNonER(std::string_view& content, int& loc, int& textSize);
+std::string_view parseCharNonER(std::string_view& content);
 
 // parse XML comment
 int parseComment(std::string_view& content, bool& doneReading);
