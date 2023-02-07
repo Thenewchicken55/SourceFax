@@ -50,6 +50,11 @@ void parseXMLDeclaration(std::string_view content) {
     // parse optional encoding and standalone attributes
     parseOptional(content);
 
+    TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
+    assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
+    content.remove_prefix("?>"sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+
 }
 
 // parse required version
@@ -151,10 +156,6 @@ void parseOptional(std::string_view& content) {
         content.remove_prefix(valueEndPosition + 1);
         content.remove_prefix(content.find_first_not_of(WHITESPACE));
     }
-    TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
-    assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
-    content.remove_prefix("?>"sv.size());
-    content.remove_prefix(content.find_first_not_of(WHITESPACE));
 }
 
 //parse DOCTYPE
