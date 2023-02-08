@@ -469,3 +469,8 @@ bool isXML(std::string_view content) {
 bool isDOCTYPE(std::string_view content) {
     return content[1] == '!' && content[0] == '<' && content[2] == 'D' && content[3] == 'O' && content[4] == 'C' && content[5] == 'T' && content[6] == 'Y' && content[7] == 'P' && content[8] == 'E' && content[9] == ' ';
 }
+
+// Accessor::predicate to test if the tag is CDATA
+bool isCDATA(std::string_view content) {
+    return content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' && content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[';
+}

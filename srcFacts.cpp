@@ -133,8 +133,7 @@ int main(int argc, char* argv[]) {
             bytesRead = parseComment(content, doneReading);
             totalBytes += bytesRead;
             content.remove_prefix("-->"sv.size());
-        } else if (content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' &&
-                   content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[') {
+        } else if (isCDATA(content)) {
             // parse CDATA
             auto result = parseCDATA(content, doneReading);
             totalBytes = result.first;

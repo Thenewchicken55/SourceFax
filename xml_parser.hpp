@@ -57,4 +57,7 @@ bool isXML(std::string_view content);
 
 // Accessor::predicate to test if the tag is DOCTYPE
 bool isDOCTYPE(std::string_view content);
+
+// Accessor::predicate to test if the tag is CDATA
+bool isCDATA(std::string_view content);
 #endif
