@@ -459,3 +459,8 @@ std::size_t parseAttribute(std::string_view& content) {
     }
     return valueEndPosition;
 }
+
+// Accessor::predicate to test if the tag is a XML declaration
+bool isXML(std::string_view content) {
+    return content[0] == '<' && content[1] == '?' && content[2] == 'x' && content[3] == 'm' && content[4] == 'l' && content[5] == ' ';
+}
