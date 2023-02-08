@@ -175,7 +175,7 @@ int main(int argc, char* argv[]) {
             content.remove_prefix(nameEndPosition);
             content.remove_prefix(content.find_first_not_of(WHITESPACE));
             while (xmlNameMask[content[0]]) {
-                if (content[0] == 'x' && content[1] == 'm' && content[2] == 'l' && content[3] == 'n' && content[4] == 's' && (content[5] == ':' || content[5] == '=')) {
+                if (isNamespace(content)) {
                     // parse XML namespace
                     parseNamespace(content);
                 } else {

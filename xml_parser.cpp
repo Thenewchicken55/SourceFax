@@ -479,3 +479,8 @@ bool isCDATA(std::string_view content) {
 bool isComment(std::string_view content) {
     return !content.empty() && content[0] == '<' && content[1] == '!' && content[2] == '-' && content[3] == '-';
 }
+
+// Accessor::predicate to test if the tag is an XML namespace
+bool isNamespace(std::string_view content) {
+    return content[0] == 'x' && content[1] == 'm' && content[2] == 'l' && content[3] == 'n' && content[4] == 's' && (content[5] == ':' || content[5] == '=');
+}
