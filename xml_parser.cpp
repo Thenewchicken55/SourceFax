@@ -464,3 +464,8 @@ std::size_t parseAttribute(std::string_view& content) {
 bool isXML(std::string_view content) {
     return content[0] == '<' && content[1] == '?' && content[2] == 'x' && content[3] == 'm' && content[4] == 'l' && content[5] == ' ';
 }
+
+// Accessor::predicate to test if the tag is DOCTYPE
+bool isDOCTYPE(std::string_view content) {
+return content[1] == '!' && content[0] == '<' && content[2] == 'D' && content[3] == 'O' && content[4] == 'C' && content[5] == 'T' && content[6] == 'Y' && content[7] == 'P' && content[8] == 'E' && content[9] == ' ';
+}

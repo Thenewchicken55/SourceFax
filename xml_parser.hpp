@@ -54,4 +54,7 @@ std::size_t parseAttribute(std::string_view& content);
 
 // Accessor::predicate to test if the tag is a XML declaration
 bool isXML(std::string_view content);
+
+// Accessor::predicate to test if the tag is DOCTYPE
+bool isDOCTYPE(std::string_view content);
 #endif
