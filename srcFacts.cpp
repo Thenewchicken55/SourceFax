@@ -212,7 +212,7 @@ int main(int argc, char* argv[]) {
         }
     }
     content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
-    while (!content.empty() && content[0] == '<' && content[1] == '!' && content[2] == '-' && content[3] == '-') {
+    while (isComment(content)) {
         // parse XML comment
         bytesRead = parseComment(content, doneReading);
         totalBytes += bytesRead;

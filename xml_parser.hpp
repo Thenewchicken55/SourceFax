@@ -60,4 +60,7 @@ bool isDOCTYPE(std::string_view content);
 
 // Accessor::predicate to test if the tag is CDATA
 bool isCDATA(std::string_view content);
+
+// Accessor::predicate to test if the tag is a comment tag
+bool isComment(std::string_view content);
 #endif

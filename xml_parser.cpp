@@ -474,3 +474,8 @@ bool isDOCTYPE(std::string_view content) {
 bool isCDATA(std::string_view content) {
     return content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' && content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[';
 }
+
+// Accessor::predicate to test if the tag is a comment tag
+bool isComment(std::string_view content) {
+    return !content.empty() && content[0] == '<' && content[1] == '!' && content[2] == '-' && content[3] == '-';
+}
