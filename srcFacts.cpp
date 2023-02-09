@@ -177,8 +177,11 @@ int main(int argc, char* argv[]) {
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix, "localName", localName, "value", value);
-                    if (localName == "literal"sv && value == "string"sv)
+                    if (localName == "literal"sv && value == "string"sv) {
                         ++stringCount;
+                    } else if (localName == "comment"sv && value == "line") {
+                        ++lineCommentCount;
+                    }
                     // convert special srcML escaped element to characters
                     if (inEscape && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
@@ -224,16 +227,17 @@ int main(int argc, char* argv[]) {
     std::cout << "# srcFacts: " << url << '\n';
     std::cout << "| Measure      | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:-------------|-" << std::setw(valueWidth + 3) << std::setfill('-') << ":|\n" << std::setfill(' ');
-    std::cout << "| Characters   | " << std::setw(valueWidth) << textSize      << " |\n";
-    std::cout << "| LOC          | " << std::setw(valueWidth) << loc           << " |\n";
-    std::cout << "| Files        | " << std::setw(valueWidth) << files         << " |\n";
-    std::cout << "| Classes      | " << std::setw(valueWidth) << classCount    << " |\n";
-    std::cout << "| Functions    | " << std::setw(valueWidth) << functionCount << " |\n";
-    std::cout << "| Declarations | " << std::setw(valueWidth) << declCount     << " |\n";
-    std::cout << "| Expressions  | " << std::setw(valueWidth) << exprCount     << " |\n";
-    std::cout << "| Comments     | " << std::setw(valueWidth) << commentCount  << " |\n";
-    std::cout << "| Returns      | " << std::setw(valueWidth) << returnCount   << " |\n";
-    std::cout << "| Strings      | " << std::setw(valueWidth) << stringCount   << " |\n";
+    std::cout << "| Characters   | " << std::setw(valueWidth) << textSize        << " |\n";
+    std::cout << "| LOC          | " << std::setw(valueWidth) << loc             << " |\n";
+    std::cout << "| Files        | " << std::setw(valueWidth) << files           << " |\n";
+    std::cout << "| Classes      | " << std::setw(valueWidth) << classCount      << " |\n";
+    std::cout << "| Functions    | " << std::setw(valueWidth) << functionCount   << " |\n";
+    std::cout << "| Declarations | " << std::setw(valueWidth) << declCount       << " |\n";
+    std::cout << "| Expressions  | " << std::setw(valueWidth) << exprCount       << " |\n";
+    std::cout << "| Comments     | " << std::setw(valueWidth) << commentCount    << " |\n";
+    std::cout << "| Returns      | " << std::setw(valueWidth) << returnCount     << " |\n";
+    std::cout << "| Line Comments| " << std::setw(valueWidth) << lineCommentCount<< " |\n";
+    std::cout << "| Strings      | " << std::setw(valueWidth) << stringCount     << " |\n";
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';
