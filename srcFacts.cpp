@@ -129,7 +129,6 @@ int main(int argc, char* argv[]) {
             totalBytes = result.first;
             auto characters = result.second;
             totalBytes += bytesRead;
-            TRACE("CDATA", "characters", characters);
             textSize += static_cast<int>(characters.size());
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         } else if (content[1] == '?' /* && content[0] == '<' */) {

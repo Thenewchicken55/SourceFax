@@ -294,6 +294,7 @@ std::pair<int, std::string_view> parseCDATA(std::string_view& content, bool& don
     const std::string_view characters(content.substr(0, tagEndPosition));
     content.remove_prefix(tagEndPosition);
     content.remove_prefix("]]>"sv.size());
+    TRACE("CDATA", "characters", characters);
     return std::make_pair(bytesRead, characters);
 }
 
