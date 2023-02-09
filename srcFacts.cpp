@@ -177,7 +177,8 @@ int main(int argc, char* argv[]) {
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix, "localName", localName, "value", value);
-
+                    if (localName == "literal"sv && value == "string"sv)
+                        ++stringCount;
                     // convert special srcML escaped element to characters
                     if (inEscape && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
@@ -232,6 +233,7 @@ int main(int argc, char* argv[]) {
     std::cout << "| Expressions  | " << std::setw(valueWidth) << exprCount     << " |\n";
     std::cout << "| Comments     | " << std::setw(valueWidth) << commentCount  << " |\n";
     std::cout << "| Returns      | " << std::setw(valueWidth) << returnCount   << " |\n";
+    std::cout << "| Strings      | " << std::setw(valueWidth) << stringCount   << " |\n";
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';
