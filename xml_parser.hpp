@@ -44,8 +44,8 @@ void parseProcessing(std::string_view& content);
 void parseEndTag(std::string_view& content);
 
 // parse start tag
-std::pair<std::size_t, std::string_view> parseStartTag(std::string_view& content);
-    
+std::size_t parseStartTag(std::string_view& content, std::string_view& qName, std::string_view& prefix, std::string_view& localName);   
+
 // parse XML namespace
 void parseNamespace(std::string_view& content);
 

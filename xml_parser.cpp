@@ -348,7 +348,7 @@ void parseEndTag(std::string_view& content) {
 }
 
 // parse start tag
-std::pair<std::size_t, std::string_view> parseStartTag(std::string_view& content) {
+std::size_t parseStartTag(std::string_view& content, std::string_view& qName, std::string_view& prefix, std::string_view& localName) {
     assert(content.compare(0, "<"sv.size(), "<"sv) == 0);
     content.remove_prefix("<"sv.size());
     if (content[0] == ':') {
@@ -365,16 +365,16 @@ std::pair<std::size_t, std::string_view> parseStartTag(std::string_view& content
         colonPosition = nameEndPosition;
         nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
     }
-    const std::string_view qName(content.substr(0, nameEndPosition));
+    qName = content.substr(0, nameEndPosition);
     if (qName.empty()) {
         std::cerr << "parser error: StartTag: invalid element name\n";
         exit(1);
     }
-    [[maybe_unused]] const std::string_view prefix(qName.substr(0, colonPosition));
-    const std::string_view localName(qName.substr(colonPosition ? colonPosition + 1 : 0, nameEndPosition));
+    prefix = qName.substr(0, colonPosition);
+    localName = qName.substr(colonPosition ? colonPosition + 1 : 0, nameEndPosition);
     TRACE("START TAG", "qName", qName, "prefix", prefix, "localName", localName);
 
-    return std::make_pair(nameEndPosition, localName);
+    return nameEndPosition;
 }
 
 // parse XML namespace

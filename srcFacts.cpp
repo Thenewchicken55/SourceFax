@@ -152,10 +152,11 @@ int main(int argc, char* argv[]) {
             if (depth == 0)
                 break;
         } else if (content[0] == '<') {
+            std::string_view qName;
+            [[maybe_unused]] std::string_view prefix;
+            std::string_view localName;
             // parse start tag
-            auto result = parseStartTag(content);
-            auto nameEndPosition = result.first;
-            auto localName = result.second;
+            auto nameEndPosition = parseStartTag(content, qName, prefix, localName);
             bool inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;
