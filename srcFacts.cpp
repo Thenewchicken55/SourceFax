@@ -116,7 +116,6 @@ int main(int argc, char* argv[]) {
         } else if (content[0] != '<') {
             // parse character non-entity references
             auto characters = parseCharNonER(content);
-            TRACE("CHARACTERS", "characters", characters);
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
             textSize += static_cast<int>(characters.size());
             content.remove_prefix(characters.size());

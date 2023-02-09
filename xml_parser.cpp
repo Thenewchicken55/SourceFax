@@ -246,7 +246,8 @@ void parseCharER(std::string_view& content) {
 std::string_view parseCharNonER(std::string_view& content) {
     assert(content[0] != '<' && content[0] != '&');
     auto characterEndPosition = content.find_first_of("<&");
-    const std::string_view characters(content.substr(0, characterEndPosition));
+    const std::string_view characters(content.substr(0, characterEndPosition));\
+    TRACE("CHARACTERS", "characters", characters);
     return characters;
 }
 
