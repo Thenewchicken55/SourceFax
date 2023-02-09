@@ -248,6 +248,7 @@ std::string_view parseCharNonER(std::string_view& content) {
     auto characterEndPosition = content.find_first_of("<&");
     const std::string_view characters(content.substr(0, characterEndPosition));\
     TRACE("CHARACTERS", "characters", characters);
+    content.remove_prefix(characters.size());
     return characters;
 }
 

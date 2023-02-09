@@ -118,7 +118,6 @@ int main(int argc, char* argv[]) {
             auto characters = parseCharNonER(content);
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
             textSize += static_cast<int>(characters.size());
-            content.remove_prefix(characters.size());
         } else if (isComment(content)) {
             // parse XML comment
             bytesRead = parseComment(content, doneReading);
