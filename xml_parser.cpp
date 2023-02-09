@@ -493,7 +493,7 @@ bool isNamespace(std::string_view content) {
 }
 
 // parse file from the start
-int parseStart(std::string_view& content) {
+int parseBegin(std::string_view& content) {
     TRACE("START DOCUMENT");
     int bytesRead = refillContent(content);
     if (bytesRead < 0) {

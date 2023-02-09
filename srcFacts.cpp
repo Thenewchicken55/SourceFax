@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     std::string_view content;
 
     // parse file from the start
-    auto bytesRead = parseStart(content);
+    auto bytesRead = parseBegin(content);
     totalBytes += bytesRead;
 
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
