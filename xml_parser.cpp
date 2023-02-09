@@ -269,6 +269,10 @@ int parseComment(std::string_view& content, bool& doneReading) {
     [[maybe_unused]] const std::string_view comment(content.substr(0, tagEndPosition));
     TRACE("COMMENT", "content", comment);
     content.remove_prefix(tagEndPosition);
+    assert(content.compare(0, "-->"sv.size(), "-->"sv) == 0);
+    content.remove_prefix("-->"sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
+
     return bytesRead;
 }
 

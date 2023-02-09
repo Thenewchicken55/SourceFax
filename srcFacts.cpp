@@ -208,9 +208,6 @@ int main(int argc, char* argv[]) {
         // parse XML comment
         bytesRead = parseComment(content, doneReading);
         totalBytes += bytesRead;
-        assert(content.compare(0, "-->"sv.size(), "-->"sv) == 0);
-        content.remove_prefix("-->"sv.size());
-        content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
     }
     if (!content.empty()) {
         std::cerr << "parser error : extra content at end of document\n";
