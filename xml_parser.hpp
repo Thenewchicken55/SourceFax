@@ -66,4 +66,7 @@ bool isComment(std::string_view content);
 
 // Accessor::predicate to test if the tag is an XML namespace
 bool isNamespace(std::string_view content);
+
+// parse file from the start
+int parseStart(std::string_view& content);
 #endif

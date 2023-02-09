@@ -85,16 +85,8 @@ int main(int argc, char* argv[]) {
     int returnCount = 0;
     std::string_view content;
 
-    TRACE("START DOCUMENT");
-    int bytesRead = refillContent(content);
-    if (bytesRead < 0) {
-        std::cerr << "parser error : File input error\n";
-        return 1;
-    }
-    if (bytesRead == 0) {
-        std::cerr << "parser error : Empty file\n";
-        return 1;
-    }
+    // parse file from the start
+    auto bytesRead = parseStart(content);
     totalBytes += bytesRead;
 
     content.remove_prefix(content.find_first_not_of(WHITESPACE));

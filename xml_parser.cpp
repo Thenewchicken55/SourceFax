@@ -484,3 +484,19 @@ bool isComment(std::string_view content) {
 bool isNamespace(std::string_view content) {
     return content[0] == 'x' && content[1] == 'm' && content[2] == 'l' && content[3] == 'n' && content[4] == 's' && (content[5] == ':' || content[5] == '=');
 }
+
+// parse file from the start
+int parseStart(std::string_view& content) {
+    TRACE("START DOCUMENT");
+    int bytesRead = refillContent(content);
+    if (bytesRead < 0) {
+        std::cerr << "parser error : File input error\n";
+        return 1;
+    }
+    if (bytesRead == 0) {
+        std::cerr << "parser error : Empty file\n";
+        return 1;
+    }
+
+    return bytesRead;
+}
