@@ -439,7 +439,7 @@ std::size_t parseAttribute(std::string_view& content) {
     }
     const std::string_view qName(content.substr(0, nameEndPosition));
     [[maybe_unused]] const std::string_view prefix(qName.substr(0, colonPosition));
-    const std::string_view localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
+    [[maybe_unused]] const std::string_view localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
     content.remove_prefix(nameEndPosition);
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
     if (content.empty()) {

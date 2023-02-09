@@ -52,7 +52,7 @@ const int BLOCK_SIZE = 4096;
 const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111111111111111111111100000001111111111011000000000000000000000000000000000000000000000");
 
 constexpr auto WHITESPACE = " \n\t\r"sv;
-constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
+[[maybe_unused]] constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 
 // trace parsing
 #ifdef TRACE
