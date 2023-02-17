@@ -507,3 +507,8 @@ int parseBegin(std::string_view& content) {
 
     return bytesRead;
 }
+
+// Accessor::predicate to check if content has a specific character at a specific index
+bool isCharacter(std::string_view& content, int index, char character) {
+    return content[index] == character;
+}

@@ -100,11 +100,11 @@ int main(int argc, char* argv[]) {
             bytesRead = refillPreserve(content, doneReading);
             totalBytes += bytesRead;
         }
-        if (content[0] == '&') {
+        if (isCharacter(content, 0, '&')) {
             // parse character entity references
             parseCharER(content);
             ++textSize;
-        } else if (content[0] != '<') {
+        } else if (!isCharacter(content, 0 ,'<')) {
             // parse character non-entity references
             auto characters = parseCharNonER(content);
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
@@ -122,16 +122,16 @@ int main(int argc, char* argv[]) {
             totalBytes += bytesRead;
             textSize += static_cast<int>(characters.size());
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-        } else if (content[1] == '?' /* && content[0] == '<' */) {
+        } else if (isCharacter(content, 1, '?') /* && isCharacter(content, 0, '<') */) {
             // parse processing instruction
             parseProcessing(content);
-        } else if (content[1] == '/' /* && content[0] == '<' */) {
+        } else if (isCharacter(content, 1, '/') /* && isCharacter(content, 0, '<') */) {
             // parse end tag
             parseEndTag(content);
             --depth;
             if (depth == 0)
                 break;
-        } else if (content[0] == '<') {
+        } else if (isCharacter(content, 0, '<')) {
             std::string_view qName;
             [[maybe_unused]] std::string_view prefix;
             std::string_view localName;
@@ -181,10 +181,10 @@ int main(int argc, char* argv[]) {
                     content.remove_prefix(content.find_first_not_of(WHITESPACE));
                 }
             }
-            if (content[0] == '>') {
+            if (isCharacter(content, 0, '>')) {
                 content.remove_prefix(">"sv.size());
                 ++depth;
-            } else if (content[0] == '/' && content[1] == '>') {
+            } else if (isCharacter(content, 0, '/') && isCharacter(content, 1, '>')) {
                 assert(content.compare(0, "/>"sv.size(), "/>") == 0);
                 content.remove_prefix("/>"sv.size());
                 TRACE("END TAG", "qName", qName, "prefix", prefix, "localName", localName);

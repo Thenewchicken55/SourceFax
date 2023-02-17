@@ -69,4 +69,7 @@ bool isNamespace(std::string_view content);
 
 // parse file from the start
 int parseBegin(std::string_view& content);
+
+// Accessor::predicate to check if content has a specific character at a specific index
+bool isCharacter(std::string_view& content, int index, char character);
 #endif
