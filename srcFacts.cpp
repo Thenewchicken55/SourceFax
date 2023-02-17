@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
             ++textSize;
         } else if (!isCharacter(content, 0 ,'<')) {
             // parse character non-entity references
-            auto characters = parseCharNonER(content);
+            auto characters = parseCharacterNotEntityReference(content);
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
             textSize += static_cast<int>(characters.size());
         } else if (isComment(content)) {

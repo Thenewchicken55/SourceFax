@@ -243,7 +243,7 @@ void parseCharacterEntityReference(std::string_view& content) {
 }
 
 // parse character non-entity references
-std::string_view parseCharNonER(std::string_view& content) {
+std::string_view parseCharacterNotEntityReference(std::string_view& content) {
     assert(content[0] != '<' && content[0] != '&');
     auto characterEndPosition = content.find_first_of("<&");
     const std::string_view characters(content.substr(0, characterEndPosition));\
