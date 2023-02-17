@@ -26,7 +26,7 @@ void parseDOCTYPE(std::string_view& content);
 int refillPreserve(std::string_view& content, bool& doneReading);
 
 // parse character entity references
-void parseCharER(std::string_view& content);
+void parseCharacterEntityReference(std::string_view& content);
 
 // parse character non-entity references
 std::string_view parseCharNonER(std::string_view& content);

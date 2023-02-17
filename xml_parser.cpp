@@ -221,7 +221,7 @@ std::string_view unescapedCharacter;
 std::string_view escapedCharacter;
 
 // parse character entity references
-void parseCharER(std::string_view& content) {
+void parseCharacterEntityReference(std::string_view& content) {
 
     if (content[1] == 'l' && content[2] == 't' && content[3] == ';') {
         unescapedCharacter = "<";
