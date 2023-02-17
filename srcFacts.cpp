@@ -33,17 +33,6 @@
 #include "refillContent.hpp"
 #include "xml_parser.hpp"
 
-#if !defined(_MSC_VER)
-#include <sys/uio.h>
-#include <unistd.h>
-#define READ read
-#else
-#include <BaseTsd.h>
-#include <io.h>
-typedef SSIZE_T ssize_t;
-#define READ _read
-#endif
-
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
 
