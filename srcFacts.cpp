@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
                     // convert special srcML escaped element to characters
                     if (inEscape && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
-                        [[maybe_unused]] char escapeValue = (char)strtol(value.data(), NULL, 0);
+                        [[maybe_unused]] auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }
                     content.remove_prefix(valueEndPosition);
                     content.remove_prefix("\""sv.size());
