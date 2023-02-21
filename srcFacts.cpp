@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
             std::string_view localName;
             // parse start tag
             auto nameEndPosition = parseStartTag(content, qName, prefix, localName);
-            bool inEscape = localName == "escape"sv;
+            auto inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;
             } else if (localName == "decl"sv) {
@@ -209,10 +209,10 @@ int main(int argc, char* argv[]) {
     TRACE("END DOCUMENT");
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
-    const double MLOCPerSecond = loc / elapsedSeconds / 1000000;
-    int files = std::max(unitCount - 1, 1);
+    const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
+    auto files = std::max(unitCount - 1, 1);
     std::cout.imbue(std::locale{""});
-    int valueWidth = std::max(5, static_cast<int>(log10(totalBytes) * 1.3 + 1));
+    auto valueWidth = std::max(5, static_cast<int>(log10(totalBytes) * 1.3 + 1));
     std::cout << "# srcFacts: " << url << '\n';
     std::cout << "| Measure      | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:-------------|-" << std::setw(valueWidth + 3) << std::setfill('-') << ":|\n" << std::setfill(' ');
