@@ -116,9 +116,9 @@ int main(int argc, char* argv[]) {
             content.remove_prefix("-->"sv.size());
         } else if (isCDATA(content)) {
             // parse CDATA
-            auto result = parseCDATA(content, doneReading);
+            const auto result = parseCDATA(content, doneReading);
             totalBytes = result.first;
-            auto characters = result.second;
+            const auto characters = result.second;
             totalBytes += bytesRead;
             textSize += static_cast<int>(characters.size());
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
@@ -136,8 +136,8 @@ int main(int argc, char* argv[]) {
             [[maybe_unused]] std::string_view prefix;
             std::string_view localName;
             // parse start tag
-            auto nameEndPosition = parseStartTag(content, qName, prefix, localName);
-            auto inEscape = localName == "escape"sv;
+            const auto nameEndPosition = parseStartTag(content, qName, prefix, localName);
+            const auto inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;
             } else if (localName == "decl"sv) {
@@ -161,7 +161,7 @@ int main(int argc, char* argv[]) {
                     parseNamespace(content);
                 } else {
                     // parse attribute
-                    auto valueEndPosition = parseAttribute(content);
+                    const auto valueEndPosition = parseAttribute(content);
                     const std::string_view value(content.substr(0, valueEndPosition));
                     if (localName == "url"sv)
                         url = value;
@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
                     // convert special srcML escaped element to characters
                     if (inEscape && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
-                        [[maybe_unused]] auto escapeValue = (char)strtol(value.data(), NULL, 0);
+                        [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }
                     content.remove_prefix(valueEndPosition);
                     content.remove_prefix("\""sv.size());
@@ -210,9 +210,9 @@ int main(int argc, char* argv[]) {
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
     const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
-    auto files = std::max(unitCount - 1, 1);
+    const auto files = std::max(unitCount - 1, 1);
     std::cout.imbue(std::locale{""});
-    auto valueWidth = std::max(5, static_cast<int>(log10(totalBytes) * 1.3 + 1));
+    const auto valueWidth = std::max(5, static_cast<int>(log10(totalBytes) * 1.3 + 1));
     std::cout << "# srcFacts: " << url << '\n';
     std::cout << "| Measure      | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:-------------|-" << std::setw(valueWidth + 3) << std::setfill('-') << ":|\n" << std::setfill(' ');

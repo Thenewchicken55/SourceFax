@@ -60,7 +60,7 @@ void parseXMLDeclaration(std::string_view content) {
 
 // parse required version
 void parseVersion(std::string_view& content) {
-    auto nameEndPosition = content.find_first_of("= ");
+    const auto nameEndPosition = content.find_first_of("= ");
     const auto attr(content.substr(0, nameEndPosition));
     content.remove_prefix(nameEndPosition);
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
@@ -72,7 +72,7 @@ void parseVersion(std::string_view& content) {
         exit(1);
     }
     content.remove_prefix("\""sv.size());
-    auto valueEndPosition = content.find(delimiter);
+    const auto valueEndPosition = content.find(delimiter);
     if (valueEndPosition == content.npos) {
         std::cerr << "parser error: Invalid end delimiter for version in XML declaration\n";
         exit(1);
@@ -91,7 +91,7 @@ void parseVersion(std::string_view& content) {
 // parse optional encoding and standalone attributes
 void parseEncodingAndStandalone(std::string_view& content) {
     if (content[0] != '?') {
-        auto nameEndPosition = content.find_first_of("= ");
+        const auto nameEndPosition = content.find_first_of("= ");
         if (nameEndPosition == content.npos) {
             std::cerr << "parser error: Incomplete attribute in XML declaration\n";
             exit(1);
@@ -102,13 +102,13 @@ void parseEncodingAndStandalone(std::string_view& content) {
         assert(content.compare(0, "="sv.size(), "="sv) == 0);
         content.remove_prefix("="sv.size());
         content.remove_prefix(content.find_first_not_of(WHITESPACE));
-        auto delimiter2 = content[0];
+        const auto delimiter2 = content[0];
         if (delimiter2 != '"' && delimiter2 != '\'') {
             std::cerr << "parser error: Invalid end delimiter for attribute " << attr2 << " in XML declaration\n";
             exit(1);
         }
         content.remove_prefix("\""sv.size());
-        auto valueEndPosition = content.find(delimiter2);
+        const auto valueEndPosition = content.find(delimiter2);
         if (valueEndPosition == content.npos) {
             std::cerr << "parser error: Incomplete attribute " << attr2 << " in XML declaration\n";
             exit(1);
@@ -125,7 +125,7 @@ void parseEncodingAndStandalone(std::string_view& content) {
         content.remove_prefix(content.find_first_not_of(WHITESPACE));
     }
     if (content[0] != '?') {
-        auto nameEndPosition = content.find_first_of("= ");
+        const auto nameEndPosition = content.find_first_of("= ");
         if (nameEndPosition == content.npos) {
             std::cerr << "parser error: Incomplete attribute in XML declaration\n";
             exit(1);
@@ -141,7 +141,7 @@ void parseEncodingAndStandalone(std::string_view& content) {
             exit(1);
         }
         content.remove_prefix("\""sv.size());
-        auto valueEndPosition = content.find(delimiter2);
+        const auto valueEndPosition = content.find(delimiter2);
         if (valueEndPosition == content.npos) {
             std::cerr << "parser error: Incomplete attribute " << attr2 << " in XML declaration\n";
             exit(1);
@@ -244,7 +244,7 @@ void parseCharacterEntityReference(std::string_view& content) {
 // parse character non-entity references
 std::string_view parseCharacterNotEntityReference(std::string_view& content) {
     assert(content[0] != '<' && content[0] != '&');
-    auto characterEndPosition = content.find_first_of("<&");
+    const auto characterEndPosition = content.find_first_of("<&");
     const auto characters(content.substr(0, characterEndPosition));\
     TRACE("CHARACTERS", "characters", characters);
     content.remove_prefix(characters.size());
@@ -303,7 +303,7 @@ constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 void parseProcessing(std::string_view& content) {
     assert(content.compare(0, "<?"sv.size(), "<?"sv) == 0);
     content.remove_prefix("<?"sv.size());
-    auto tagEndPosition = content.find("?>"sv);
+    const auto tagEndPosition = content.find("?>"sv);
     if (tagEndPosition == content.npos) {
         std::cerr << "parser error: Incomplete XML declaration\n";
         exit(1);
@@ -412,7 +412,7 @@ void parseNamespace(std::string_view& content) {
         exit(1);
     }
     content.remove_prefix("\""sv.size());
-    auto valueEndPosition = content.find(delimiter);
+    const auto valueEndPosition = content.find(delimiter);
     if (valueEndPosition == content.npos) {
         std::cerr << "parser error : incomplete namespace\n";
         exit(1);
@@ -458,7 +458,7 @@ std::size_t parseAttribute(std::string_view& content) {
         exit(1);
     }
     content.remove_prefix("\""sv.size());
-    auto valueEndPosition = content.find(delimiter);
+    const auto valueEndPosition = content.find(delimiter);
     if (valueEndPosition == content.npos) {
         std::cerr << "parser error : attribute " << qName << " missing delimiter\n";
         exit(1);
@@ -494,7 +494,7 @@ bool isNamespace(std::string_view content) {
 // parse file from the start
 int parseBegin(std::string_view& content) {
     TRACE("START DOCUMENT");
-    int bytesRead = refillContent(content);
+    const int bytesRead = refillContent(content);
     if (bytesRead < 0) {
         std::cerr << "parser error : File input error\n";
         return 1;
