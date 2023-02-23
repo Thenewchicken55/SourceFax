@@ -1,0 +1,1 @@
+[XMLParser| -content: string_view |  parseXMLDeclaration();parseDOCTYPE();parseCharacterEntityReference(); parseCharacterNotEntityReference(); parseComment(); parseCDATA(); parseNamespace(); parseEndTag(); parseStartTag(); parseAttribute();]
