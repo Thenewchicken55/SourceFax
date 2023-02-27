@@ -4,8 +4,7 @@
 #include <string_view>
 #include <utility>
 
-class XMLParser
-{
+class XMLParser {
 public:    
     // parse XML declaration
     void parseXMLDeclaration(std::string_view content);
@@ -71,5 +70,4 @@ public:
     bool isCharacter(std::string_view& content, int index, char character);
 
 };
-
 #endif
