@@ -12,7 +12,7 @@ int XMLParser::parseBegin(std::string_view& content) {
 }
 
 // parse XML declaration
-void XMLParser::parseXMLDeclaration(std::string_view content) {
+void XMLParser::parseXMLDeclaration(std::string_view& content) {
     xml_parser::parseXMLDeclaration(content);
 
 }

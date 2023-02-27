@@ -13,7 +13,7 @@
 namespace xml_parser {
         
     // parse XML declaration
-    void parseXMLDeclaration(std::string_view content);
+    void parseXMLDeclaration(std::string_view& content);
 
     // parse required version
     void parseVersion(std::string_view& content);
