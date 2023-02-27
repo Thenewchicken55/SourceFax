@@ -1,6 +1,11 @@
 #include "XMLParser.hpp"
 #include "xml_parser.hpp"
 
+// constructor
+XMLParser::XMLParser() {
+    
+}
+
 // parse file from the start
 int XMLParser::parseBegin(std::string_view& content) {
     return xml_parser::parseBegin(content);

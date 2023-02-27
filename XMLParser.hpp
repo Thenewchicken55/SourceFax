@@ -5,7 +5,10 @@
 #include <utility>
 
 class XMLParser {
-public:    
+public:
+    // constructor
+    XMLParser();
+
     // parse XML declaration
     void parseXMLDeclaration(std::string_view content);
 
