@@ -32,6 +32,7 @@
 #include <utility>
 #include "refillContent.hpp"
 #include "xml_parser.hpp"
+#include "XMLParser.hpp"
 
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
