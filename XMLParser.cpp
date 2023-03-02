@@ -17,6 +17,16 @@ void XMLParser::setDoneReading(bool newBool) {
     doneReading = newBool;
 }
 
+// get qName
+std::string_view XMLParser::getQName() {
+    return qName;
+}
+
+// set qName
+void XMLParser::setQName(std::string_view newQName) {
+    qName = newQName;
+}
+
 // parse file from the start
 int XMLParser::parseBegin() {
     return xml_parser::parseBegin(content);
@@ -69,7 +79,7 @@ void XMLParser::parseEndTag() {
 }
 
 // parse start tag
-std::size_t XMLParser::parseStartTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName) {
+std::size_t XMLParser::parseStartTag(std::string_view& prefix, std::string_view& localName) {
     return xml_parser::parseStartTag(content, qName, prefix, localName);
 }
 
