@@ -6,6 +6,16 @@ XMLParser::XMLParser(std::string_view content)
     : content(content)
     {}
 
+// get doneReading
+bool XMLParser::isDoneReading() {
+    return doneReading;
+}
+
+// set doneReading
+// @param[in] change doneReading to newValue
+void XMLParser::setDoneReading(bool newBool) {
+    doneReading = newBool;
+}
 
 // parse file from the start
 int XMLParser::parseBegin() {
@@ -24,7 +34,7 @@ void XMLParser::parseDOCTYPE() {
 }
 
 // refill content preserving unprocessed
-int XMLParser::refillPreserve(bool& doneReading) {
+int XMLParser::refillPreserve() {
     return xml_parser::refillPreserve(content, doneReading);
 }
 
@@ -39,12 +49,12 @@ std::string_view XMLParser::parseCharacterNotEntityReference() {
 }
 
 // parse XML comment
-int XMLParser::parseComment(bool& doneReading) {
+int XMLParser::parseComment() {
     return xml_parser::parseComment(content, doneReading);
 }
 
 // parse CDATA
-std::pair<int, std::string_view> XMLParser::parseCDATA(bool& doneReading) {
+std::pair<int, std::string_view> XMLParser::parseCDATA() {
     return xml_parser::parseCDATA(content, doneReading);
 }
 

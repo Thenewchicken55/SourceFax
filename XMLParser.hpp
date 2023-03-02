@@ -10,6 +10,13 @@ public:
     // constructor
     XMLParser(std::string_view content);
 
+    // get doneReading
+    bool isDoneReading();
+
+    // set doneReading
+    // @param[in] change doneReading to newValue
+    void setDoneReading(bool newValue);
+
     // parse XML declaration
     void parseXMLDeclaration();
 
@@ -23,7 +30,7 @@ public:
     void parseDOCTYPE();
 
     // refill content preserving unprocessed
-    int refillPreserve(bool& doneReading);
+    int refillPreserve();
 
     // parse character entity references
     void parseCharacterEntityReference();
@@ -32,10 +39,10 @@ public:
     std::string_view parseCharacterNotEntityReference();
 
     // parse XML comment
-    int parseComment(bool& doneReading);
+    int parseComment();
 
     // parse CDATA
-    std::pair<int, std::string_view> parseCDATA(bool& doneReading);
+    std::pair<int, std::string_view> parseCDATA();
 
     // parse processing instruction
     void parseProcessing();
@@ -96,6 +103,7 @@ public:
 
 private:
     std::string_view content;
+    bool doneReading;
 
 };
 #endif

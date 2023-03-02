@@ -92,14 +92,14 @@ int main(int argc, char* argv[]) {
         parser.parseDOCTYPE();
     }
     int depth = 0;
-    bool doneReading = false;
+    parser.setDoneReading(false);
     while (true) {
-        if (doneReading) {
+        if (parser.isDoneReading()) {
             if (parser.getSizeOfContent() == 0)
                 break;
         } else if (parser.getSizeOfContent() < BLOCK_SIZE) {
             // refill content preserving unprocessed
-            bytesRead = parser.refillPreserve(doneReading);
+            bytesRead = parser.refillPreserve();
             totalBytes += bytesRead;
         }
         if (parser.isCharacter(0, '&')) {
@@ -113,12 +113,12 @@ int main(int argc, char* argv[]) {
             textSize += static_cast<int>(characters.size());
         } else if (parser.isComment()) {
             // parse XML comment
-            bytesRead = parser.parseComment(doneReading);
+            bytesRead = parser.parseComment();
             totalBytes += bytesRead;
             parser.removePrefix("-->"sv.size());
         } else if (parser.isCDATA()) {
             // parse CDATA
-            const auto result = parser.parseCDATA(doneReading);
+            const auto result = parser.parseCDATA();
             totalBytes = result.first;
             const auto characters = result.second;
             totalBytes += bytesRead;
@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
     parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.getSizeOfContent() : parser.findFirstNotOf(WHITESPACE));
     while (parser.isComment()) {
         // parse XML comment
-        bytesRead = parser.parseComment(doneReading);
+        bytesRead = parser.parseComment();
         totalBytes += bytesRead;
     }
     if (parser.getSizeOfContent() != 0) {
