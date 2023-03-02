@@ -103,12 +103,11 @@ public:
 
     // wrapper for .npos
     size_t npos();
-
-    // @return content[0]
-    char getFirstCharFromContent();
-    
+   
     // wrapper for compare()
     int compareContent(int startingPosition, int lengthOfString, std::string compareToString);
+
+    bool isMatchNameMask();
 
 private:
     std::string_view content;

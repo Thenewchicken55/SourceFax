@@ -1,5 +1,6 @@
 #include "XMLParser.hpp"
 #include "xml_parser.hpp"
+#include <bitset>
 
 // constructor
 XMLParser::XMLParser(std::string_view content)
@@ -154,12 +155,13 @@ size_t XMLParser::npos() {
     return content.npos;
 }
 
-// @return content[0]  
-char XMLParser::getFirstCharFromContent() {
-    return content[0];
-}
-
 // wrapper for compare()
 int XMLParser::compareContent(int position, int count, std::string string) {
     return content.compare(position, count, string);
+}
+
+
+bool XMLParser::isMatchNameMask() {
+    const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111111111111111111111100000001111111111011000000000000000000000000000000000000000000000");
+    return xmlNameMask[content[0]];
 }
