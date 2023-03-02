@@ -82,8 +82,8 @@ void XMLParser::parseCharacterEntityReference() {
 }
 
 // parse character non-entity references
-std::string_view XMLParser::parseCharacterNotEntityReference() {
-    return xml_parser::parseCharacterNotEntityReference(content);
+void XMLParser::parseCharacterNotEntityReference() {
+    characters = xml_parser::parseCharacterNotEntityReference(content);
 }
 
 // parse XML comment

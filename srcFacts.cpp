@@ -103,9 +103,9 @@ int main(int argc, char* argv[]) {
             ++textSize;
         } else if (!parser.isCharacter(0 ,'<')) {
             // parse character non-entity references
-            auto characters = parser.parseCharacterNotEntityReference();
-            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-            textSize += static_cast<int>(characters.size());
+            parser.parseCharacterNotEntityReference();
+            loc += static_cast<int>(std::count(parser.getCharacters().cbegin(), parser.getCharacters().cend(), '\n'));
+            textSize += static_cast<int>(parser.getCharacters().size());
         } else if (parser.isComment()) {
             // parse XML comment
             totalBytes += parser.parseComment();
