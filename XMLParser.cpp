@@ -38,6 +38,13 @@ std::string_view XMLParser::getLocalName() {
     return localName;
 }
 
+// get inEscape
+bool XMLParser::inEscape() {
+    // provides literal string operator""sv
+    using namespace std::literals::string_view_literals;
+    return (localName == "escape"sv);
+}
+
 // parse file from the start
 int XMLParser::parseBegin() {
     return xml_parser::parseBegin(content);

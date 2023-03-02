@@ -29,6 +29,9 @@ public:
     // get localName
     std::string_view getLocalName();
 
+    // get inEscape
+    bool inEscape();
+
     // parse XML declaration
     void parseXMLDeclaration();
 
@@ -112,9 +115,10 @@ public:
 private:
     std::string_view content;
     bool doneReading = false;
+
     std::string_view qName;
     std::string_view prefix;
     std::string_view localName;
-
+    
 };
 #endif

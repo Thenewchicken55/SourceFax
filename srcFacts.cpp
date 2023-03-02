@@ -131,7 +131,6 @@ int main(int argc, char* argv[]) {
             // parse start tag
             parser.parseStartTag();
             std::string_view localName = parser.getLocalName();
-            const auto inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;
             } else if (localName == "decl"sv) {
@@ -164,7 +163,7 @@ int main(int argc, char* argv[]) {
                         ++lineCommentCount;
                     }
                     // convert special srcML escaped element to characters
-                    if (inEscape && localName == "char"sv /* && inUnit */) {
+                    if (parser.inEscape() && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
                         [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }
