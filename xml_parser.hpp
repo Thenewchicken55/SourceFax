@@ -52,7 +52,7 @@ namespace xml_parser {
     void parseNamespace(std::string_view& content);
 
     // parse attribute
-    std::size_t parseAttribute(std::string_view& content);
+    std::string_view parseAttribute(std::string_view& content);
 
     // Accessor::predicate to test if the tag is a XML declaration
     bool isXML(std::string_view content);

@@ -57,7 +57,7 @@ public:
     void parseNamespace();
 
     // parse attribute
-    std::size_t parseAttribute();
+    std::string_view parseAttribute();
 
     // Accessor::predicate to test if the tag is a XML declaration
     bool isXML();
@@ -94,9 +94,6 @@ public:
 
     // @return content[0]
     char getFirstCharFromContent();
-    
-    // wrapper for substr()
-    std::string_view subString(int begin, int end);
     
     // wrapper for compare()
     int compareContent(int startingPosition, int lengthOfString, std::string compareToString);

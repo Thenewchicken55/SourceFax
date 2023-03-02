@@ -427,7 +427,7 @@ namespace xml_parser {
     }
 
     // parse attribute
-    std::size_t parseAttribute(std::string_view& content) {
+    std::string_view parseAttribute(std::string_view& content) {
         auto nameEndPosition = content.find_first_of(NAMEEND);
         if (nameEndPosition == content.size()) {
             std::cerr << "parser error : Empty attribute name" << '\n';
@@ -464,7 +464,9 @@ namespace xml_parser {
             std::cerr << "parser error : attribute " << qName << " missing delimiter\n";
             exit(1);
         }
-        return valueEndPosition;
+        const std::string_view value(content.substr(0, valueEndPosition));
+        content.remove_prefix(valueEndPosition);
+        return value;
     }
 
     // Accessor::predicate to test if the tag is a XML declaration

@@ -79,7 +79,7 @@ void XMLParser::parseNamespace() {
 }
 
 // parse attribute
-std::size_t XMLParser::parseAttribute() {
+std::string_view XMLParser::parseAttribute() {
     return xml_parser::parseAttribute(content);
 }
 
@@ -136,11 +136,6 @@ size_t XMLParser::npos() {
 // @return content[0]  
 char XMLParser::getFirstCharFromContent() {
     return content[0];
-}
-
-// wrapper for substr()
-std::string_view XMLParser::subString(int begin, int end) {
-    return content.substr(begin, end);
 }
 
 // wrapper for compare()

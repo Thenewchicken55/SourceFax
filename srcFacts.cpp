@@ -163,8 +163,7 @@ int main(int argc, char* argv[]) {
                     parser.parseNamespace();
                 } else {
                     // parse attribute
-                    const auto valueEndPosition = parser.parseAttribute();
-                    const std::string_view value(parser.subString(0, valueEndPosition));
+                    const auto value = parser.parseAttribute();
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix, "localName", localName, "value", value);
@@ -178,7 +177,6 @@ int main(int argc, char* argv[]) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
                         [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }
-                    parser.removePrefix(valueEndPosition);
                     parser.removePrefix("\""sv.size());
                     parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
                 }
