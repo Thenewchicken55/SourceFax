@@ -2,7 +2,6 @@
 #define XMLPARSER_HPP
 
 #include <string_view>
-#include <string>
 
 class XMLParser {
 public:
