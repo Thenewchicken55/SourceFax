@@ -79,8 +79,7 @@ int main(int argc, char* argv[]) {
     XMLParser parser = XMLParser(content);
 
     // parse file from the start
-    auto bytesRead = parser.parseBegin();
-    totalBytes += bytesRead;
+    totalBytes += parser.parseBegin();
 
     parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
     if (parser.isXML()) {
@@ -99,8 +98,7 @@ int main(int argc, char* argv[]) {
                 break;
         } else if (parser.sizeOfContent() < BLOCK_SIZE) {
             // refill content preserving unprocessed
-            bytesRead = parser.refillPreserve();
-            totalBytes += bytesRead;
+            totalBytes += parser.refillPreserve();
         }
         if (parser.isCharacter(0, '&')) {
             // parse character entity references
@@ -113,15 +111,13 @@ int main(int argc, char* argv[]) {
             textSize += static_cast<int>(characters.size());
         } else if (parser.isComment()) {
             // parse XML comment
-            bytesRead = parser.parseComment();
-            totalBytes += bytesRead;
+            totalBytes += parser.parseComment();
             parser.removePrefix("-->"sv.size());
         } else if (parser.isCDATA()) {
             // parse CDATA
             const auto result = parser.parseCDATA();
-            totalBytes = result.first;
             const auto characters = result.second;
-            totalBytes += bytesRead;
+            totalBytes += result.first;
             textSize += static_cast<int>(characters.size());
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         } else if (parser.isCharacter(1, '?') /* && parser.isCharacter(0, '<') */) {
@@ -197,8 +193,7 @@ int main(int argc, char* argv[]) {
     parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.sizeOfContent() : parser.findFirstNotOf(WHITESPACE));
     while (parser.isComment()) {
         // parse XML comment
-        bytesRead = parser.parseComment();
-        totalBytes += bytesRead;
+        totalBytes += parser.parseComment();
     }
     if (parser.sizeOfContent() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
