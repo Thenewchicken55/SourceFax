@@ -112,7 +112,7 @@ public:
     size_t npos();
    
     // wrapper for compare()
-    int compareContent(int startingPosition, int lengthOfString, std::string compareToString);
+    int compareContent(int startingPosition, int lengthOfString, const std::string& compareToString);
 
     bool isMatchNameMask();
 

@@ -175,7 +175,7 @@ size_t XMLParser::npos() {
 }
 
 // wrapper for compare()
-int XMLParser::compareContent(int position, int count, std::string string) {
+int XMLParser::compareContent(int position, int count, const std::string& string) {
     return content.compare(position, count, string);
 }
 
