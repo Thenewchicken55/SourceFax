@@ -2,7 +2,6 @@
 #define XMLPARSER_HPP
 
 #include <string_view>
-#include <utility>
 #include <string>
 
 class XMLParser {
@@ -32,6 +31,12 @@ public:
     // get inEscape
     bool inEscape();
 
+    // get characters
+    std::string_view getCharacters();
+
+    // set characters
+    void setCharacters(std::string_view newCharacters);
+
     // parse XML declaration
     void parseXMLDeclaration();
 
@@ -57,7 +62,7 @@ public:
     int parseComment();
 
     // parse CDATA
-    std::pair<int, std::string_view> parseCDATA();
+    int parseCDATA();
 
     // parse processing instruction
     void parseProcessing();
@@ -120,5 +125,6 @@ private:
     std::string_view prefix;
     std::string_view localName;
     
+    std::string_view characters;
 };
 #endif

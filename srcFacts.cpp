@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <bitset>
 #include <cassert>
-#include <utility>
 #include "refillContent.hpp"
 #include "xml_parser.hpp"
 #include "XMLParser.hpp"
@@ -113,11 +112,9 @@ int main(int argc, char* argv[]) {
             parser.removePrefix("-->"sv.size());
         } else if (parser.isCDATA()) {
             // parse CDATA
-            const auto result = parser.parseCDATA();
-            const auto characters = result.second;
-            totalBytes += result.first;
-            textSize += static_cast<int>(characters.size());
-            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+            totalBytes += parser.parseCDATA();
+            textSize += static_cast<int>(parser.getCharacters().size());
+            loc += static_cast<int>(std::count(parser.getCharacters().cbegin(), parser.getCharacters().cend(), '\n'));
         } else if (parser.isCharacter(1, '?') /* && parser.isCharacter(0, '<') */) {
             // parse processing instruction
             parser.parseProcessing();

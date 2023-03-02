@@ -45,6 +45,16 @@ bool XMLParser::inEscape() {
     return (localName == "escape"sv);
 }
 
+// get characters
+std::string_view XMLParser::getCharacters() {
+    return characters;
+}
+
+// set characters
+void XMLParser::setCharacters(std::string_view newCharacters) {
+    characters = newCharacters;
+}
+
 // parse file from the start
 int XMLParser::parseBegin() {
     return xml_parser::parseBegin(content);
@@ -82,8 +92,10 @@ int XMLParser::parseComment() {
 }
 
 // parse CDATA
-std::pair<int, std::string_view> XMLParser::parseCDATA() {
-    return xml_parser::parseCDATA(content, doneReading);
+int XMLParser::parseCDATA() {
+    const auto charactersAndTotalBytes = xml_parser::parseCDATA(content, doneReading);
+    characters = charactersAndTotalBytes.second;
+    return charactersAndTotalBytes.first;
 }
 
 // parse processing instruction
