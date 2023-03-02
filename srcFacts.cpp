@@ -95,9 +95,9 @@ int main(int argc, char* argv[]) {
     parser.setDoneReading(false);
     while (true) {
         if (parser.isDoneReading()) {
-            if (parser.getSizeOfContent() == 0)
+            if (parser.sizeOfContent() == 0)
                 break;
-        } else if (parser.getSizeOfContent() < BLOCK_SIZE) {
+        } else if (parser.sizeOfContent() < BLOCK_SIZE) {
             // refill content preserving unprocessed
             bytesRead = parser.refillPreserve();
             totalBytes += bytesRead;
@@ -194,13 +194,13 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-    parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.getSizeOfContent() : parser.findFirstNotOf(WHITESPACE));
+    parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.sizeOfContent() : parser.findFirstNotOf(WHITESPACE));
     while (parser.isComment()) {
         // parse XML comment
         bytesRead = parser.parseComment();
         totalBytes += bytesRead;
     }
-    if (parser.getSizeOfContent() != 0) {
+    if (parser.sizeOfContent() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
         return 1;
     }

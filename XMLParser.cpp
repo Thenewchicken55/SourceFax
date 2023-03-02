@@ -144,7 +144,7 @@ std::size_t XMLParser::findFirstNotOf(std::string_view string) {
 }
 
 // wrapper for size()
-int XMLParser::getSizeOfContent() {
+int XMLParser::sizeOfContent() {
     return content.size();
 }
 

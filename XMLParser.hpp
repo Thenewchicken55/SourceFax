@@ -99,7 +99,7 @@ public:
     std::size_t findFirstNotOf(std::string_view delimiters);
     
     // wrapper for size()
-    int getSizeOfContent();
+    int sizeOfContent();
 
     // wrapper for .npos
     size_t npos();
