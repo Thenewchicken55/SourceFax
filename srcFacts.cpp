@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
             [[maybe_unused]] std::string_view prefix;
             std::string_view localName;
             // parse start tag
-            const auto nameEndPosition = parser.parseStartTag(prefix, localName);
+            const auto nameEndPosition = parser.parseStartTag(localName);
             const auto inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;

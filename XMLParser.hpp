@@ -57,7 +57,7 @@ public:
     void parseEndTag();
 
     // parse start tag
-    std::size_t parseStartTag(std::string_view& prefix, std::string_view& localName);
+    std::size_t parseStartTag(std::string_view& localName);
 
     // parse XML namespace
     void parseNamespace();
@@ -108,6 +108,7 @@ private:
     std::string_view content;
     bool doneReading = false;
     std::string_view qName;
+    std::string_view prefix;
 
 };
 #endif

@@ -79,7 +79,7 @@ void XMLParser::parseEndTag() {
 }
 
 // parse start tag
-std::size_t XMLParser::parseStartTag(std::string_view& prefix, std::string_view& localName) {
+std::size_t XMLParser::parseStartTag(std::string_view& localName) {
     return xml_parser::parseStartTag(content, qName, prefix, localName);
 }
 
