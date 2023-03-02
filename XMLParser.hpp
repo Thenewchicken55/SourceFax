@@ -23,6 +23,12 @@ public:
     // set qName
     void setQName(std::string_view newQName);
 
+    // get prefix
+    std::string_view getPrefix();
+
+    // get localName
+    std::string_view getLocalName();
+
     // parse XML declaration
     void parseXMLDeclaration();
 
@@ -57,7 +63,7 @@ public:
     void parseEndTag();
 
     // parse start tag
-    std::size_t parseStartTag(std::string_view& localName);
+    std::size_t parseStartTag();
 
     // parse XML namespace
     void parseNamespace();
@@ -109,6 +115,7 @@ private:
     bool doneReading = false;
     std::string_view qName;
     std::string_view prefix;
+    std::string_view localName;
 
 };
 #endif

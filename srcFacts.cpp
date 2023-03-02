@@ -134,10 +134,9 @@ int main(int argc, char* argv[]) {
             if (depth == 0)
                 break;
         } else if (parser.isCharacter(0, '<')) {
-            [[maybe_unused]] std::string_view prefix;
-            std::string_view localName;
             // parse start tag
-            const auto nameEndPosition = parser.parseStartTag(localName);
+            const auto nameEndPosition = parser.parseStartTag();
+            std::string_view localName = parser.getLocalName();
             const auto inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;
@@ -165,7 +164,7 @@ int main(int argc, char* argv[]) {
                     const auto value = parser.parseAttribute();
                     if (localName == "url"sv)
                         url = value;
-                    TRACE("ATTRIBUTE", "qName", parser.getQName(), "prefix", prefix, "localName", localName, "value", value);
+                    TRACE("ATTRIBUTE", "qName", parser.getQName(), "prefix", parser.getPrefix() , "localName", localName, "value", value);
                     if (localName == "literal"sv && value == "string"sv) {
                         ++stringCount;
                     } else if (localName == "comment"sv && value == "line") {
@@ -186,7 +185,7 @@ int main(int argc, char* argv[]) {
             } else if (parser.isCharacter(0, '/') && parser.isCharacter(1, '>')) {
                 assert(parser.compareContent(0, "/>"sv.size(), "/>") == 0);
                 parser.removePrefix("/>"sv.size());
-                TRACE("END TAG", "qName", parser.getQName(), "prefix", prefix, "localName", localName);
+                TRACE("END TAG", "qName", parser.getQName(), "prefix", parser.getPrefix() , "localName", localName);
                 if (depth == 0)
                     break;
             }

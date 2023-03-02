@@ -27,6 +27,16 @@ void XMLParser::setQName(std::string_view newQName) {
     qName = newQName;
 }
 
+// get prefix
+std::string_view XMLParser::getPrefix() {
+    return prefix;
+}
+
+// get localName
+std::string_view XMLParser::getLocalName() {
+    return localName;
+}
+
 // parse file from the start
 int XMLParser::parseBegin() {
     return xml_parser::parseBegin(content);
@@ -79,7 +89,7 @@ void XMLParser::parseEndTag() {
 }
 
 // parse start tag
-std::size_t XMLParser::parseStartTag(std::string_view& localName) {
+std::size_t XMLParser::parseStartTag() {
     return xml_parser::parseStartTag(content, qName, prefix, localName);
 }
 
