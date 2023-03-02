@@ -3,74 +3,99 @@
 
 #include <string_view>
 #include <utility>
+#include <string>
 
 class XMLParser {
 public:
     // constructor
-    XMLParser();
+    XMLParser(std::string_view content);
 
     // parse XML declaration
-    void parseXMLDeclaration(std::string_view& content);
+    void parseXMLDeclaration();
 
     // parse required version
-    void parseVersion(std::string_view& content);
+    void parseVersion();
 
     // parse optional encoding and standalone attributes
-    void parseEncodingAndStandalone(std::string_view& content);
+    void parseEncodingAndStandalone();
 
     //parse DOCTYPE
-    void parseDOCTYPE(std::string_view& content);
+    void parseDOCTYPE();
 
     // refill content preserving unprocessed
-    int refillPreserve(std::string_view& content, bool& doneReading);
+    int refillPreserve(bool& doneReading);
 
     // parse character entity references
-    void parseCharacterEntityReference(std::string_view& content);
+    void parseCharacterEntityReference();
 
     // parse character non-entity references
-    std::string_view parseCharacterNotEntityReference(std::string_view& content);
+    std::string_view parseCharacterNotEntityReference();
 
     // parse XML comment
-    int parseComment(std::string_view& content, bool& doneReading);
+    int parseComment(bool& doneReading);
 
     // parse CDATA
-    std::pair<int, std::string_view> parseCDATA(std::string_view& content, bool& doneReading);
+    std::pair<int, std::string_view> parseCDATA(bool& doneReading);
 
     // parse processing instruction
-    void parseProcessing(std::string_view& content);
+    void parseProcessing();
 
     // parse end tag
-    void parseEndTag(std::string_view& content);
+    void parseEndTag();
 
     // parse start tag
-    std::size_t parseStartTag(std::string_view& content, std::string_view& qName, std::string_view& prefix, std::string_view& localName);
+    std::size_t parseStartTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName);
 
     // parse XML namespace
-    void parseNamespace(std::string_view& content);
+    void parseNamespace();
 
     // parse attribute
-    std::size_t parseAttribute(std::string_view& content);
+    std::size_t parseAttribute();
 
     // Accessor::predicate to test if the tag is a XML declaration
-    bool isXML(std::string_view content);
+    bool isXML();
 
     // Accessor::predicate to test if the tag is DOCTYPE
-    bool isDOCTYPE(std::string_view content);
+    bool isDOCTYPE();
 
     // Accessor::predicate to test if the tag is CDATA
-    bool isCDATA(std::string_view content);
+    bool isCDATA();
 
     // Accessor::predicate to test if the tag is a comment tag
-    bool isComment(std::string_view content);
+    bool isComment();
 
     // Accessor::predicate to test if the tag is an XML namespace
-    bool isNamespace(std::string_view content);
+    bool isNamespace();
 
     // parse file from the start
-    int parseBegin(std::string_view& content);
+    int parseBegin();
 
     // Accessor::predicate to check if content has a specific character at a specific index
-    bool isCharacter(std::string_view& content, int index, char character);
+    bool isCharacter(int index, char character);
+
+    // wrapper for remove_prefix()
+    void removePrefix(int indexToRemove);
+
+    // wrapper for find_first_not_of()
+    std::size_t findFirstNotOf(std::string_view delimiters);
+    
+    // wrapper for size()
+    int getSizeOfContent();
+
+    // wrapper for .npos
+    size_t npos();
+
+    // @return content[0]
+    char getFirstCharFromContent();
+    
+    // wrapper for substr()
+    std::string_view subString(int begin, int end);
+    
+    // wrapper for compare()
+    int compareContent(int startingPosition, int lengthOfString, std::string compareToString);
+
+private:
+    std::string_view content;
 
 };
 #endif

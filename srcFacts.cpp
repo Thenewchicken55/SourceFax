@@ -76,69 +76,69 @@ int main(int argc, char* argv[]) {
     int stringCount = 0;
     long totalBytes = 0;
     std::string_view content;
-    XMLParser parser = XMLParser();
+    XMLParser parser = XMLParser(content);
 
     // parse file from the start
-    auto bytesRead = parser.parseBegin(content);
+    auto bytesRead = parser.parseBegin();
     totalBytes += bytesRead;
 
-    content.remove_prefix(content.find_first_not_of(WHITESPACE));
-    if (parser.isXML(content)) {
+    parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
+    if (parser.isXML()) {
         // parse XML Declaration
-        parser.parseXMLDeclaration(content);
+        parser.parseXMLDeclaration();
     }
-    if (parser.isDOCTYPE(content)) {
+    if (parser.isDOCTYPE()) {
         // parse DOCTYPE
-        parser.parseDOCTYPE(content);
+        parser.parseDOCTYPE();
     }
     int depth = 0;
     bool doneReading = false;
     while (true) {
         if (doneReading) {
-            if (content.empty())
+            if (parser.getSizeOfContent() == 0)
                 break;
-        } else if (content.size() < BLOCK_SIZE) {
+        } else if (parser.getSizeOfContent() < BLOCK_SIZE) {
             // refill content preserving unprocessed
-            bytesRead = parser.refillPreserve(content, doneReading);
+            bytesRead = parser.refillPreserve(doneReading);
             totalBytes += bytesRead;
         }
-        if (parser.isCharacter(content, 0, '&')) {
+        if (parser.isCharacter(0, '&')) {
             // parse character entity references
-            parser.parseCharacterEntityReference(content);
+            parser.parseCharacterEntityReference();
             ++textSize;
-        } else if (!parser.isCharacter(content, 0 ,'<')) {
+        } else if (!parser.isCharacter(0 ,'<')) {
             // parse character non-entity references
-            auto characters = parser.parseCharacterNotEntityReference(content);
+            auto characters = parser.parseCharacterNotEntityReference();
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
             textSize += static_cast<int>(characters.size());
-        } else if (parser.isComment(content)) {
+        } else if (parser.isComment()) {
             // parse XML comment
-            bytesRead = parser.parseComment(content, doneReading);
+            bytesRead = parser.parseComment(doneReading);
             totalBytes += bytesRead;
-            content.remove_prefix("-->"sv.size());
-        } else if (parser.isCDATA(content)) {
+            parser.removePrefix("-->"sv.size());
+        } else if (parser.isCDATA()) {
             // parse CDATA
-            const auto result = parser.parseCDATA(content, doneReading);
+            const auto result = parser.parseCDATA(doneReading);
             totalBytes = result.first;
             const auto characters = result.second;
             totalBytes += bytesRead;
             textSize += static_cast<int>(characters.size());
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-        } else if (parser.isCharacter(content, 1, '?') /* && parser.isCharacter(content, 0, '<') */) {
+        } else if (parser.isCharacter(1, '?') /* && parser.isCharacter(0, '<') */) {
             // parse processing instruction
-            parser.parseProcessing(content);
-        } else if (parser.isCharacter(content, 1, '/') /* && parser.isCharacter(content, 0, '<') */) {
+            parser.parseProcessing();
+        } else if (parser.isCharacter(1, '/') /* && parser.isCharacter(0, '<') */) {
             // parse end tag
-            parser.parseEndTag(content);
+            parser.parseEndTag();
             --depth;
             if (depth == 0)
                 break;
-        } else if (parser.isCharacter(content, 0, '<')) {
+        } else if (parser.isCharacter(0, '<')) {
             std::string_view qName;
             [[maybe_unused]] std::string_view prefix;
             std::string_view localName;
             // parse start tag
-            const auto nameEndPosition = parser.parseStartTag(content, qName, prefix, localName);
+            const auto nameEndPosition = parser.parseStartTag(qName, prefix, localName);
             const auto inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
                 ++exprCount;
@@ -155,16 +155,16 @@ int main(int argc, char* argv[]) {
             } else if (localName == "return"sv) {
                 ++returnCount;
             }
-            content.remove_prefix(nameEndPosition);
-            content.remove_prefix(content.find_first_not_of(WHITESPACE));
-            while (xmlNameMask[content[0]]) {
-                if (parser.isNamespace(content)) {
+            parser.removePrefix(nameEndPosition);
+            parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
+            while (xmlNameMask[parser.getFirstCharFromContent()]) {
+                if (parser.isNamespace()) {
                     // parse XML namespace
-                    parser.parseNamespace(content);
+                    parser.parseNamespace();
                 } else {
                     // parse attribute
-                    const auto valueEndPosition = parser.parseAttribute(content);
-                    const std::string_view value(content.substr(0, valueEndPosition));
+                    const auto valueEndPosition = parser.parseAttribute();
+                    const std::string_view value(parser.subString(0, valueEndPosition));
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix, "localName", localName, "value", value);
@@ -178,17 +178,17 @@ int main(int argc, char* argv[]) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
                         [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }
-                    content.remove_prefix(valueEndPosition);
-                    content.remove_prefix("\""sv.size());
-                    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+                    parser.removePrefix(valueEndPosition);
+                    parser.removePrefix("\""sv.size());
+                    parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
                 }
             }
-            if (parser.isCharacter(content, 0, '>')) {
-                content.remove_prefix(">"sv.size());
+            if (parser.isCharacter(0, '>')) {
+                parser.removePrefix(">"sv.size());
                 ++depth;
-            } else if (parser.isCharacter(content, 0, '/') && parser.isCharacter(content, 1, '>')) {
-                assert(content.compare(0, "/>"sv.size(), "/>") == 0);
-                content.remove_prefix("/>"sv.size());
+            } else if (parser.isCharacter(0, '/') && parser.isCharacter(1, '>')) {
+                assert(parser.compareContent(0, "/>"sv.size(), "/>") == 0);
+                parser.removePrefix("/>"sv.size());
                 TRACE("END TAG", "qName", qName, "prefix", prefix, "localName", localName);
                 if (depth == 0)
                     break;
@@ -198,13 +198,13 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-    content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
-    while (parser.isComment(content)) {
+    parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.getSizeOfContent() : parser.findFirstNotOf(WHITESPACE));
+    while (parser.isComment()) {
         // parse XML comment
-        bytesRead = parser.parseComment(content, doneReading);
+        bytesRead = parser.parseComment(doneReading);
         totalBytes += bytesRead;
     }
-    if (!content.empty()) {
+    if (parser.getSizeOfContent() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
         return 1;
     }
