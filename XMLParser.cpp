@@ -89,8 +89,9 @@ void XMLParser::parseEndTag() {
 }
 
 // parse start tag
-std::size_t XMLParser::parseStartTag() {
-    return xml_parser::parseStartTag(content, qName, prefix, localName);
+void XMLParser::parseStartTag() {
+    auto nameEndPosition = xml_parser::parseStartTag(content, qName, prefix, localName);
+    content.remove_prefix(nameEndPosition);
 }
 
 // parse XML namespace

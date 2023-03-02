@@ -63,7 +63,7 @@ public:
     void parseEndTag();
 
     // parse start tag
-    std::size_t parseStartTag();
+    void parseStartTag();
 
     // parse XML namespace
     void parseNamespace();

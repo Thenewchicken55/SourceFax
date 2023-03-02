@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
                 break;
         } else if (parser.isCharacter(0, '<')) {
             // parse start tag
-            const auto nameEndPosition = parser.parseStartTag();
+            parser.parseStartTag();
             std::string_view localName = parser.getLocalName();
             const auto inEscape = localName == "escape"sv;
             if (localName == "expr"sv) {
@@ -149,7 +149,6 @@ int main(int argc, char* argv[]) {
             } else if (localName == "return"sv) {
                 ++returnCount;
             }
-            parser.removePrefix(nameEndPosition);
             parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
             while (xmlNameMask[parser.getFirstCharFromContent()]) {
                 if (parser.isNamespace()) {
