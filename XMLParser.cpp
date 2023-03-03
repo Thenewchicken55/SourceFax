@@ -88,9 +88,10 @@ int XMLParser::parseComment() {
 
 // parse CDATA
 int XMLParser::parseCDATA() {
-    const auto charactersAndTotalBytes = xml_parser::parseCDATA(content, doneReading);
-    characters = charactersAndTotalBytes.second;
-    return charactersAndTotalBytes.first;
+    const auto result = xml_parser::parseCDATA(content, doneReading);
+    characters = result.second;
+    auto bytesRead = result.first;
+    return bytesRead;
 }
 
 // parse processing instruction
