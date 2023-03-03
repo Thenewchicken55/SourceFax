@@ -431,7 +431,44 @@ void XMLParser::parseStartTag() {
 
 // parse XML namespace
 void XMLParser::parseNamespace() {
-    xml_parser::parseNamespace(content);
+    assert(content.compare(0, "xmlns"sv.size(), "xmlns"sv) == 0);
+    content.remove_prefix("xmlns"sv.size());
+    auto nameEndPosition = content.find('=');
+    if (nameEndPosition == content.npos) {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    std::size_t prefixSize = 0;
+    if (content[0] == ':') {
+        content.remove_prefix(":"sv.size());
+        --nameEndPosition;
+        prefixSize = nameEndPosition;
+    }
+    [[maybe_unused]] const auto prefix(content.substr(0, prefixSize));
+    content.remove_prefix(nameEndPosition);
+    content.remove_prefix("="sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    if (content.empty()) {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    const auto delimiter = content[0];
+    if (delimiter != '"' && delimiter != '\'') {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    content.remove_prefix("\""sv.size());
+    const auto valueEndPosition = content.find(delimiter);
+    if (valueEndPosition == content.npos) {
+        std::cerr << "parser error : incomplete namespace\n";
+        exit(1);
+    }
+    [[maybe_unused]] const auto uri(content.substr(0, valueEndPosition));
+    TRACE("NAMESPACE", "prefix", prefix, "uri", uri);
+    content.remove_prefix(valueEndPosition);
+    assert(content.compare(0, "\""sv.size(), "\""sv) == 0);
+    content.remove_prefix("\""sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
 }
 
 // parse attribute
