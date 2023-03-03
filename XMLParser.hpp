@@ -2,6 +2,7 @@
 #define XMLPARSER_HPP
 
 #include <string_view>
+#include <optional>
 
 class XMLParser {
 public:
@@ -123,5 +124,9 @@ private:
     std::string_view localName;
     
     std::string_view characters;
+
+    std::optional<std::string_view> encoding;
+    std::optional<std::string_view> standalone;
+    [[maybe_unused]] const std::string_view version;
 };
 #endif
