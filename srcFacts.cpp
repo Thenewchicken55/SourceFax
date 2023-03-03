@@ -13,24 +13,13 @@
 */
 
 #include <iostream>
-#include <locale>
-#include <iterator>
-#include <string>
 #include <algorithm>
-#include <sys/types.h>
-#include <errno.h>
-#include <string_view>
-#include <optional>
 #include <iomanip>
+#include <string_view>
 #include <cmath>
-#include <algorithm>
 #include <chrono>
-#include <memory>
-#include <stdlib.h>
-#include <bitset>
 #include <cassert>
 #include "refillContent.hpp"
-#include "xml_parser.hpp"
 #include "XMLParser.hpp"
 
 // provides literal string operator""sv
