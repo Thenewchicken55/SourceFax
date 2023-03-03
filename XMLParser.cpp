@@ -271,7 +271,23 @@ int XMLParser::refillPreserve() {
 
 // parse character entity references
 void XMLParser::parseCharacterEntityReference() {
-    xml_parser::parseCharacterEntityReference(content);
+    if (content[1] == 'l' && content[2] == 't' && content[3] == ';') {
+        unescapedCharacter = "<";
+        escapedCharacter = "&lt;"sv;
+    } else if (content[1] == 'g' && content[2] == 't' && content[3] == ';') {
+        unescapedCharacter = ">";
+        escapedCharacter = "&gt;"sv;
+    } else if (content[1] == 'a' && content[2] == 'm' && content[3] == 'p' && content[4] == ';') {
+        unescapedCharacter = "&";
+        escapedCharacter = "&amp;"sv;
+    } else {
+        unescapedCharacter = "&";
+        escapedCharacter = "&"sv;
+    }
+    assert(content.compare(0, escapedCharacter.size(), escapedCharacter) == 0);
+    content.remove_prefix(escapedCharacter.size());
+    [[maybe_unused]] const auto characters(unescapedCharacter);
+    TRACE("CHARACTERS", "characters", characters);
 }
 
 // parse character non-entity references
