@@ -516,27 +516,27 @@ std::string_view XMLParser::parseAttribute() {
 
 // Accessor::predicate to test if the tag is a XML declaration
 bool XMLParser::isXML() {
-    return xml_parser::isXML(content);
+    return content[0] == '<' && content[1] == '?' && content[2] == 'x' && content[3] == 'm' && content[4] == 'l' && content[5] == ' ';
 }
 
 // Accessor::predicate to test if the tag is DOCTYPE
 bool XMLParser::isDOCTYPE() {
-    return xml_parser::isDOCTYPE(content);
+    return content[1] == '!' && content[0] == '<' && content[2] == 'D' && content[3] == 'O' && content[4] == 'C' && content[5] == 'T' && content[6] == 'Y' && content[7] == 'P' && content[8] == 'E' && content[9] == ' ';
 }
 
 // Accessor::predicate to test if the tag is CDATA
 bool XMLParser::isCDATA() {
-    return xml_parser::isCDATA(content);
+    return content[1] == '!' /* && content[0] == '<' */ && content[2] == '[' && content[3] == 'C' && content[4] == 'D' && content[5] == 'A' && content[6] == 'T' && content[7] == 'A' && content[8] == '[';
 }
 
 // Accessor::predicate to test if the tag is a comment tag
 bool XMLParser::isComment() {
-    return xml_parser::isComment(content);
+    return (!content.empty() && content[0] == '<' && content[1] == '!' && content[2] == '-' && content[3] == '-') || (content[1] == '!' /* && content[0] == '<' */ && content[2] == '-' && content[3] == '-');
 }
 
 // Accessor::predicate to test if the tag is an XML namespace
 bool XMLParser::isNamespace() {
-    return xml_parser::isNamespace(content);
+    return content[0] == 'x' && content[1] == 'm' && content[2] == 'l' && content[3] == 'n' && content[4] == 's' && (content[5] == ':' || content[5] == '=');
 }
 
 // Accessor::predicate to check if content has a specific character at a specific index
