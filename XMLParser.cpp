@@ -31,6 +31,7 @@
 using namespace std::literals::string_view_literals;
 
 constexpr auto WHITESPACE = " \n\t\r"sv;
+constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 
 // constructor
 XMLParser::XMLParser(std::string_view content)
@@ -347,7 +348,24 @@ int XMLParser::parseCDATA() {
 
 // parse processing instruction
 void XMLParser::parseProcessing() {
-    xml_parser::parseProcessing(content);
+    assert(content.compare(0, "<?"sv.size(), "<?"sv) == 0);
+    content.remove_prefix("<?"sv.size());
+    const auto tagEndPosition = content.find("?>"sv);
+    if (tagEndPosition == content.npos) {
+        std::cerr << "parser error: Incomplete XML declaration\n";
+        exit(1);
+    }
+    auto nameEndPosition = content.find_first_of(NAMEEND);
+    if (nameEndPosition == content.npos) {
+        std::cerr << "parser error : Unterminated processing instruction\n";
+        exit(1);
+    }
+    [[maybe_unused]] const auto target(content.substr(0, nameEndPosition));
+    [[maybe_unused]] const auto data(content.substr(nameEndPosition, tagEndPosition - nameEndPosition));
+    TRACE("PI", "target", target, "data", data);
+    content.remove_prefix(tagEndPosition);
+    assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
+    content.remove_prefix("?>"sv.size()); 
 }
 
 // parse end tag
