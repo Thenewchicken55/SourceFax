@@ -134,7 +134,7 @@ void XMLParser::parseVersion() {
         std::cerr << "parser error: Missing required first attribute version in XML declaration\n";
         exit(1);
     }
-    [[maybe_unused]] const auto version(content.substr(0, valueEndPosition));
+    version = (content.substr(0, valueEndPosition));
     content.remove_prefix(valueEndPosition);
     content.remove_prefix("\""sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));

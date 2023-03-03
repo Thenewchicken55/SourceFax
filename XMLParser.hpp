@@ -127,7 +127,7 @@ private:
 
     std::optional<std::string_view> encoding;
     std::optional<std::string_view> standalone;
-    [[maybe_unused]] const std::string_view version;
+    std::string_view version;
 
     std::string_view unescapedCharacter;
     std::string_view escapedCharacter;
