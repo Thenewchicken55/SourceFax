@@ -370,7 +370,34 @@ void XMLParser::parseProcessing() {
 
 // parse end tag
 void XMLParser::parseEndTag() {
-    xml_parser::parseEndTag(content);
+    assert(content.compare(0, "</"sv.size(), "</"sv) == 0);
+    content.remove_prefix("</"sv.size());
+    if (content[0] == ':') {
+        std::cerr << "parser error : Invalid end tag name\n";
+        exit(1);
+    }
+    auto nameEndPosition = content.find_first_of(NAMEEND);
+    if (nameEndPosition == content.size()) {
+        std::cerr << "parser error : Unterminated end tag '" << content.substr(0, nameEndPosition) << "'\n";
+        exit(1);
+    }
+    std::size_t colonPosition = 0;
+    if (content[nameEndPosition] == ':') {
+        colonPosition = nameEndPosition;
+        nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
+    }
+    const auto qName(content.substr(0, nameEndPosition));
+    if (qName.empty()) {
+        std::cerr << "parser error: EndTag: invalid element name\n";
+        exit(1);
+    }
+    [[maybe_unused]] const auto prefix(qName.substr(0, colonPosition));
+    [[maybe_unused]] const auto localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
+    TRACE("END TAG", "qName", qName, "prefix", prefix, "localName", localName);
+    content.remove_prefix(nameEndPosition);
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    assert(content.compare(0, ">"sv.size(), ">"sv) == 0);
+    content.remove_prefix(">"sv.size());
 }
 
 // parse start tag
