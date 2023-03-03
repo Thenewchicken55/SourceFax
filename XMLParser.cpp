@@ -1,14 +1,8 @@
 #include "XMLParser.hpp"
-#include <bitset>
 #include "refillContent.hpp"
-#include <string_view>
+#include <bitset>
 #include <cassert>
 #include <iostream>
-#include <optional>
-#include <utility>
-#include <algorithm>
-#include <utility>
-#include <iomanip>
 
 
 // trace parsing
