@@ -81,34 +81,34 @@ std::string_view XMLParser::getCharacters() {
 // parse file from the start
 int XMLParser::parseBegin() {
     TRACE("START DOCUMENT");
-        const int bytesRead = refillContent(content);
-        if (bytesRead < 0) {
-            std::cerr << "parser error : File input error\n";
-            return 1;
-        }
-        if (bytesRead == 0) {
-            std::cerr << "parser error : Empty file\n";
-            return 1;
-        }
+    const int bytesRead = refillContent(content);
+    if (bytesRead < 0) {
+        std::cerr << "parser error : File input error\n";
+        return 1;
+    }
+    if (bytesRead == 0) {
+        std::cerr << "parser error : Empty file\n";
+        return 1;
+    }
 
-        return bytesRead;
+    return bytesRead;
 }
 
 // parse XML declaration
 void XMLParser::parseXMLDeclaration() {
-content.remove_prefix("<?xml"sv.size());
-        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    content.remove_prefix("<?xml"sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
 
-        // parse required version
-        parseVersion();
-        
-        // parse optional encoding and standalone attributes
-        parseEncodingAndStandalone();
+    // parse required version
+    parseVersion();
+    
+    // parse optional encoding and standalone attributes
+    parseEncodingAndStandalone();
 
-        TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
-        assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
-        content.remove_prefix("?>"sv.size());
-        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
+    assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
+    content.remove_prefix("?>"sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
 }
 
 // parse required version
@@ -213,51 +213,60 @@ void XMLParser::parseEncodingAndStandalone() {
 
 //parse DOCTYPE
 void XMLParser::parseDOCTYPE() {
-assert(content.compare(0, "<!DOCTYPE "sv.size(), "<!DOCTYPE "sv) == 0);
-        content.remove_prefix("<!DOCTYPE"sv.size());
-        int depthAngleBrackets = 1;
-        bool inSingleQuote = false;
-        bool inDoubleQuote = false;
-        bool inComment = false;
-        std::size_t p = 0;
-        while ((p = content.find_first_of("<>'\"-"sv, p)) != content.npos) {
-            if (content.compare(p, "<!--"sv.size(), "<!--"sv) == 0) {
-                inComment = true;
-                p += "<!--"sv.size();
-                continue;
-            } else if (content.compare(p, "-->"sv.size(), "-->"sv) == 0) {
-                inComment = false;
-                p += "-->"sv.size();
-                continue;
-            }
-            if (inComment) {
-                ++p;
-                continue;
-            }
-            if (content[p] == '<' && !inSingleQuote && !inDoubleQuote) {
-                ++depthAngleBrackets;
-            } else if (content[p] == '>' && !inSingleQuote && !inDoubleQuote) {
-                --depthAngleBrackets;
-            } else if (content[p] == '\'') {
-                inSingleQuote = !inSingleQuote;
-            } else if (content[p] == '"') {
-                inDoubleQuote = !inDoubleQuote;
-            }
-            if (depthAngleBrackets == 0)
-                break;
-            ++p;
+    assert(content.compare(0, "<!DOCTYPE "sv.size(), "<!DOCTYPE "sv) == 0);
+    content.remove_prefix("<!DOCTYPE"sv.size());
+    int depthAngleBrackets = 1;
+    bool inSingleQuote = false;
+    bool inDoubleQuote = false;
+    bool inComment = false;
+    std::size_t p = 0;
+    while ((p = content.find_first_of("<>'\"-"sv, p)) != content.npos) {
+        if (content.compare(p, "<!--"sv.size(), "<!--"sv) == 0) {
+            inComment = true;
+            p += "<!--"sv.size();
+            continue;
+        } else if (content.compare(p, "-->"sv.size(), "-->"sv) == 0) {
+            inComment = false;
+            p += "-->"sv.size();
+            continue;
         }
-        [[maybe_unused]] const auto contents(content.substr(0, p));
-        TRACE("DOCTYPE", "contents", contents);
-        content.remove_prefix(p);
-        assert(content[0] == '>');
-        content.remove_prefix(">"sv.size());
-        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        if (inComment) {
+            ++p;
+            continue;
+        }
+        if (content[p] == '<' && !inSingleQuote && !inDoubleQuote) {
+            ++depthAngleBrackets;
+        } else if (content[p] == '>' && !inSingleQuote && !inDoubleQuote) {
+            --depthAngleBrackets;
+        } else if (content[p] == '\'') {
+            inSingleQuote = !inSingleQuote;
+        } else if (content[p] == '"') {
+            inDoubleQuote = !inDoubleQuote;
+        }
+        if (depthAngleBrackets == 0)
+            break;
+        ++p;
+    }
+    [[maybe_unused]] const auto contents(content.substr(0, p));
+    TRACE("DOCTYPE", "contents", contents);
+    content.remove_prefix(p);
+    assert(content[0] == '>');
+    content.remove_prefix(">"sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
 }
 
 // refill content preserving unprocessed
 int XMLParser::refillPreserve() {
-    return xml_parser::refillPreserve(content, doneReading);
+    int bytesRead = refillContent(content);
+    if (bytesRead < 0) {
+        std::cerr << "parser error : File input error\n";
+        exit(1);
+    }
+    if (bytesRead == 0) {
+        doneReading = true;
+    }
+    
+    return bytesRead;
 }
 
 // parse character entity references
