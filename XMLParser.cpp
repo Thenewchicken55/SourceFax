@@ -473,7 +473,45 @@ void XMLParser::parseNamespace() {
 
 // parse attribute
 std::string_view XMLParser::parseAttribute() {
-    return xml_parser::parseAttribute(content);
+    auto nameEndPosition = content.find_first_of(NAMEEND);
+    if (nameEndPosition == content.size()) {
+        std::cerr << "parser error : Empty attribute name" << '\n';
+        exit(1);
+    }
+    std::size_t colonPosition = 0;
+    if (content[nameEndPosition] == ':') {
+        colonPosition = nameEndPosition;
+        nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
+    }
+    const auto qName(content.substr(0, nameEndPosition));
+    [[maybe_unused]] const auto prefix(qName.substr(0, colonPosition));
+    [[maybe_unused]] const auto localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
+    content.remove_prefix(nameEndPosition);
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    if (content.empty()) {
+        std::cerr << "parser error : attribute " << qName << " incomplete attribute\n";
+        exit(1);
+    }
+    if (content[0] != '=') {
+        std::cerr << "parser error : attribute " << qName << " missing =\n";
+        exit(1);
+    }
+    content.remove_prefix("="sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    const auto delimiter = content[0];
+    if (delimiter != '"' && delimiter != '\'') {
+        std::cerr << "parser error : attribute " << qName << " missing delimiter\n";
+        exit(1);
+    }
+    content.remove_prefix("\""sv.size());
+    const auto valueEndPosition = content.find(delimiter);
+    if (valueEndPosition == content.npos) {
+        std::cerr << "parser error : attribute " << qName << " missing delimiter\n";
+        exit(1);
+    }
+    const std::string_view value(content.substr(0, valueEndPosition));
+    content.remove_prefix(valueEndPosition);
+    return value;
 }
 
 // Accessor::predicate to test if the tag is a XML declaration
