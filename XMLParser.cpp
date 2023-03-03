@@ -50,11 +50,6 @@ std::string_view XMLParser::getCharacters() {
     return characters;
 }
 
-// set characters
-void XMLParser::setCharacters(std::string_view newCharacters) {
-    characters = newCharacters;
-}
-
 // parse file from the start
 int XMLParser::parseBegin() {
     return xml_parser::parseBegin(content);

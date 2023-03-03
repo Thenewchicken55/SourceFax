@@ -33,9 +33,6 @@ public:
     // get characters
     std::string_view getCharacters();
 
-    // set characters
-    void setCharacters(std::string_view newCharacters);
-
     // parse XML declaration
     void parseXMLDeclaration();
 
