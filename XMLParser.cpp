@@ -402,7 +402,30 @@ void XMLParser::parseEndTag() {
 
 // parse start tag
 void XMLParser::parseStartTag() {
-    auto nameEndPosition = xml_parser::parseStartTag(content, qName, prefix, localName);
+    assert(content.compare(0, "<"sv.size(), "<"sv) == 0);
+    content.remove_prefix("<"sv.size());
+    if (content[0] == ':') {
+        std::cerr << "parser error : Invalid start tag name\n";
+        exit(1);
+    }
+    auto nameEndPosition = content.find_first_of(NAMEEND);
+    if (nameEndPosition == content.size()) {
+        std::cerr << "parser error : Unterminated start tag '" << content.substr(0, nameEndPosition) << "'\n";
+        exit(1);
+    }
+    std::size_t colonPosition = 0;
+    if (content[nameEndPosition] == ':') {
+        colonPosition = nameEndPosition;
+        nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
+    }
+    qName = content.substr(0, nameEndPosition);
+    if (qName.empty()) {
+        std::cerr << "parser error: StartTag: invalid element name\n";
+        exit(1);
+    }
+    prefix = qName.substr(0, colonPosition);
+    localName = qName.substr(colonPosition ? colonPosition + 1 : 0, nameEndPosition);
+    TRACE("START TAG", "qName", qName, "prefix", prefix, "localName", localName);    
     content.remove_prefix(nameEndPosition);
 }
 
