@@ -541,7 +541,7 @@ bool XMLParser::isNamespace() {
 
 // Accessor::predicate to check if content has a specific character at a specific index
 bool XMLParser::isCharacter(int index, char character) {
-    return xml_parser::isCharacter(content, index, character);
+        return content[index] == character;
 }
 
 // wrapper for remove_prefix()
