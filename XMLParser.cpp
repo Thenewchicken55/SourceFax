@@ -96,8 +96,119 @@ int XMLParser::parseBegin() {
 
 // parse XML declaration
 void XMLParser::parseXMLDeclaration() {
-    xml_parser::parseXMLDeclaration(content);
+content.remove_prefix("<?xml"sv.size());
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
 
+        // parse required version
+        parseVersion();
+        
+        // parse optional encoding and standalone attributes
+        parseEncodingAndStandalone();
+
+        TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
+        assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
+        content.remove_prefix("?>"sv.size());
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+}
+
+// parse required version
+void XMLParser::parseVersion() {
+    const auto nameEndPosition = content.find_first_of("= ");
+    const auto attr(content.substr(0, nameEndPosition));
+    content.remove_prefix(nameEndPosition);
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    content.remove_prefix("="sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    const auto delimiter = content[0];
+    if (delimiter != '"' && delimiter != '\'') {
+        std::cerr << "parser error: Invalid start delimiter for version in XML declaration\n";
+        exit(1);
+    }
+    content.remove_prefix("\""sv.size());
+    const auto valueEndPosition = content.find(delimiter);
+    if (valueEndPosition == content.npos) {
+        std::cerr << "parser error: Invalid end delimiter for version in XML declaration\n";
+        exit(1);
+    }
+    if (attr != "version"sv) {
+        std::cerr << "parser error: Missing required first attribute version in XML declaration\n";
+        exit(1);
+    }
+    [[maybe_unused]] const auto version(content.substr(0, valueEndPosition));
+    content.remove_prefix(valueEndPosition);
+    content.remove_prefix("\""sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+}
+
+
+// parse optional encoding and standalone attributes
+void XMLParser::parseEncodingAndStandalone() {
+    if (content[0] != '?') {
+        const auto nameEndPosition = content.find_first_of("= ");
+        if (nameEndPosition == content.npos) {
+            std::cerr << "parser error: Incomplete attribute in XML declaration\n";
+            exit(1);
+        }
+        const auto attr2(content.substr(0, nameEndPosition));
+        content.remove_prefix(nameEndPosition);
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        assert(content.compare(0, "="sv.size(), "="sv) == 0);
+        content.remove_prefix("="sv.size());
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        const auto delimiter2 = content[0];
+        if (delimiter2 != '"' && delimiter2 != '\'') {
+            std::cerr << "parser error: Invalid end delimiter for attribute " << attr2 << " in XML declaration\n";
+            exit(1);
+        }
+        content.remove_prefix("\""sv.size());
+        const auto valueEndPosition = content.find(delimiter2);
+        if (valueEndPosition == content.npos) {
+            std::cerr << "parser error: Incomplete attribute " << attr2 << " in XML declaration\n";
+            exit(1);
+        }
+        if (attr2 == "encoding"sv) {
+            encoding = content.substr(0, valueEndPosition);
+        } else if (attr2 == "standalone"sv) {
+            standalone = content.substr(0, valueEndPosition);
+        } else {
+            std::cerr << "parser error: Invalid attribute " << attr2 << " in XML declaration\n";
+            exit(1);
+        }
+        content.remove_prefix(valueEndPosition + 1);
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    }
+    if (content[0] != '?') {
+        const auto nameEndPosition = content.find_first_of("= ");
+        if (nameEndPosition == content.npos) {
+            std::cerr << "parser error: Incomplete attribute in XML declaration\n";
+            exit(1);
+        }
+        const auto attr2(content.substr(0, nameEndPosition));
+        content.remove_prefix(nameEndPosition);
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        content.remove_prefix("="sv.size());
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+        const auto delimiter2 = content[0];
+        if (delimiter2 != '"' && delimiter2 != '\'') {
+            std::cerr << "parser error: Invalid end delimiter for attribute " << attr2 << " in XML declaration\n";
+            exit(1);
+        }
+        content.remove_prefix("\""sv.size());
+        const auto valueEndPosition = content.find(delimiter2);
+        if (valueEndPosition == content.npos) {
+            std::cerr << "parser error: Incomplete attribute " << attr2 << " in XML declaration\n";
+            exit(1);
+        }
+        if (!standalone && attr2 == "standalone"sv) {
+            standalone = content.substr(0, valueEndPosition);
+        } else {
+            std::cerr << "parser error: Invalid attribute " << attr2 << " in XML declaration\n";
+            exit(1);
+        }
+        // assert(content[valueEndPosition + 1] == '"');
+        content.remove_prefix(valueEndPosition + 1);
+        content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    }
 }
 
 //parse DOCTYPE
