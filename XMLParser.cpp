@@ -294,7 +294,7 @@ void XMLParser::parseCharacterEntityReference() {
 void XMLParser::parseCharacterNotEntityReference() {
     assert(content[0] != '<' && content[0] != '&');
     const auto characterEndPosition = content.find_first_of("<&");
-    const auto characters(content.substr(0, characterEndPosition));\
+    characters = (content.substr(0, characterEndPosition));\
     TRACE("CHARACTERS", "characters", characters);
     content.remove_prefix(characters.size());
 }
@@ -326,9 +326,22 @@ int XMLParser::parseComment() {
 
 // parse CDATA
 int XMLParser::parseCDATA() {
-    const auto result = xml_parser::parseCDATA(content, doneReading);
-    characters = result.second;
-    auto bytesRead = result.first;
+    int bytesRead = 0;
+    content.remove_prefix("<![CDATA["sv.size());
+    auto tagEndPosition = content.find("]]>"sv);
+    if (tagEndPosition == content.npos) {
+        // refill content preserving unprocessed
+        bytesRead = refillPreserve();
+        tagEndPosition = content.find("]]>"sv);
+        if (tagEndPosition == content.npos) {
+            std::cerr << "parser error : Unterminated CDATA\n";
+            exit(1);
+        }
+    }
+    characters = (content.substr(0, tagEndPosition));
+    content.remove_prefix(tagEndPosition);
+    content.remove_prefix("]]>"sv.size());
+    TRACE("CDATA", "characters", characters);
     return bytesRead;
 }
 
