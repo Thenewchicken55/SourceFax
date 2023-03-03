@@ -179,7 +179,7 @@ int XMLParser::compareContent(int position, int count, const std::string& string
     return content.compare(position, count, string);
 }
 
-
+// uses xmlNameMask bitset to compare with the first char of content 
 bool XMLParser::isMatchNameMask() {
     const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111111111111111111111100000001111111111011000000000000000000000000000000000000000000000");
     return xmlNameMask[content[0]];

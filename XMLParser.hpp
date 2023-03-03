@@ -114,6 +114,7 @@ public:
     // wrapper for compare()
     int compareContent(int startingPosition, int lengthOfString, const std::string& compareToString);
 
+    // uses xmlNameMask bitset to compare with the first char of content 
     bool isMatchNameMask();
 
 private:
