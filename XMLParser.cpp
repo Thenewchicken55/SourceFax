@@ -80,7 +80,18 @@ std::string_view XMLParser::getCharacters() {
 
 // parse file from the start
 int XMLParser::parseBegin() {
-    return xml_parser::parseBegin(content);
+    TRACE("START DOCUMENT");
+        const int bytesRead = refillContent(content);
+        if (bytesRead < 0) {
+            std::cerr << "parser error : File input error\n";
+            return 1;
+        }
+        if (bytesRead == 0) {
+            std::cerr << "parser error : Empty file\n";
+            return 1;
+        }
+
+        return bytesRead;
 }
 
 // parse XML declaration
