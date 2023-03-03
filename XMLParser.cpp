@@ -301,7 +301,27 @@ void XMLParser::parseCharacterNotEntityReference() {
 
 // parse XML comment
 int XMLParser::parseComment() {
-    return xml_parser::parseComment(content, doneReading);
+    int bytesRead = 0;
+    assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
+    content.remove_prefix("<!--"sv.size());
+    auto tagEndPosition = content.find("-->"sv);
+    if (tagEndPosition == content.npos) {
+        // refill content preserving unprocessed
+        bytesRead = refillPreserve();     
+        tagEndPosition = content.find("-->"sv);
+        if (tagEndPosition == content.npos) {
+            std::cerr << "parser error : Unterminated XML comment\n";
+            exit(1);
+        }
+    }
+    [[maybe_unused]] const auto comment(content.substr(0, tagEndPosition));
+    TRACE("COMMENT", "content", comment);
+    content.remove_prefix(tagEndPosition);
+    assert(content.compare(0, "-->"sv.size(), "-->"sv) == 0);
+    content.remove_prefix("-->"sv.size());
+    content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
+
+    return bytesRead;
 }
 
 // parse CDATA
