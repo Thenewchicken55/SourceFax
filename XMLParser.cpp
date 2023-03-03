@@ -292,7 +292,11 @@ void XMLParser::parseCharacterEntityReference() {
 
 // parse character non-entity references
 void XMLParser::parseCharacterNotEntityReference() {
-    characters = xml_parser::parseCharacterNotEntityReference(content);
+    assert(content[0] != '<' && content[0] != '&');
+    const auto characterEndPosition = content.find_first_of("<&");
+    const auto characters(content.substr(0, characterEndPosition));\
+    TRACE("CHARACTERS", "characters", characters);
+    content.remove_prefix(characters.size());
 }
 
 // parse XML comment
