@@ -9,6 +9,7 @@
 #include <bitset>
 #include <cassert>
 #include <iostream>
+#include <iomanip>
 
 
 // trace parsing
