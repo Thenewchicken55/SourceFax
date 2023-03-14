@@ -11,7 +11,6 @@
 #include <iostream>
 #include <iomanip>
 
-
 // trace parsing
 #ifdef TRACE
 #undef TRACE
