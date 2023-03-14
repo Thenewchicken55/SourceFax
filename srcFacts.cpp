@@ -208,6 +208,6 @@ int main(int argc, char* argv[]) {
     std::clog << totalBytes  << " bytes\n";
     std::clog << elapsedSeconds << " sec\n";
     std::clog << MLOCPerSecond << " MLOC/sec\n";
-    
+
     return 0;
 }

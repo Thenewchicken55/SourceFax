@@ -102,7 +102,7 @@ void XMLParser::parseXMLDeclaration() {
 
     // parse required version
     parseVersion();
-    
+
     // parse optional encoding and standalone attributes
     parseEncodingAndStandalone();
 
@@ -266,7 +266,7 @@ int XMLParser::refillPreserve() {
     if (bytesRead == 0) {
         doneReading = true;
     }
-    
+
     return bytesRead;
 }
 
@@ -308,7 +308,7 @@ int XMLParser::parseComment() {
     auto tagEndPosition = content.find("-->"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        bytesRead = refillPreserve();     
+        bytesRead = refillPreserve();
         tagEndPosition = content.find("-->"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated XML comment\n";
@@ -365,7 +365,7 @@ void XMLParser::parseProcessing() {
     TRACE("PI", "target", target, "data", data);
     content.remove_prefix(tagEndPosition);
     assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
-    content.remove_prefix("?>"sv.size()); 
+    content.remove_prefix("?>"sv.size());
 }
 
 // parse end tag
@@ -425,7 +425,7 @@ void XMLParser::parseStartTag() {
     }
     prefix = qName.substr(0, colonPosition);
     localName = qName.substr(colonPosition ? colonPosition + 1 : 0, nameEndPosition);
-    TRACE("START TAG", "qName", qName, "prefix", prefix, "localName", localName);    
+    TRACE("START TAG", "qName", qName, "prefix", prefix, "localName", localName);
     content.remove_prefix(nameEndPosition);
 }
 
@@ -569,7 +569,7 @@ int XMLParser::compareContent(int position, int count, const std::string& string
     return content.compare(position, count, string);
 }
 
-// uses xmlNameMask bitset to compare with the first char of content 
+// uses xmlNameMask bitset to compare with the first char of content
 bool XMLParser::isMatchNameMask() {
     const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111111111111111111111100000001111111111011000000000000000000000000000000000000000000000");
     return xmlNameMask[content[0]];

@@ -108,17 +108,17 @@ public:
 
     // wrapper for find_first_not_of()
     std::size_t findFirstNotOf(std::string_view delimiters);
-    
+
     // wrapper for size()
     int sizeOfContent();
 
     // wrapper for .npos
     size_t npos();
-   
+
     // wrapper for compare()
     int compareContent(int startingPosition, int lengthOfString, const std::string& compareToString);
 
-    // uses xmlNameMask bitset to compare with the first char of content 
+    // uses xmlNameMask bitset to compare with the first char of content
     bool isMatchNameMask();
 
 private:
@@ -128,7 +128,7 @@ private:
     std::string_view qName;
     std::string_view prefix;
     std::string_view localName;
-    
+
     std::string_view characters;
 
     std::optional<std::string_view> encoding;

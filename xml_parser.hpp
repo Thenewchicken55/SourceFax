@@ -11,7 +11,7 @@
 #include <utility>
 
 namespace xml_parser {
-        
+
     // parse XML declaration
     void parseXMLDeclaration(std::string_view& content);
 
@@ -46,7 +46,7 @@ namespace xml_parser {
     void parseEndTag(std::string_view& content);
 
     // parse start tag
-    std::size_t parseStartTag(std::string_view& content, std::string_view& qName, std::string_view& prefix, std::string_view& localName);   
+    std::size_t parseStartTag(std::string_view& content, std::string_view& qName, std::string_view& prefix, std::string_view& localName);
 
     // parse XML namespace
     void parseNamespace(std::string_view& content);

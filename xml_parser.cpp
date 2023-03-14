@@ -39,7 +39,7 @@ namespace xml_parser {
     std::optional<std::string_view> encoding;
     std::optional<std::string_view> standalone;
     [[maybe_unused]] const std::string_view version;
-    
+
     // parse XML declaration
     void parseXMLDeclaration(std::string_view& content) {
         assert(content.compare(0, "<?xml "sv.size(), "<?xml "sv) == 0);
@@ -48,7 +48,7 @@ namespace xml_parser {
 
         // parse required version
         parseVersion(content);
-        
+
         // parse optional encoding and standalone attributes
         parseEncodingAndStandalone(content);
 
@@ -213,7 +213,7 @@ namespace xml_parser {
         if (bytesRead == 0) {
             doneReading = true;
         }
-        
+
         return bytesRead;
     }
 
@@ -260,7 +260,7 @@ namespace xml_parser {
         auto tagEndPosition = content.find("-->"sv);
         if (tagEndPosition == content.npos) {
             // refill content preserving unprocessed
-            bytesRead = refillPreserve(content, doneReading);     
+            bytesRead = refillPreserve(content, doneReading);
             tagEndPosition = content.find("-->"sv);
             if (tagEndPosition == content.npos) {
                 std::cerr << "parser error : Unterminated XML comment\n";
@@ -319,7 +319,7 @@ namespace xml_parser {
         TRACE("PI", "target", target, "data", data);
         content.remove_prefix(tagEndPosition);
         assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
-        content.remove_prefix("?>"sv.size()); 
+        content.remove_prefix("?>"sv.size());
     }
 
     // parse end tag
