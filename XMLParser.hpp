@@ -46,8 +46,11 @@ public:
     // parse required version
     void parseVersion();
 
-    // parse optional encoding and standalone attributes
-    void parseEncodingAndStandalone();
+    // parse optional encoding attribute
+    void parseEncoding();
+
+    // parse optional standalone attribute
+    void parseStandalone();
 
     //parse DOCTYPE
     void parseDOCTYPE();

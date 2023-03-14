@@ -102,8 +102,11 @@ void XMLParser::parseXMLDeclaration() {
     // parse required version
     parseVersion();
 
-    // parse optional encoding and standalone attributes
-    parseEncodingAndStandalone();
+    // parse optional encoding attribute
+    parseEncoding();
+
+    // parse optional standalone attribute
+    parseStandalone();
 
     TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
     assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
@@ -141,8 +144,8 @@ void XMLParser::parseVersion() {
 }
 
 
-// parse optional encoding and standalone attributes
-void XMLParser::parseEncodingAndStandalone() {
+// parse optional encoding attribute
+void XMLParser::parseEncoding() {
     if (content[0] != '?') {
         const auto nameEndPosition = content.find_first_of("= ");
         if (nameEndPosition == content.npos) {
@@ -177,6 +180,10 @@ void XMLParser::parseEncodingAndStandalone() {
         content.remove_prefix(valueEndPosition + 1);
         content.remove_prefix(content.find_first_not_of(WHITESPACE));
     }
+}
+
+// parse optional standalone attribute
+void XMLParser::parseStandalone() {
     if (content[0] != '?') {
         const auto nameEndPosition = content.find_first_of("= ");
         if (nameEndPosition == content.npos) {
