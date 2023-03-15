@@ -26,16 +26,16 @@ public:
     std::string_view getCharacters();
 
     // parse XML declaration
-    void parseXMLDeclaration();
+    void parseXMLDeclaration(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone);
 
     // parse required version
-    void parseVersion();
+    void parseVersion(std::string_view& version);
 
     // parse optional encoding attribute
-    void parseEncoding();
+    void parseEncoding(std::optional<std::string_view>& encoding);
 
     // parse optional standalone attribute
-    void parseStandalone();
+    void parseStandalone(std::optional<std::string_view>& standalone);
 
     //parse DOCTYPE
     void parseDOCTYPE();
@@ -114,10 +114,6 @@ private:
     bool doneReading = false;
 
     std::string_view characters;
-
-    std::optional<std::string_view> encoding;
-    std::optional<std::string_view> standalone;
-    std::string_view version;
 
     std::string_view unescapedCharacter;
     std::string_view escapedCharacter;

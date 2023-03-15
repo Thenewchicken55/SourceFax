@@ -66,11 +66,14 @@ int main(int argc, char* argv[]) {
 
     // parse file from the start
     totalBytes += parser.parseBegin();
-
+    
+    std::string_view version;
+    std::optional<std::string_view> encoding;
+    std::optional<std::string_view> standalone;
     parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
     if (parser.isXML()) {
         // parse XML Declaration
-        parser.parseXMLDeclaration();
+        parser.parseXMLDeclaration(version, encoding, standalone);
     }
     if (parser.isDOCTYPE()) {
         // parse DOCTYPE

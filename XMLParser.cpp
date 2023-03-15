@@ -70,18 +70,18 @@ int XMLParser::parseBegin() {
 }
 
 // parse XML declaration
-void XMLParser::parseXMLDeclaration() {
+void XMLParser::parseXMLDeclaration(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone) {
     content.remove_prefix("<?xml"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
 
     // parse required version
-    parseVersion();
+    parseVersion(version);
 
     // parse optional encoding attribute
-    parseEncoding();
+    parseEncoding(encoding);
 
     // parse optional standalone attribute
-    parseStandalone();
+    parseStandalone(standalone);
 
     TRACE("XML DECLARATION", "version", version, "encoding", (encoding ? *encoding : ""), "standalone", (standalone ? *standalone : ""));
     assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
@@ -90,7 +90,7 @@ void XMLParser::parseXMLDeclaration() {
 }
 
 // parse required version
-void XMLParser::parseVersion() {
+void XMLParser::parseVersion(std::string_view& version) {
     const auto nameEndPosition = content.find_first_of("= ");
     const auto attr(content.substr(0, nameEndPosition));
     content.remove_prefix(nameEndPosition);
@@ -120,7 +120,7 @@ void XMLParser::parseVersion() {
 
 
 // parse optional encoding attribute
-void XMLParser::parseEncoding() {
+void XMLParser::parseEncoding(std::optional<std::string_view>& encoding) {
     if (content[0] != '?') {
         const auto nameEndPosition = content.find_first_of("= ");
         if (nameEndPosition == content.npos) {
@@ -146,8 +146,6 @@ void XMLParser::parseEncoding() {
         }
         if (attr2 == "encoding"sv) {
             encoding = content.substr(0, valueEndPosition);
-        } else if (attr2 == "standalone"sv) {
-            standalone = content.substr(0, valueEndPosition);
         } else {
             std::cerr << "parser error: Invalid attribute " << attr2 << " in XML declaration\n";
             exit(1);
@@ -158,7 +156,7 @@ void XMLParser::parseEncoding() {
 }
 
 // parse optional standalone attribute
-void XMLParser::parseStandalone() {
+void XMLParser::parseStandalone(std::optional<std::string_view>& standalone) {
     if (content[0] != '?') {
         const auto nameEndPosition = content.find_first_of("= ");
         if (nameEndPosition == content.npos) {
