@@ -22,9 +22,6 @@ public:
     // @param[in] change doneReading to newValue
     void setDoneReading(bool newValue);
 
-    // get inEscape
-    bool inEscape(std::string_view localName);
-
     // get characters
     std::string_view getCharacters();
 

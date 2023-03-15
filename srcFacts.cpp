@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
                         ++lineCommentCount;
                     }
                     // convert special srcML escaped element to characters
-                    if (parser.inEscape(localName) && localName == "char"sv /* && inUnit */) {
+                    if (localName == "escape"sv && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
                         [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }

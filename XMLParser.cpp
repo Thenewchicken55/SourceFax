@@ -48,11 +48,6 @@ void XMLParser::setDoneReading(bool newBool) {
     doneReading = newBool;
 }
 
-// get inEscape
-bool XMLParser::inEscape(std::string_view localName) {
-    return (localName == "escape"sv);
-}
-
 // get characters
 std::string_view XMLParser::getCharacters() {
     return characters;
