@@ -22,20 +22,8 @@ public:
     // @param[in] change doneReading to newValue
     void setDoneReading(bool newValue);
 
-    // get qName
-    std::string_view getQName();
-
-    // set qName
-    void setQName(std::string_view newQName);
-
-    // get prefix
-    std::string_view getPrefix();
-
-    // get localName
-    std::string_view getLocalName();
-
     // get inEscape
-    bool inEscape();
+    bool inEscape(std::string_view localName);
 
     // get characters
     std::string_view getCharacters();
@@ -77,7 +65,7 @@ public:
     void parseEndTag();
 
     // parse start tag
-    void parseStartTag();
+    void parseStartTag(std::string_view& prefix, std::string_view& qName, std::string_view& localName);
 
     // parse XML namespace
     void parseNamespace();
@@ -127,10 +115,6 @@ public:
 private:
     std::string_view content;
     bool doneReading = false;
-
-    std::string_view qName;
-    std::string_view prefix;
-    std::string_view localName;
 
     std::string_view characters;
 

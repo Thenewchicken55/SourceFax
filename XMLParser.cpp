@@ -48,28 +48,8 @@ void XMLParser::setDoneReading(bool newBool) {
     doneReading = newBool;
 }
 
-// get qName
-std::string_view XMLParser::getQName() {
-    return qName;
-}
-
-// set qName
-void XMLParser::setQName(std::string_view newQName) {
-    qName = newQName;
-}
-
-// get prefix
-std::string_view XMLParser::getPrefix() {
-    return prefix;
-}
-
-// get localName
-std::string_view XMLParser::getLocalName() {
-    return localName;
-}
-
 // get inEscape
-bool XMLParser::inEscape() {
+bool XMLParser::inEscape(std::string_view localName) {
     return (localName == "escape"sv);
 }
 
@@ -407,7 +387,7 @@ void XMLParser::parseEndTag() {
 }
 
 // parse start tag
-void XMLParser::parseStartTag() {
+void XMLParser::parseStartTag(std::string_view& prefix, std::string_view& qName, std::string_view& localName) {
     assert(content.compare(0, "<"sv.size(), "<"sv) == 0);
     content.remove_prefix("<"sv.size());
     if (content[0] == ':') {
