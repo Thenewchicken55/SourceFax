@@ -100,3 +100,74 @@ add_custom_target(run
         USES_TERMINAL
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+# xmlstats application
+add_executable(xmlstats)
+
+# xmlstats sources
+target_sources(xmlstats PRIVATE xmlstats.cpp XMLParser.cpp refillContent.cpp xml_parser.cpp)
+
+# Turn on warnings
+target_compile_options(xmlstats PRIVATE
+     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wall>
+     $<$<CXX_COMPILER_ID:MSVC>: /W4>
+)
+
+# xmlstats run command
+add_custom_target(run_xmlstats
+        COMMENT "Run xmlstats"
+        COMMAND $<TARGET_FILE:xmlstats> < ${DATA_DIR}/demo.xml
+        DEPENDS xmlstats
+        USES_TERMINAL
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+# identity application
+add_executable(identity)
+
+# identity sources
+target_sources(identity PRIVATE identity.cpp XMLParser.cpp refillContent.cpp xml_parser.cpp)
+
+# Turn on warnings
+target_compile_options(identity PRIVATE
+     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wall>
+     $<$<CXX_COMPILER_ID:MSVC>: /W4>
+)
+
+# identity run output file
+set(IDENTITY_OUTPUT_FILE ${CMAKE_BINARY_DIR}/democopy.xml)
+
+# identity run command
+add_custom_target(run_identity
+        COMMENT "Run identity"
+        COMMAND $<TARGET_FILE:identity> < ${DATA_DIR}/demo.xml > ${IDENTITY_OUTPUT_FILE}
+        DEPENDS identity
+        USES_TERMINAL
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+# Add the generated identity output file to the clean target
+set_property(
+        TARGET identity
+        APPEND
+        PROPERTY ADDITIONAL_CLEAN_FILES ${IDENTITY_OUTPUT_FILE}
+)
+
+# identity run command output
+add_custom_target(run_identity_check
+        COMMENT "Run identity and compare input and output"
+        COMMAND "${CMAKE_COMMAND}" -E compare_files --ignore-eol "${DATA_DIR}/demo.xml" "${IDENTITY_OUTPUT_FILE}" && echo "Files are identical" || echo "Files are not identical"
+        DEPENDS run_identity
+        USES_TERMINAL
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+# identity run command with difference output
+# Note: May have a large amount of output
+add_custom_target(run_identity_diff
+        COMMENT "Run identity and compare input and output"
+        COMMAND diff ${DATA_DIR}/demo.xml ${IDENTITY_OUTPUT_FILE}
+        DEPENDS run_identity
+        USES_TERMINAL
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
