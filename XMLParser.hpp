@@ -18,9 +18,11 @@ public:
 
     // parse XML
     void parse(int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler);
-
+    
     // get totalBytes
-    long getTotalBytes(); 
+    long getTotalBytes();
+     
+private:
 
     // parse XML declaration
     void parseXMLDeclaration(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone);
@@ -106,7 +108,7 @@ public:
     // uses xmlNameMask bitset to compare with the first char of content
     bool isMatchNameMask();
 
-private:
+    // data members
     std::string_view content;
 
     long totalBytes;
