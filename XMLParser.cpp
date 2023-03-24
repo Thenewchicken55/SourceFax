@@ -31,6 +31,8 @@ using namespace std::literals::string_view_literals;
 
 constexpr auto WHITESPACE = " \n\t\r"sv;
 constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
+const int BLOCK_SIZE = 4096;
+
 
 // constructor
 XMLParser::XMLParser(std::string_view content)
@@ -38,7 +40,118 @@ XMLParser::XMLParser(std::string_view content)
     {}
 
 // parse XML
-void parse();
+void XMLParser::parse(int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
+    // parse file from the start
+    parseBegin();
+
+    std::string_view version;
+    std::optional<std::string_view> encoding;
+    std::optional<std::string_view> standalone;
+    content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    if (isXML()) {
+        // parse XML Declaration
+        parseXMLDeclaration(version, encoding, standalone);
+    }
+    if (isDOCTYPE()) {
+        // parse DOCTYPE
+        parseDOCTYPE();
+    }
+
+    int depth = 0;
+    bool doneReading = false;
+    while (true) {
+        std::string_view characters;
+        if (doneReading) {
+            if (content.size() == 0)
+                break;
+        } else if (content.size() < BLOCK_SIZE) {
+            // refill content preserving unprocessed
+            refillPreserve(doneReading);
+        }
+        if (isCharacter(0, '&')) {
+            // parse character entity references
+            parseCharacterEntityReference();
+            ++textSize;
+        } else if (!isCharacter(0 ,'<')) {
+            // parse character non-entity references
+            parseCharacterNotEntityReference(characters);
+            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+            textSize += static_cast<int>(characters.size());
+        } else if (isComment()) {
+            // parse XML comment
+            parseComment(doneReading);
+            removePrefix("-->"sv.size());
+        } else if (isCDATA()) {
+            // parse CDATA
+            parseCDATA(doneReading, characters);
+            textSize += static_cast<int>(characters.size());
+            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+        } else if (isCharacter(1, '?') /* && isCharacter(0, '<') */) {
+            // parse processing instruction
+            parseProcessing();
+        } else if (isCharacter(1, '/') /* && isCharacter(0, '<') */) {
+            // parse end tag
+            parseEndTag();
+            --depth;
+            if (depth == 0)
+                break;
+        } else if (isCharacter(0, '<')) {
+            // parse start tag
+            std::string_view prefix;
+            std::string_view qName;
+            std::string_view localName;
+            std::string_view value;
+            parseStartTag(prefix, qName, localName);
+            incrementFactsHandler(localName);
+            removePrefix(findFirstNotOf(WHITESPACE));
+            while (isMatchNameMask()) {
+                if (isNamespace()) {
+                    // parse XML namespace
+                    parseNamespace();
+                } else {
+                    // parse attribute
+                    const auto value = parseAttribute();
+                    if (localName == "url"sv)
+                        url = value;
+                    TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix , "localName", localName, "value", value);
+                    incrementAttributesHandler(localName, value);
+                    // convert special srcML escaped element to characters
+                    if (localName == "escape"sv && localName == "char"sv /* && inUnit */) {
+                        // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
+                        [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
+                    }
+                    removePrefix("\""sv.size());
+                    removePrefix(findFirstNotOf(WHITESPACE));
+                }
+            }
+            if (isCharacter(0, '>')) {
+                removePrefix(">"sv.size());
+                ++depth;
+            } else if (isCharacter(0, '/') && isCharacter(1, '>')) {
+                assert(compareContent(0, "/>"sv.size(), "/>") == 0);
+                removePrefix("/>"sv.size());
+                TRACE("END TAG", "qName", qName , "prefix", prefix , "localName", localName);
+                if (depth == 0)
+                    break;
+            }
+        } else {
+            std::cerr << "parser error : invalid XML document\n";
+            exit(1);
+        }
+    }
+    
+    removePrefix(findFirstNotOf(WHITESPACE) == npos() ? sizeOfContent() : findFirstNotOf(WHITESPACE));
+    while (isComment()) {
+        // parse XML comment
+        parseComment(doneReading);
+    }
+    if (sizeOfContent() != 0) {
+        std::cerr << "parser error : extra content at end of document\n";
+        exit(1);
+    }
+
+    TRACE("END DOCUMENT");
+}
 
 // get totalBytes
 long XMLParser::getTotalBytes() {

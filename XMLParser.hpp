@@ -9,6 +9,7 @@
 
 #include <string_view>
 #include <optional>
+#include <functional>
 
 class XMLParser {
 public:
@@ -16,7 +17,7 @@ public:
     XMLParser(std::string_view content);
 
     // parse XML
-    void parse();
+    void parse(int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler);
 
     // get totalBytes
     long getTotalBytes(); 

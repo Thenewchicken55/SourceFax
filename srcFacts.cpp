@@ -25,8 +25,6 @@
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
 
-const int BLOCK_SIZE = 4096;
-
 constexpr auto WHITESPACE = " \n\t\r"sv;
 [[maybe_unused]] constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 
@@ -63,66 +61,9 @@ int main(int argc, char* argv[]) {
     std::string_view content;
     XMLParser parser = XMLParser(content);
 
-    // parse file from the start
-    parser.parseBegin();
-    
-    std::string_view version;
-    std::optional<std::string_view> encoding;
-    std::optional<std::string_view> standalone;
-    parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
-    if (parser.isXML()) {
-        // parse XML Declaration
-        parser.parseXMLDeclaration(version, encoding, standalone);
-    }
-    if (parser.isDOCTYPE()) {
-        // parse DOCTYPE
-        parser.parseDOCTYPE();
-    }
-    int depth = 0;
-    bool doneReading = false;
-    while (true) {
-        std::string_view characters;
-        if (doneReading) {
-            if (parser.sizeOfContent() == 0)
-                break;
-        } else if (parser.sizeOfContent() < BLOCK_SIZE) {
-            // refill content preserving unprocessed
-            parser.refillPreserve(doneReading);
-        }
-        if (parser.isCharacter(0, '&')) {
-            // parse character entity references
-            parser.parseCharacterEntityReference();
-            ++textSize;
-        } else if (!parser.isCharacter(0 ,'<')) {
-            // parse character non-entity references
-            parser.parseCharacterNotEntityReference(characters);
-            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-            textSize += static_cast<int>(characters.size());
-        } else if (parser.isComment()) {
-            // parse XML comment
-            parser.parseComment(doneReading);
-            parser.removePrefix("-->"sv.size());
-        } else if (parser.isCDATA()) {
-            // parse CDATA
-            parser.parseCDATA(doneReading, characters);
-            textSize += static_cast<int>(characters.size());
-            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-        } else if (parser.isCharacter(1, '?') /* && parser.isCharacter(0, '<') */) {
-            // parse processing instruction
-            parser.parseProcessing();
-        } else if (parser.isCharacter(1, '/') /* && parser.isCharacter(0, '<') */) {
-            // parse end tag
-            parser.parseEndTag();
-            --depth;
-            if (depth == 0)
-                break;
-        } else if (parser.isCharacter(0, '<')) {
-            // parse start tag
-            std::string_view prefix;
-            std::string_view qName;
-            std::string_view localName;
-            parser.parseStartTag(prefix, qName, localName);
-            if (localName == "expr"sv) {
+    // parse XML
+    parser.parse(textSize, loc, url, [&](std::string_view localName)->void {
+             if (localName == "expr"sv) {
                 ++exprCount;
             } else if (localName == "decl"sv) {
                 ++declCount;
@@ -136,57 +77,13 @@ int main(int argc, char* argv[]) {
                 ++classCount;
             } else if (localName == "return"sv) {
                 ++returnCount;
-            }
-            parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
-            while (parser.isMatchNameMask()) {
-                if (parser.isNamespace()) {
-                    // parse XML namespace
-                    parser.parseNamespace();
-                } else {
-                    // parse attribute
-                    const auto value = parser.parseAttribute();
-                    if (localName == "url"sv)
-                        url = value;
-                    TRACE("ATTRIBUTE", "qName", parser.getQName(), "prefix", parser.getPrefix() , "localName", localName, "value", value);
-                    if (localName == "literal"sv && value == "string"sv) {
-                        ++stringCount;
-                    } else if (localName == "comment"sv && value == "line") {
-                        ++lineCommentCount;
-                    }
-                    // convert special srcML escaped element to characters
-                    if (localName == "escape"sv && localName == "char"sv /* && inUnit */) {
-                        // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
-                        [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
-                    }
-                    parser.removePrefix("\""sv.size());
-                    parser.removePrefix(parser.findFirstNotOf(WHITESPACE));
-                }
-            }
-            if (parser.isCharacter(0, '>')) {
-                parser.removePrefix(">"sv.size());
-                ++depth;
-            } else if (parser.isCharacter(0, '/') && parser.isCharacter(1, '>')) {
-                assert(parser.compareContent(0, "/>"sv.size(), "/>") == 0);
-                parser.removePrefix("/>"sv.size());
-                TRACE("END TAG", "qName", parser.getQName(), "prefix", parser.getPrefix() , "localName", localName);
-                if (depth == 0)
-                    break;
-            }
-        } else {
-            std::cerr << "parser error : invalid XML document\n";
-            return 1;
-        }
-    }
-    parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.sizeOfContent() : parser.findFirstNotOf(WHITESPACE));
-    while (parser.isComment()) {
-        // parse XML comment
-        parser.parseComment(doneReading);
-    }
-    if (parser.sizeOfContent() != 0) {
-        std::cerr << "parser error : extra content at end of document\n";
-        return 1;
-    }
-    TRACE("END DOCUMENT");
+            }}, [&](std::string_view localName, std::string_view value)->void {
+                if (localName == "literal"sv && value == "string"sv) {
+                ++stringCount;
+            } else if (localName == "comment"sv && value == "line") {
+                ++lineCommentCount;
+            }});
+    
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
     const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
