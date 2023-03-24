@@ -15,9 +15,6 @@ public:
     // constructor
     XMLParser(std::string_view content);
 
-    // get characters
-    std::string_view getCharacters();
-
     // parse XML declaration
     void parseXMLDeclaration(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone);
 
@@ -40,13 +37,13 @@ public:
     void parseCharacterEntityReference();
 
     // parse character non-entity references
-    void parseCharacterNotEntityReference();
+    void parseCharacterNotEntityReference(std::string_view& characters);
 
     // parse XML comment
     int parseComment(bool& doneReading);
 
     // parse CDATA
-    int parseCDATA(bool& doneReading);
+    int parseCDATA(bool& doneReading, std::string_view& characters);
 
     // parse processing instruction
     void parseProcessing();
@@ -104,8 +101,6 @@ public:
 
 private:
     std::string_view content;
-
-    std::string_view characters;
 
     std::string_view unescapedCharacter;
     std::string_view escapedCharacter;

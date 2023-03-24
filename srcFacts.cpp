@@ -82,6 +82,7 @@ int main(int argc, char* argv[]) {
     int depth = 0;
     bool doneReading = false;
     while (true) {
+        std::string_view characters;
         if (doneReading) {
             if (parser.sizeOfContent() == 0)
                 break;
@@ -95,18 +96,18 @@ int main(int argc, char* argv[]) {
             ++textSize;
         } else if (!parser.isCharacter(0 ,'<')) {
             // parse character non-entity references
-            parser.parseCharacterNotEntityReference();
-            loc += static_cast<int>(std::count(parser.getCharacters().cbegin(), parser.getCharacters().cend(), '\n'));
-            textSize += static_cast<int>(parser.getCharacters().size());
+            parser.parseCharacterNotEntityReference(characters);
+            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+            textSize += static_cast<int>(characters.size());
         } else if (parser.isComment()) {
             // parse XML comment
             totalBytes += parser.parseComment(doneReading);
             parser.removePrefix("-->"sv.size());
         } else if (parser.isCDATA()) {
             // parse CDATA
-            totalBytes += parser.parseCDATA(doneReading);
-            textSize += static_cast<int>(parser.getCharacters().size());
-            loc += static_cast<int>(std::count(parser.getCharacters().cbegin(), parser.getCharacters().cend(), '\n'));
+            totalBytes += parser.parseCDATA(doneReading, characters);
+            textSize += static_cast<int>(characters.size());
+            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         } else if (parser.isCharacter(1, '?') /* && parser.isCharacter(0, '<') */) {
             // parse processing instruction
             parser.parseProcessing();

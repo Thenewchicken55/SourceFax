@@ -37,10 +37,6 @@ XMLParser::XMLParser(std::string_view content)
     : content(content)
     {}
 
-// get characters
-std::string_view XMLParser::getCharacters() {
-    return characters;
-}
 
 // parse file from the start
 int XMLParser::parseBegin() {
@@ -260,7 +256,7 @@ void XMLParser::parseCharacterEntityReference() {
 }
 
 // parse character non-entity references
-void XMLParser::parseCharacterNotEntityReference() {
+void XMLParser::parseCharacterNotEntityReference(std::string_view& characters) {
     assert(content[0] != '<' && content[0] != '&');
     const auto characterEndPosition = content.find_first_of("<&");
     characters = (content.substr(0, characterEndPosition));\
@@ -294,7 +290,7 @@ int XMLParser::parseComment(bool& doneReading) {
 }
 
 // parse CDATA
-int XMLParser::parseCDATA(bool& doneReading) {
+int XMLParser::parseCDATA(bool& doneReading, std::string_view& characters) {
     int bytesRead = 0;
     content.remove_prefix("<![CDATA["sv.size());
     auto tagEndPosition = content.find("]]>"sv);
