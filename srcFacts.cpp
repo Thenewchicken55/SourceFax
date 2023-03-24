@@ -80,14 +80,14 @@ int main(int argc, char* argv[]) {
         parser.parseDOCTYPE();
     }
     int depth = 0;
-    parser.setDoneReading(false);
+    bool doneReading = false;
     while (true) {
-        if (parser.isDoneReading()) {
+        if (doneReading) {
             if (parser.sizeOfContent() == 0)
                 break;
         } else if (parser.sizeOfContent() < BLOCK_SIZE) {
             // refill content preserving unprocessed
-            totalBytes += parser.refillPreserve();
+            totalBytes += parser.refillPreserve(doneReading);
         }
         if (parser.isCharacter(0, '&')) {
             // parse character entity references
@@ -100,11 +100,11 @@ int main(int argc, char* argv[]) {
             textSize += static_cast<int>(parser.getCharacters().size());
         } else if (parser.isComment()) {
             // parse XML comment
-            totalBytes += parser.parseComment();
+            totalBytes += parser.parseComment(doneReading);
             parser.removePrefix("-->"sv.size());
         } else if (parser.isCDATA()) {
             // parse CDATA
-            totalBytes += parser.parseCDATA();
+            totalBytes += parser.parseCDATA(doneReading);
             textSize += static_cast<int>(parser.getCharacters().size());
             loc += static_cast<int>(std::count(parser.getCharacters().cbegin(), parser.getCharacters().cend(), '\n'));
         } else if (parser.isCharacter(1, '?') /* && parser.isCharacter(0, '<') */) {
@@ -180,7 +180,7 @@ int main(int argc, char* argv[]) {
     parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.sizeOfContent() : parser.findFirstNotOf(WHITESPACE));
     while (parser.isComment()) {
         // parse XML comment
-        totalBytes += parser.parseComment();
+        totalBytes += parser.parseComment(doneReading);
     }
     if (parser.sizeOfContent() != 0) {
         std::cerr << "parser error : extra content at end of document\n";

@@ -37,17 +37,6 @@ XMLParser::XMLParser(std::string_view content)
     : content(content)
     {}
 
-// get doneReading
-bool XMLParser::isDoneReading() {
-    return doneReading;
-}
-
-// set doneReading
-// @param[in] change doneReading to newValue
-void XMLParser::setDoneReading(bool newBool) {
-    doneReading = newBool;
-}
-
 // get characters
 std::string_view XMLParser::getCharacters() {
     return characters;
@@ -236,7 +225,7 @@ void XMLParser::parseDOCTYPE() {
 }
 
 // refill content preserving unprocessed
-int XMLParser::refillPreserve() {
+int XMLParser::refillPreserve(bool& doneReading) {
     int bytesRead = refillContent(content);
     if (bytesRead < 0) {
         std::cerr << "parser error : File input error\n";
@@ -280,14 +269,14 @@ void XMLParser::parseCharacterNotEntityReference() {
 }
 
 // parse XML comment
-int XMLParser::parseComment() {
+int XMLParser::parseComment(bool& doneReading) {
     int bytesRead = 0;
     assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
     content.remove_prefix("<!--"sv.size());
     auto tagEndPosition = content.find("-->"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        bytesRead = refillPreserve();
+        bytesRead = refillPreserve(doneReading);
         tagEndPosition = content.find("-->"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated XML comment\n";
@@ -305,13 +294,13 @@ int XMLParser::parseComment() {
 }
 
 // parse CDATA
-int XMLParser::parseCDATA() {
+int XMLParser::parseCDATA(bool& doneReading) {
     int bytesRead = 0;
     content.remove_prefix("<![CDATA["sv.size());
     auto tagEndPosition = content.find("]]>"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        bytesRead = refillPreserve();
+        bytesRead = refillPreserve(doneReading);
         tagEndPosition = content.find("]]>"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated CDATA\n";
