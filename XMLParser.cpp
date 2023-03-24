@@ -37,6 +37,9 @@ XMLParser::XMLParser(std::string_view content)
     : content(content), totalBytes(0)
     {}
 
+// parse XML
+void parse();
+
 // get totalBytes
 long XMLParser::getTotalBytes() {
     return totalBytes;

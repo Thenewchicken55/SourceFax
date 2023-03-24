@@ -15,6 +15,9 @@ public:
     // constructor
     XMLParser(std::string_view content);
 
+    // parse XML
+    void parse();
+
     // get totalBytes
     long getTotalBytes(); 
 
