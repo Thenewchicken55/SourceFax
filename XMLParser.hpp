@@ -15,6 +15,9 @@ public:
     // constructor
     XMLParser(std::string_view content);
 
+    // get totalBytes
+    long getTotalBytes(); 
+
     // parse XML declaration
     void parseXMLDeclaration(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone);
 
@@ -31,7 +34,7 @@ public:
     void parseDOCTYPE();
 
     // refill content preserving unprocessed
-    int refillPreserve(bool& doneReading);
+    void refillPreserve(bool& doneReading);
 
     // parse character entity references
     void parseCharacterEntityReference();
@@ -40,10 +43,10 @@ public:
     void parseCharacterNotEntityReference(std::string_view& characters);
 
     // parse XML comment
-    int parseComment(bool& doneReading);
+    void parseComment(bool& doneReading);
 
     // parse CDATA
-    int parseCDATA(bool& doneReading, std::string_view& characters);
+    void parseCDATA(bool& doneReading, std::string_view& characters);
 
     // parse processing instruction
     void parseProcessing();
@@ -76,7 +79,7 @@ public:
     bool isNamespace();
 
     // parse file from the start
-    int parseBegin();
+    void parseBegin();
 
     // Accessor::predicate to check if content has a specific character at a specific index
     bool isCharacter(int index, char character);
@@ -101,6 +104,8 @@ public:
 
 private:
     std::string_view content;
+
+    long totalBytes;
 
     std::string_view unescapedCharacter;
     std::string_view escapedCharacter;

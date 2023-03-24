@@ -34,24 +34,28 @@ constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 
 // constructor
 XMLParser::XMLParser(std::string_view content)
-    : content(content)
+    : content(content), totalBytes(0)
     {}
 
+// get totalBytes
+long XMLParser::getTotalBytes() {
+    return totalBytes;
+}
 
 // parse file from the start
-int XMLParser::parseBegin() {
+void XMLParser::parseBegin() {
     TRACE("START DOCUMENT");
     const int bytesRead = refillContent(content);
     if (bytesRead < 0) {
         std::cerr << "parser error : File input error\n";
-        return 1;
+        exit(1);
     }
     if (bytesRead == 0) {
         std::cerr << "parser error : Empty file\n";
-        return 1;
+        exit(1);
     }
 
-    return bytesRead;
+    totalBytes += bytesRead;
 }
 
 // parse XML declaration
@@ -221,7 +225,7 @@ void XMLParser::parseDOCTYPE() {
 }
 
 // refill content preserving unprocessed
-int XMLParser::refillPreserve(bool& doneReading) {
+void XMLParser::refillPreserve(bool& doneReading) {
     int bytesRead = refillContent(content);
     if (bytesRead < 0) {
         std::cerr << "parser error : File input error\n";
@@ -231,7 +235,8 @@ int XMLParser::refillPreserve(bool& doneReading) {
         doneReading = true;
     }
 
-    return bytesRead;
+    totalBytes += bytesRead;
+    
 }
 
 // parse character entity references
@@ -265,14 +270,13 @@ void XMLParser::parseCharacterNotEntityReference(std::string_view& characters) {
 }
 
 // parse XML comment
-int XMLParser::parseComment(bool& doneReading) {
-    int bytesRead = 0;
+void XMLParser::parseComment(bool& doneReading) {
     assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
     content.remove_prefix("<!--"sv.size());
     auto tagEndPosition = content.find("-->"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        bytesRead = refillPreserve(doneReading);
+        refillPreserve(doneReading);
         tagEndPosition = content.find("-->"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated XML comment\n";
@@ -285,18 +289,15 @@ int XMLParser::parseComment(bool& doneReading) {
     assert(content.compare(0, "-->"sv.size(), "-->"sv) == 0);
     content.remove_prefix("-->"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
-
-    return bytesRead;
 }
 
 // parse CDATA
-int XMLParser::parseCDATA(bool& doneReading, std::string_view& characters) {
-    int bytesRead = 0;
+void XMLParser::parseCDATA(bool& doneReading, std::string_view& characters) {
     content.remove_prefix("<![CDATA["sv.size());
     auto tagEndPosition = content.find("]]>"sv);
     if (tagEndPosition == content.npos) {
         // refill content preserving unprocessed
-        bytesRead = refillPreserve(doneReading);
+        refillPreserve(doneReading);
         tagEndPosition = content.find("]]>"sv);
         if (tagEndPosition == content.npos) {
             std::cerr << "parser error : Unterminated CDATA\n";
@@ -307,7 +308,6 @@ int XMLParser::parseCDATA(bool& doneReading, std::string_view& characters) {
     content.remove_prefix(tagEndPosition);
     content.remove_prefix("]]>"sv.size());
     TRACE("CDATA", "characters", characters);
-    return bytesRead;
 }
 
 // parse processing instruction

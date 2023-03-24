@@ -60,12 +60,11 @@ int main(int argc, char* argv[]) {
     int returnCount = 0;
     int lineCommentCount = 0;
     int stringCount = 0;
-    long totalBytes = 0;
     std::string_view content;
     XMLParser parser = XMLParser(content);
 
     // parse file from the start
-    totalBytes += parser.parseBegin();
+    parser.parseBegin();
     
     std::string_view version;
     std::optional<std::string_view> encoding;
@@ -88,7 +87,7 @@ int main(int argc, char* argv[]) {
                 break;
         } else if (parser.sizeOfContent() < BLOCK_SIZE) {
             // refill content preserving unprocessed
-            totalBytes += parser.refillPreserve(doneReading);
+            parser.refillPreserve(doneReading);
         }
         if (parser.isCharacter(0, '&')) {
             // parse character entity references
@@ -101,11 +100,11 @@ int main(int argc, char* argv[]) {
             textSize += static_cast<int>(characters.size());
         } else if (parser.isComment()) {
             // parse XML comment
-            totalBytes += parser.parseComment(doneReading);
+            parser.parseComment(doneReading);
             parser.removePrefix("-->"sv.size());
         } else if (parser.isCDATA()) {
             // parse CDATA
-            totalBytes += parser.parseCDATA(doneReading, characters);
+            parser.parseCDATA(doneReading, characters);
             textSize += static_cast<int>(characters.size());
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         } else if (parser.isCharacter(1, '?') /* && parser.isCharacter(0, '<') */) {
@@ -181,7 +180,7 @@ int main(int argc, char* argv[]) {
     parser.removePrefix(parser.findFirstNotOf(WHITESPACE) == parser.npos() ? parser.sizeOfContent() : parser.findFirstNotOf(WHITESPACE));
     while (parser.isComment()) {
         // parse XML comment
-        totalBytes += parser.parseComment(doneReading);
+        parser.parseComment(doneReading);
     }
     if (parser.sizeOfContent() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
@@ -193,7 +192,7 @@ int main(int argc, char* argv[]) {
     const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
     const auto files = std::max(unitCount - 1, 1);
     std::cout.imbue(std::locale{""});
-    const auto valueWidth = std::max(5, static_cast<int>(log10(totalBytes) * 1.3 + 1));
+    const auto valueWidth = std::max(5, static_cast<int>(log10(parser.getTotalBytes()) * 1.3 + 1));
     std::cout << "# srcFacts: " << url << '\n';
     std::cout << "| Measure      | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:-------------|-" << std::setw(valueWidth + 3) << std::setfill('-') << ":|\n" << std::setfill(' ');
@@ -211,7 +210,7 @@ int main(int argc, char* argv[]) {
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';
-    std::clog << totalBytes  << " bytes\n";
+    std::clog << parser.getTotalBytes()  << " bytes\n";
     std::clog << elapsedSeconds << " sec\n";
     std::clog << MLOCPerSecond << " MLOC/sec\n";
 
