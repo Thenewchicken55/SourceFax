@@ -112,3 +112,68 @@ You can also time it:
 ```console
 time ./srcfacts < data/linux-6.0.xml
 ```
+
+## xmlstats
+
+By default, the build also builds the application *xmlstats*.
+
+To build only the xmlstats application:
+
+```console
+make xmlstats
+```
+
+To run xmlstats with the demo file using make:
+
+```console
+make run_xmlstats
+```
+
+To run xml stats with the demo file on the command line:
+
+```console
+./xmlstats < data/demo.xml
+```
+
+## identity
+
+By default, the build also builds the application *identity*.
+
+To build only the identity application:
+
+```console
+make identity
+```
+
+To run identity with the demo file using make:
+
+```console
+make run_identity
+```
+
+The target runidentity does not output to standard output, but is redirected
+to the file *democopy.xml*. It is equivalent to next command.
+
+To run xml stats with the demo file on the command line:
+
+```console
+./identity < data/demo.xml > democopy.xml
+```
+
+If you want to compare the output to the input for *identity*, you can use
+the following command:
+
+```console
+make run_identity_check
+```
+
+This is equivalent to:
+
+```console
+make run_identity
+diff data/demo.xml democopy.xml
+```
+
+This runs a diff between the input file and the output file. Note that the
+output can be very large.
+
