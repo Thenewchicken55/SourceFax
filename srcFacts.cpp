@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     std::string_view content;
     XMLParser parser = XMLParser(content);
 
-    auto startTagHandler =  
+    auto startTagHandler =
     [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
         if (localName == "expr"sv) {
             ++exprCount;
@@ -64,19 +64,19 @@ int main(int argc, char* argv[]) {
             ++returnCount;
         }
     };
-        
-    auto characterEntityReferencesHandler = 
+
+    auto characterEntityReferencesHandler =
     [&](std::string_view& characters)->void {
         ++textSize;
     };
 
-    auto characterNonEntityReferencesHandler = 
+    auto characterNonEntityReferencesHandler =
     [&](std::string_view& characters)->void {
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         textSize += static_cast<int>(characters.size());
     };
 
-    auto attributeHandler = 
+    auto attributeHandler =
     [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
         if (localName == "url"sv) {
             url = value;
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
         }
     };
 
-    auto CDATAHandler = 
+    auto CDATAHandler =
     [&](std::string_view& characters)->void {
         textSize += static_cast<int>(characters.size());
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
@@ -95,9 +95,9 @@ int main(int argc, char* argv[]) {
 
     // parse XML
     parser.parse(
-        
+
         // null Start Document handler
-        nullptr, 
+        nullptr,
 
         // null XML declaration handler
         nullptr,
@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
 
         // null XML Comment handler
         nullptr,
-        
+
         // CDATA handler
         CDATAHandler,
 
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
         nullptr
 
         );
-    
+
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
     const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
