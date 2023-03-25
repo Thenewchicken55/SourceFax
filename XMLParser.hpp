@@ -23,7 +23,8 @@ public:
                 std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> elementEndTagHandler, 
                 std::function<void(std::string_view& characters)> characterEntityReferencesHandler,
                 std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler,
-                int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler);
+                std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
+                int& textSize, int& loc, std::string& url);
     
     // get totalBytes
     long getTotalBytes();

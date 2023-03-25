@@ -61,31 +61,45 @@ int main(int argc, char* argv[]) {
     std::string_view content;
     XMLParser parser = XMLParser(content);
 
-    auto startTagHandler =  [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
-                            if (localName == "expr"sv) {
-                                ++exprCount;
-                            } else if (localName == "decl"sv) {
-                                ++declCount;
-                            } else if (localName == "comment"sv) {
-                                ++commentCount;
-                            } else if (localName == "function"sv) {
-                                ++functionCount;
-                            } else if (localName == "unit"sv) {
-                                ++unitCount;
-                            } else if (localName == "class"sv) {
-                                ++classCount;
-                            } else if (localName == "return"sv) {
-                                ++returnCount;
-                            }};
-                            
-    auto characterEntityReferencesHandler = [&](std::string_view& characters)->void {
-                                ++textSize;
-                            };
+    auto startTagHandler =  
+    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
+        if (localName == "expr"sv) {
+            ++exprCount;
+        } else if (localName == "decl"sv) {
+            ++declCount;
+        } else if (localName == "comment"sv) {
+            ++commentCount;
+        } else if (localName == "function"sv) {
+            ++functionCount;
+        } else if (localName == "unit"sv) {
+            ++unitCount;
+        } else if (localName == "class"sv) {
+            ++classCount;
+        } else if (localName == "return"sv) {
+            ++returnCount;
+        }
+    };
+        
+    auto characterEntityReferencesHandler = 
+        [&](std::string_view& characters)->void {
+            ++textSize;
+        };
 
-    auto characterNonEntityReferencesHandler = [&](std::string_view& characters)->void {
-                                loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-                                textSize += static_cast<int>(characters.size());
-                            };
+    auto characterNonEntityReferencesHandler = 
+        [&](std::string_view& characters)->void {
+            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+            textSize += static_cast<int>(characters.size());
+        };
+
+    auto attributeHandler = 
+    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
+        if (localName == "literal"sv && value == "string"sv) {
+            ++stringCount;
+        } else if (localName == "comment"sv && value == "line") {
+            ++lineCommentCount;
+        }
+    };
+
 
     // parse XML
     parser.parse(
@@ -105,17 +119,13 @@ int main(int argc, char* argv[]) {
         // character entity references handler
         characterEntityReferencesHandler,
 
-        // character entity references handler
+        // character non-entity references handler
         characterNonEntityReferencesHandler,
+
+        // attribute handler
+        attributeHandler,
         
-        textSize, loc, url, 
-            
-            [&](std::string_view localName, std::string_view value)->void {
-                if (localName == "literal"sv && value == "string"sv) {
-                ++stringCount;
-            } else if (localName == "comment"sv && value == "line") {
-                ++lineCommentCount;
-            }});
+        textSize, loc, url);
     
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();

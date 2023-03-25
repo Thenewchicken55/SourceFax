@@ -46,7 +46,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> endTagHandler, 
                         std::function<void(std::string_view& characters)> characterEntityReferencesHandler, 
                         std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler, 
-                int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
+                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
+                int& textSize, int& loc, std::string& url) {
     
     // parse file from the start
     parseBegin();
@@ -135,7 +136,9 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix , "localName", localName, "value", value);
-                    incrementAttributesHandler(localName, value);
+                    if(attributeHandler) {
+                        attributeHandler(qName, prefix, localName, value);
+                    }
                     // convert special srcML escaped element to characters
                     if (localName == "escape"sv && localName == "char"sv /* && inUnit */) {
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
