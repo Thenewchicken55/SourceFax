@@ -73,8 +73,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
 
     int depth = 0;
     bool doneReading = false;
-    std::string_view prefix;
     std::string_view qName;
+    std::string_view prefix;
     std::string_view localName;
     std::string_view value;
     std::string_view characters;
@@ -114,16 +114,16 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             // parse end tag
             parseEndTag();
             if(endTagHandler) {
-                endTagHandler(prefix, qName, localName);
+                endTagHandler(qName, prefix, localName);
             }
             --depth;
             if (depth == 0)
                 break;
         } else if (isCharacter(0, '<')) {
             // parse start tag
-            parseStartTag(prefix, qName, localName);
+            parseStartTag(qName, prefix, localName);
             if(startTagHandler) {
-                startTagHandler(prefix, qName, localName);
+                startTagHandler(qName, prefix, localName);
             }
             removePrefix(findFirstNotOf(WHITESPACE));
             while (isMatchNameMask()) {
@@ -505,7 +505,7 @@ void XMLParser::parseEndTag() {
 }
 
 // parse start tag
-void XMLParser::parseStartTag(std::string_view& prefix, std::string_view& qName, std::string_view& localName) {
+void XMLParser::parseStartTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName) {
     assert(content.compare(0, "<"sv.size(), "<"sv) == 0);
     content.remove_prefix("<"sv.size());
     if (content[0] == ':') {
