@@ -129,6 +129,9 @@ int main(int argc, char* argv[]) {
 
         // null XML namespace handler
         nullptr,
+
+        // null XML Comment handler
+        nullptr,
         
         textSize, loc);
     

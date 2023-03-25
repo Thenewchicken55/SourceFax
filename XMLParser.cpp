@@ -48,6 +48,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler, 
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
                         std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
+                        std::function<void(std::string_view& value)> XMLCommentHandler, 
                 int& textSize, int& loc) {
     
     // parse file from the start
