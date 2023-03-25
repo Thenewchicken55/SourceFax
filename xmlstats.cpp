@@ -101,45 +101,45 @@ int main() {
 
     // parse XML
     parser.parse(
-        
+
         // null Start Document handler
-        nullptr, 
+        startDocumentHandler,
 
         // null XML declaration handler
-        nullptr,
+        XMLDeclarationHandler,
 
         // start tag handler
-        nullptr,
+        startTagHandler,
 
         // null End tag handler
-        nullptr,
+        endTagHandler,
 
         // character entity references handler
-        nullptr,
+        characterEntityReferencesHandler,
 
         // character non-entity references handler
-        nullptr,
+        characterNonEntityReferencesHandler,
 
         // attribute handler
-        nullptr,
+        attributeHandler,
 
         // null XML namespace handler
-        nullptr,
+        XMLNamespaceHandler,
 
         // null XML Comment handler
-        nullptr,
-        
+        XMLCommentHandler,
+
         // CDATA handler
-        nullptr,
+        CDATAHandler,
 
         // null processing instruction handler
-        nullptr,
+        processingInstructionHandler,
 
         // null end document handler
-        nullptr
+        endDocumentHandler
 
         );
-    
+
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
     const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
