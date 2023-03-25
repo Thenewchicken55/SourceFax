@@ -102,6 +102,11 @@ int main(int argc, char* argv[]) {
         }
     };
 
+    auto CDATAHandler = 
+    [&](std::string_view& characters)->void {
+        textSize += static_cast<int>(characters.size());
+        loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+    };
 
     // parse XML
     parser.parse(
@@ -133,7 +138,10 @@ int main(int argc, char* argv[]) {
         // null XML Comment handler
         nullptr,
         
-        textSize, loc);
+        // CDATA handler
+        CDATAHandler
+
+        );
     
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();

@@ -49,7 +49,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
                         std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
                         std::function<void(std::string_view& value)> XMLCommentHandler, 
-                int& textSize, int& loc) {
+                        std::function<void(std::string_view& characters)> CDATAHandler
+                        ) {
     
     // parse file from the start
     parseBegin();
@@ -107,8 +108,9 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         } else if (isCDATA()) {
             // parse CDATA
             parseCDATA(doneReading, characters);
-            textSize += static_cast<int>(characters.size());
-            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+            if (CDATAHandler) {
+                CDATAHandler(characters);
+            }
         } else if (isCharacter(1, '?') /* && isCharacter(0, '<') */) {
             // parse processing instruction
             parseProcessing();

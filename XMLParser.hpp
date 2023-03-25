@@ -26,7 +26,8 @@ public:
                 std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
                 std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
                 std::function<void(std::string_view& value)> XMLCommentHandler, 
-                int& textSize, int& loc);
+                std::function<void(std::string_view& characters)> CDATAHandler 
+                );
     
     // get totalBytes
     long getTotalBytes();
