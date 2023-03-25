@@ -21,6 +21,7 @@ public:
                 std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
                 std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> elementStartTagHandler, 
                 std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> elementEndTagHandler, 
+                std::function<void(std::string_view& characters)> characterEntityReferencesHandler,
                 int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler);
     
     // get totalBytes

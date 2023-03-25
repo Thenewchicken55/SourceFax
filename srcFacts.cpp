@@ -61,38 +61,45 @@ int main(int argc, char* argv[]) {
     std::string_view content;
     XMLParser parser = XMLParser(content);
 
-    auto startTagHandler = [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
-             if (localName == "expr"sv) {
-                ++exprCount;
-            } else if (localName == "decl"sv) {
-                ++declCount;
-            } else if (localName == "comment"sv) {
-                ++commentCount;
-            } else if (localName == "function"sv) {
-                ++functionCount;
-            } else if (localName == "unit"sv) {
-                ++unitCount;
-            } else if (localName == "class"sv) {
-                ++classCount;
-            } else if (localName == "return"sv) {
-                ++returnCount;
-            }};
+    auto startTagHandler =  [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
+                            if (localName == "expr"sv) {
+                                ++exprCount;
+                            } else if (localName == "decl"sv) {
+                                ++declCount;
+                            } else if (localName == "comment"sv) {
+                                ++commentCount;
+                            } else if (localName == "function"sv) {
+                                ++functionCount;
+                            } else if (localName == "unit"sv) {
+                                ++unitCount;
+                            } else if (localName == "class"sv) {
+                                ++classCount;
+                            } else if (localName == "return"sv) {
+                                ++returnCount;
+                            }};
+                            
+    auto characterEntityReferencesHandler = [&](std::string_view& characters)->void {
+                                ++textSize;
+                            };
 
 
     // parse XML
     parser.parse(
         
-        // Null Start Document handler
+        // null Start Document handler
         nullptr, 
 
-        // Null XML declaration handler
+        // null XML declaration handler
         nullptr,
 
-        // Start tag handler
+        // start tag handler
         startTagHandler,
 
-        // Null End tag handler
+        // null End tag handler
         nullptr,
+
+        // character entity references handler
+        characterEntityReferencesHandler,
         
         textSize, loc, url, 
             

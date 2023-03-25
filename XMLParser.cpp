@@ -44,6 +44,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> startTagHandler, 
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> endTagHandler, 
+                        std::function<void(std::string_view& characters)> characterEntityReferencesHandler, 
                 int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
     
     // parse file from the start
@@ -74,8 +75,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
     std::string_view qName;
     std::string_view localName;
     std::string_view value;
+    std::string_view characters;
     while (true) {
-        std::string_view characters;
         if (doneReading) {
             if (content.size() == 0)
                 break;
@@ -85,11 +86,13 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         }
         if (isCharacter(0, '&')) {
             // parse character entity references
-            parseCharacterEntityReference();
-            ++textSize;
+            parseCharacterEntityReference(); 
+            if (characterEntityReferencesHandler) {
+                characterEntityReferencesHandler(characters);
+            }
         } else if (!isCharacter(0 ,'<')) {
             // parse character non-entity references
-            parseCharacterNotEntityReference(characters);
+            parseCharacterNotEntityReference(characters); 
             loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
             textSize += static_cast<int>(characters.size());
         } else if (isComment()) {
