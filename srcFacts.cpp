@@ -28,21 +28,6 @@ using namespace std::literals::string_view_literals;
 constexpr auto WHITESPACE = " \n\t\r"sv;
 [[maybe_unused]] constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 
-// trace parsing
-#ifdef TRACE
-#undef TRACE
-#define HEADER(m) std::clog << "\033[1m" << std::setw(10) << std::left << m << "\u001b[0m" << '\t'
-#define TRACE0() ""
-#define TRACE1(l1, n1)                         "\033[1m" << l1 << "\u001b[0m" << "|" << "\u001b[31;1m" << n1 << "\u001b[0m" << "| "
-#define TRACE2(l1, n1, l2, n2)                 TRACE1(l1,n1)             << TRACE1(l2,n2)
-#define TRACE3(l1, n1, l2, n2, l3, n3)         TRACE2(l1,n1,l2,n2)       << TRACE1(l3,n3)
-#define TRACE4(l1, n1, l2, n2, l3, n3, l4, n4) TRACE3(l1,n1,l2,n2,l3,n3) << TRACE1(l4,n4)
-#define GET_TRACE(_2,_3,_4,_5,_6,_7,_8,_9,NAME,...) NAME
-#define TRACE(m,...) HEADER(m) << GET_TRACE(__VA_ARGS__, TRACE4, _UNUSED, TRACE3, _UNUSED, TRACE2, _UNUSED, TRACE1, TRACE0, TRACE0)(__VA_ARGS__) << '\n';
-#else
-#define TRACE(...)
-#endif
-
 int main(int argc, char* argv[]) {
 
     const auto startTime = std::chrono::steady_clock::now();
