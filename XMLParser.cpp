@@ -40,10 +40,12 @@ XMLParser::XMLParser(std::string_view content)
     {}
 
 // parse XML
-void XMLParser::parse(int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
+void XMLParser::parse(std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
+                int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
+    
     // parse file from the start
     parseBegin();
-
+    
     std::string_view version;
     std::optional<std::string_view> encoding;
     std::optional<std::string_view> standalone;
@@ -51,6 +53,9 @@ void XMLParser::parse(int& textSize, int& loc, std::string& url, std::function<v
     if (isXML()) {
         // parse XML Declaration
         parseXMLDeclaration(version, encoding, standalone);
+        if(XMLDeclarationHandler) {
+            XMLDeclarationHandler(version, encoding, standalone);
+        }
     }
     if (isDOCTYPE()) {
         // parse DOCTYPE

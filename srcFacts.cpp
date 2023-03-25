@@ -62,7 +62,12 @@ int main(int argc, char* argv[]) {
     XMLParser parser = XMLParser(content);
 
     // parse XML
-    parser.parse(textSize, loc, url, [&](std::string_view localName)->void {
+    parser.parse(
+        
+        // null XML declaration handler
+        nullptr,
+        
+        textSize, loc, url, [&](std::string_view localName)->void {
              if (localName == "expr"sv) {
                 ++exprCount;
             } else if (localName == "decl"sv) {
@@ -77,7 +82,9 @@ int main(int argc, char* argv[]) {
                 ++classCount;
             } else if (localName == "return"sv) {
                 ++returnCount;
-            }}, [&](std::string_view localName, std::string_view value)->void {
+            }}, 
+            
+            [&](std::string_view localName, std::string_view value)->void {
                 if (localName == "literal"sv && value == "string"sv) {
                 ++stringCount;
             } else if (localName == "comment"sv && value == "line") {

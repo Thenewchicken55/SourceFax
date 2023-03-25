@@ -17,11 +17,12 @@ public:
     XMLParser(std::string_view content);
 
     // parse XML
-    void parse(int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler);
+    void parse(std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
+                int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler);
     
     // get totalBytes
     long getTotalBytes();
-     
+
 private:
 
     // parse XML declaration
