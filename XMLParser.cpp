@@ -45,6 +45,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> startTagHandler, 
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> endTagHandler, 
                         std::function<void(std::string_view& characters)> characterEntityReferencesHandler, 
+                        std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler, 
                 int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
     
     // parse file from the start
@@ -93,8 +94,9 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         } else if (!isCharacter(0 ,'<')) {
             // parse character non-entity references
             parseCharacterNotEntityReference(characters); 
-            loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-            textSize += static_cast<int>(characters.size());
+            if (characterNonEntityReferencesHandler) {
+                characterNonEntityReferencesHandler(characters);
+            }
         } else if (isComment()) {
             // parse XML comment
             parseComment(doneReading);

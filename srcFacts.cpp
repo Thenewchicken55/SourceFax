@@ -82,6 +82,10 @@ int main(int argc, char* argv[]) {
                                 ++textSize;
                             };
 
+    auto characterNonEntityReferencesHandler = [&](std::string_view& characters)->void {
+                                loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+                                textSize += static_cast<int>(characters.size());
+                            };
 
     // parse XML
     parser.parse(
@@ -100,6 +104,9 @@ int main(int argc, char* argv[]) {
 
         // character entity references handler
         characterEntityReferencesHandler,
+
+        // character entity references handler
+        characterNonEntityReferencesHandler,
         
         textSize, loc, url, 
             
