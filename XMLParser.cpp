@@ -40,8 +40,10 @@ XMLParser::XMLParser(std::string_view content)
     {}
 
 // parse XML
-void XMLParser::parse(std::function<void()> startDocumentHandler, std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
-                int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName)> incrementFactsHandler, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
+void XMLParser::parse(  std::function<void()> startDocumentHandler,
+                        std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
+                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> startTagHandler, 
+                int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
     
     // parse file from the start
     parseBegin();
@@ -110,7 +112,9 @@ void XMLParser::parse(std::function<void()> startDocumentHandler, std::function<
             std::string_view localName;
             std::string_view value;
             parseStartTag(prefix, qName, localName);
-            incrementFactsHandler(localName);
+            if(startTagHandler) {
+                startTagHandler(prefix, qName, localName);
+            }
             removePrefix(findFirstNotOf(WHITESPACE));
             while (isMatchNameMask()) {
                 if (isNamespace()) {
