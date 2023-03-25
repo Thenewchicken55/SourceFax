@@ -38,45 +38,100 @@ int main() {
     std::string url;
     XMLParser parser = XMLParser(content);
 
+auto startDocumentHandler =
+        [&]()->void { };
+
+    auto XMLDeclarationHandler =
+        [&](std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { };
+
+    auto startTagHandler =
+    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
+        
+
+        if (localName == "unit"sv) {
+            ++unitCount;
+        }
+    };
+
+    auto endTagHandler =
+        [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void { };
+
+    auto characterEntityReferencesHandler =
+        [&](std::string_view& characters)->void { };
+
+    auto characterNonEntityReferencesHandler =
+    [&](std::string_view& characters)->void {
+        
+
+        loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+    };
+
+    auto attributeHandler =
+    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
+        
+
+        if (localName == "url"sv) {
+            url = value;
+        }
+    };
+
+    auto XMLNamespaceHandler =
+        [&](std::string_view& prefix, std::string_view& uri)->void { };
+
+    auto XMLCommentHandler =
+        [&](std::string_view& value)->void { };
+
+    auto CDATAHandler =
+    [&](std::string_view& characters)->void {
+        
+
+        loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+    };
+
+    auto processingInstructionHandler =
+        [&](std::string_view& target, std::string_view& data)->void { };
+
+    auto endDocumentHandler =
+        [&]()->void { };
 
     // parse XML
     parser.parse(
 
         // null Start Document handler
-        nullptr,
+        startDocumentHandler,
 
         // null XML declaration handler
-        nullptr,
+        XMLDeclarationHandler,
 
         // start tag handler
-        nullptr,
+        startTagHandler,
 
         // null End tag handler
-        nullptr,
+        endTagHandler,
 
         // character entity references handler
-        nullptr,
+        characterEntityReferencesHandler,
 
         // character non-entity references handler
-        nullptr,
+        characterNonEntityReferencesHandler,
 
         // attribute handler
-        nullptr,
+        attributeHandler,
 
         // null XML namespace handler
-        nullptr,
+        XMLNamespaceHandler,
 
         // null XML Comment handler
-        nullptr,
+        XMLCommentHandler,
 
         // CDATA handler
-        nullptr,
+        CDATAHandler,
 
         // null processing instruction handler
-        nullptr,
+        processingInstructionHandler,
 
         // null end document handler
-        nullptr
+        endDocumentHandler
 
         );
 

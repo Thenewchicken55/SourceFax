@@ -145,7 +145,7 @@ int main() {
     const auto files = std::max(unitCount - 1, 1);
     std::cout.imbue(std::locale{""});
     const auto valueWidth = std::max(5, static_cast<int>(log10(parser.getTotalBytes()) * 1.3 + 1));
-    std::cout << "# srcFacts: " << url << '\n';
+    std::cout << "# xmlStats: " << url << '\n';
     std::cout << "| Measure                 | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:------------------------|-" << std::setw(valueWidth + 3) << std::setfill('-')       << ":|\n" << std::setfill(' ');
     std::cout << "| LOC                     | " << std::setw(valueWidth) << loc                         << " |\n";
