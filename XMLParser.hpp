@@ -28,8 +28,7 @@ public:
                 std::function<void(std::string_view& value)> XMLCommentHandler, 
                 std::function<void(std::string_view& characters)> CDATAHandler,
                 std::function<void(std::string_view& target, std::string_view& data)> processingInstructionHandler,
-                std::function<void()> endDocumentHandler
-                );
+                std::function<void()> endDocumentHandler);
     
     // get totalBytes
     long getTotalBytes();

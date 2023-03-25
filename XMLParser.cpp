@@ -107,6 +107,9 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             // parse XML comment
             parseComment(doneReading);
             removePrefix("-->"sv.size());
+            if (XMLCommentHandler) {
+                XMLCommentHandler(value);
+            }
         } else if (isCDATA()) {
             // parse CDATA
             parseCDATA(doneReading, characters);
@@ -180,6 +183,9 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
     while (isComment()) {
         // parse XML comment
         parseComment(doneReading);
+        if (XMLCommentHandler) {
+            XMLCommentHandler(value);
+        }
     }
     if (sizeOfContent() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
