@@ -1,9 +1,9 @@
 /*
     xmlstats.cpp
 
-    Create the application xmlstats that produces a markdown 
+    Create the application xmlstats that produces a markdown
     report (similar to what srcFacts does) that indicates the
-    number of each part of XML. E.g., the number of start 
+    number of each part of XML. E.g., the number of start
     tags, end tags, attributes, character sections, etc.
 
 */
@@ -43,6 +43,61 @@ int main() {
     std::string_view content;
     XMLParser parser = XMLParser(content);
 
+    auto startDocumentHandler =
+        [&]()->void { ++startDocumentCount;};
+
+    auto XMLDeclarationHandler =
+        [&](std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { ++XMLDeclarationCount;};
+
+    auto startTagHandler =
+    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
+        ++startTagCount;
+
+        if (localName == "unit"sv) {
+            ++unitCount;
+        }
+    };
+
+    auto endTagHandler =
+        [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void { ++endTagCount;};
+
+    auto characterEntityReferencesHandler =
+        [&](std::string_view& characters)->void { ++charactersCount;};
+
+    auto characterNonEntityReferencesHandler =
+    [&](std::string_view& characters)->void {
+        ++charactersCount;
+
+        loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+    };
+
+    auto attributeHandler =
+    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
+        ++attributeCount;
+
+        if (localName == "url"sv) {
+            url = value;
+        }
+    };
+
+    auto XMLNamespaceHandler =
+        [&](std::string_view& prefix, std::string_view& uri)->void { ++XMLNamespaceCount;};
+
+    auto XMLCommentHandler =
+        [&](std::string_view& value)->void { ++XMLCommentCount;};
+
+    auto CDATAHandler =
+    [&](std::string_view& characters)->void {
+        ++CDATACount;
+
+        loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
+    };
+
+    auto processingInstructionHandler =
+        [&](std::string_view& target, std::string_view& data)->void { ++processingInstructionCount;};
+
+    auto endDocumentHandler =
+        [&]()->void { ++endDocumentCount;};
 
     // parse XML
     parser.parse(
