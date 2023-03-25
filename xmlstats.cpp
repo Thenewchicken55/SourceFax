@@ -28,8 +28,19 @@ int main() {
     const auto startTime = std::chrono::steady_clock::now();
     int unitCount = 0;
     int loc = 0;
-    std::string_view content;
     std::string url;
+    int startDocumentCount = 0;
+    int XMLDeclarationCount = 0;
+    int startTagCount = 0;
+    int endTagCount = 0;
+    int charactersCount = 0;
+    int attributeCount = 0;
+    int XMLNamespaceCount = 0;
+    int XMLCommentCount = 0;
+    int CDATACount = 0;
+    int processingInstructionCount = 0;
+    int endDocumentCount = 0;
+    std::string_view content;
     XMLParser parser = XMLParser(content);
 
 
