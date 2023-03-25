@@ -25,7 +25,7 @@ public:
                 std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler,
                 std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
                 std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
-                int& textSize, int& loc, std::string& url);
+                int& textSize, int& loc);
     
     // get totalBytes
     long getTotalBytes();

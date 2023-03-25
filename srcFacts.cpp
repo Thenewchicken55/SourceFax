@@ -93,7 +93,9 @@ int main(int argc, char* argv[]) {
 
     auto attributeHandler = 
     [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
-        if (localName == "literal"sv && value == "string"sv) {
+        if (localName == "url"sv) {
+            url = value;
+        } else if (localName == "literal"sv && value == "string"sv) {
             ++stringCount;
         } else if (localName == "comment"sv && value == "line") {
             ++lineCommentCount;
@@ -128,7 +130,7 @@ int main(int argc, char* argv[]) {
         // null XML namespace handler
         nullptr,
         
-        textSize, loc, url);
+        textSize, loc);
     
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
