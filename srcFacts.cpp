@@ -64,8 +64,12 @@ int main(int argc, char* argv[]) {
     // parse XML
     parser.parse(
         
+        // null Start Document handler
+        nullptr, 
+
         // null XML declaration handler
         nullptr,
+
         
         textSize, loc, url, [&](std::string_view localName)->void {
              if (localName == "expr"sv) {
