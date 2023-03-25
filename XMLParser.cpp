@@ -49,7 +49,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
                         std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
                         std::function<void(std::string_view& value)> XMLCommentHandler, 
-                        std::function<void(std::string_view& characters)> CDATAHandler
+                        std::function<void(std::string_view& characters)> CDATAHandler,
+                        std::function<void(std::string_view& target, std::string_view& data)> processingInstructionHandler
                         ) {
     
     // parse file from the start
@@ -113,7 +114,12 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             }
         } else if (isCharacter(1, '?') /* && isCharacter(0, '<') */) {
             // parse processing instruction
-            parseProcessing();
+            auto result = parseProcessing();
+            auto target = result.first;
+            auto data = result.second;
+            if (processingInstructionHandler) {
+                processingInstructionHandler(target, data);
+            }
         } else if (isCharacter(1, '/') /* && isCharacter(0, '<') */) {
             // parse end tag
             parseEndTag();
@@ -456,7 +462,7 @@ void XMLParser::parseCDATA(bool& doneReading, std::string_view& characters) {
 }
 
 // parse processing instruction
-void XMLParser::parseProcessing() {
+std::pair<std::string_view, std::string_view> XMLParser::parseProcessing() {
     assert(content.compare(0, "<?"sv.size(), "<?"sv) == 0);
     content.remove_prefix("<?"sv.size());
     const auto tagEndPosition = content.find("?>"sv);
@@ -475,6 +481,7 @@ void XMLParser::parseProcessing() {
     content.remove_prefix(tagEndPosition);
     assert(content.compare(0, "?>"sv.size(), "?>"sv) == 0);
     content.remove_prefix("?>"sv.size());
+    return std::pair(target, data);
 }
 
 // parse end tag

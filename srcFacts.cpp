@@ -139,7 +139,10 @@ int main(int argc, char* argv[]) {
         nullptr,
         
         // CDATA handler
-        CDATAHandler
+        CDATAHandler,
+
+        // null processing instruction handler
+        nullptr
 
         );
     

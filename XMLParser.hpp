@@ -26,7 +26,8 @@ public:
                 std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
                 std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
                 std::function<void(std::string_view& value)> XMLCommentHandler, 
-                std::function<void(std::string_view& characters)> CDATAHandler 
+                std::function<void(std::string_view& characters)> CDATAHandler,
+                std::function<void(std::string_view& target, std::string_view& data)> processingInstructionHandler 
                 );
     
     // get totalBytes
@@ -65,7 +66,7 @@ private:
     void parseCDATA(bool& doneReading, std::string_view& characters);
 
     // parse processing instruction
-    void parseProcessing();
+    std::pair<std::string_view, std::string_view> parseProcessing();
 
     // parse end tag
     void parseEndTag();
