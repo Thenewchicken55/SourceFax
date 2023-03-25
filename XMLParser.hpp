@@ -24,6 +24,7 @@ public:
                 std::function<void(std::string_view& characters)> characterEntityReferencesHandler,
                 std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler,
                 std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
+                std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
                 int& textSize, int& loc, std::string& url);
     
     // get totalBytes
@@ -71,7 +72,7 @@ private:
     void parseStartTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName);
 
     // parse XML namespace
-    void parseNamespace();
+    std::string_view parseNamespace();
 
     // parse attribute
     std::string_view parseAttribute();

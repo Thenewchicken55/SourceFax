@@ -124,6 +124,9 @@ int main(int argc, char* argv[]) {
 
         // attribute handler
         attributeHandler,
+
+        // null XML namespace handler
+        nullptr,
         
         textSize, loc, url);
     

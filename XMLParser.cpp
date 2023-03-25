@@ -47,6 +47,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& characters)> characterEntityReferencesHandler, 
                         std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler, 
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
+                        std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
                 int& textSize, int& loc, std::string& url) {
     
     // parse file from the start
@@ -129,7 +130,10 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             while (isMatchNameMask()) {
                 if (isNamespace()) {
                     // parse XML namespace
-                    parseNamespace();
+                    auto uri = parseNamespace();
+                    if (XMLNamespaceHandler) { 
+                        XMLNamespaceHandler(prefix, uri);
+                    }
                 } else {
                     // parse attribute
                     value = parseAttribute();
@@ -534,7 +538,7 @@ void XMLParser::parseStartTag(std::string_view& qName, std::string_view& prefix,
 }
 
 // parse XML namespace
-void XMLParser::parseNamespace() {
+std::string_view XMLParser::parseNamespace() {
     assert(content.compare(0, "xmlns"sv.size(), "xmlns"sv) == 0);
     content.remove_prefix("xmlns"sv.size());
     auto nameEndPosition = content.find('=');
@@ -573,6 +577,7 @@ void XMLParser::parseNamespace() {
     assert(content.compare(0, "\""sv.size(), "\""sv) == 0);
     content.remove_prefix("\""sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
+    return uri;
 }
 
 // parse attribute
