@@ -142,6 +142,9 @@ int main(int argc, char* argv[]) {
         CDATAHandler,
 
         // null processing instruction handler
+        nullptr,
+
+        // null end document handler
         nullptr
 
         );

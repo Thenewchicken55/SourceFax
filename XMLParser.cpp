@@ -50,7 +50,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
                         std::function<void(std::string_view& value)> XMLCommentHandler, 
                         std::function<void(std::string_view& characters)> CDATAHandler,
-                        std::function<void(std::string_view& target, std::string_view& data)> processingInstructionHandler
+                        std::function<void(std::string_view& target, std::string_view& data)> processingInstructionHandler,
+                        std::function<void()> endDocumentHandler
                         ) {
     
     // parse file from the start
@@ -184,7 +185,9 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         std::cerr << "parser error : extra content at end of document\n";
         exit(1);
     }
-
+    if (endDocumentHandler) {
+        endDocumentHandler();
+    }
     TRACE("END DOCUMENT");
 }
 
