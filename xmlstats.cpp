@@ -137,7 +137,6 @@ int main() {
 
         // null end document handler
         endDocumentHandler
-
         );
 
     const auto finishTime = std::chrono::steady_clock::now();
