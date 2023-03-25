@@ -43,6 +43,7 @@ XMLParser::XMLParser(std::string_view content)
 void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
                         std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> startTagHandler, 
+                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> endTagHandler, 
                 int& textSize, int& loc, std::string& url, std::function<void(std::string_view localName, std::string_view value)> incrementAttributesHandler) {
     
     // parse file from the start
@@ -69,6 +70,10 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
 
     int depth = 0;
     bool doneReading = false;
+    std::string_view prefix;
+    std::string_view qName;
+    std::string_view localName;
+    std::string_view value;
     while (true) {
         std::string_view characters;
         if (doneReading) {
@@ -102,15 +107,14 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         } else if (isCharacter(1, '/') /* && isCharacter(0, '<') */) {
             // parse end tag
             parseEndTag();
+            if(endTagHandler) {
+                endTagHandler(prefix, qName, localName);
+            }
             --depth;
             if (depth == 0)
                 break;
         } else if (isCharacter(0, '<')) {
             // parse start tag
-            std::string_view prefix;
-            std::string_view qName;
-            std::string_view localName;
-            std::string_view value;
             parseStartTag(prefix, qName, localName);
             if(startTagHandler) {
                 startTagHandler(prefix, qName, localName);
@@ -122,7 +126,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                     parseNamespace();
                 } else {
                     // parse attribute
-                    const auto value = parseAttribute();
+                    value = parseAttribute();
                     if (localName == "url"sv)
                         url = value;
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix , "localName", localName, "value", value);

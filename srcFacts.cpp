@@ -90,6 +90,9 @@ int main(int argc, char* argv[]) {
 
         // Start tag handler
         startTagHandler,
+
+        // Null End tag handler
+        nullptr,
         
         textSize, loc, url, 
             
