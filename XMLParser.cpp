@@ -42,24 +42,24 @@ XMLParser::XMLParser(std::string_view content)
 // parse XML
 void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
-                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> startTagHandler, 
-                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> endTagHandler, 
-                        std::function<void(std::string_view& characters)> characterEntityReferencesHandler, 
-                        std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler, 
-                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
-                        std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
-                        std::function<void(std::string_view& value)> XMLCommentHandler, 
+                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> startTagHandler,
+                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> endTagHandler,
+                        std::function<void(std::string_view& characters)> characterEntityReferencesHandler,
+                        std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler,
+                        std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler,
+                        std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler,
+                        std::function<void(std::string_view& value)> XMLCommentHandler,
                         std::function<void(std::string_view& characters)> CDATAHandler,
                         std::function<void(std::string_view& target, std::string_view& data)> processingInstructionHandler,
                         std::function<void()> endDocumentHandler
                         ) {
-    
+
     // parse file from the start
     parseBegin();
     if (startDocumentHandler) {
     startDocumentHandler();
     }
-    
+
     std::string_view version;
     std::optional<std::string_view> encoding;
     std::optional<std::string_view> standalone;
@@ -93,13 +93,13 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         }
         if (isCharacter(0, '&')) {
             // parse character entity references
-            parseCharacterEntityReference(); 
+            parseCharacterEntityReference();
             if (characterEntityReferencesHandler) {
                 characterEntityReferencesHandler(characters);
             }
         } else if (!isCharacter(0 ,'<')) {
             // parse character non-entity references
-            parseCharacterNotEntityReference(characters); 
+            parseCharacterNotEntityReference(characters);
             if (characterNonEntityReferencesHandler) {
                 characterNonEntityReferencesHandler(characters);
             }
@@ -144,7 +144,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                 if (isNamespace()) {
                     // parse XML namespace
                     auto uri = parseNamespace();
-                    if (XMLNamespaceHandler) { 
+                    if (XMLNamespaceHandler) {
                         XMLNamespaceHandler(prefix, uri);
                     }
                 } else {
@@ -178,7 +178,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             exit(1);
         }
     }
-    
+
     removePrefix(findFirstNotOf(WHITESPACE) == npos() ? sizeOfContent() : findFirstNotOf(WHITESPACE));
     while (isComment()) {
         // parse XML comment
@@ -396,7 +396,7 @@ void XMLParser::refillPreserve(bool& doneReading) {
     }
 
     totalBytes += bytesRead;
-    
+
 }
 
 // parse character entity references

@@ -19,17 +19,17 @@ public:
     // parse XML
     void parse( std::function<void()> startDocumentHandler,
                 std::function<void(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
-                std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> elementStartTagHandler, 
-                std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> elementEndTagHandler, 
+                std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> elementStartTagHandler,
+                std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName)> elementEndTagHandler,
                 std::function<void(std::string_view& characters)> characterEntityReferencesHandler,
                 std::function<void(std::string_view& characters)> characterNonEntityReferencesHandler,
-                std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler, 
-                std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler, 
-                std::function<void(std::string_view& value)> XMLCommentHandler, 
+                std::function<void(std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)> attributeHandler,
+                std::function<void(std::string_view& prefix, std::string_view& uri)> XMLNamespaceHandler,
+                std::function<void(std::string_view& value)> XMLCommentHandler,
                 std::function<void(std::string_view& characters)> CDATAHandler,
                 std::function<void(std::string_view& target, std::string_view& data)> processingInstructionHandler,
                 std::function<void()> endDocumentHandler);
-    
+
     // get totalBytes
     long getTotalBytes();
 
@@ -109,6 +109,7 @@ private:
 
     // wrapper for size()
     int sizeOfContent();
+
 
     // wrapper for .npos
     size_t npos();
