@@ -38,7 +38,7 @@ int main() {
     std::string url;
     XMLParser parser = XMLParser(content);
 
-    auto XMLDeclarationHandler =
+    const auto XMLDeclarationHandler =
         [&](std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void {
             std::cout << "<?xml version=\"" << version << "\" ";
 
@@ -53,7 +53,7 @@ int main() {
             std::cout << "?>" << std::endl;
          };
 
-    auto startTagHandler =
+    const auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
         std::cout << "<" << qName << ">" << std::endl;
 
@@ -62,24 +62,24 @@ int main() {
         }
     };
 
-    auto endTagHandler =
+    const auto endTagHandler =
         [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
             std::cout << "</" <<  qName << ">" << std::endl;
          };
 
-    auto characterEntityReferencesHandler =
+    const auto characterEntityReferencesHandler =
         [&](std::string_view characters)->void {
             std::cout << characters << std::endl; 
          };
 
-    auto characterNonEntityReferencesHandler =
+    const auto characterNonEntityReferencesHandler =
     [&](std::string_view characters)->void {
         std::cout << characters << std::endl; 
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
-    auto attributeHandler =
+    const auto attributeHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
         std::cout << "<" << qName << "=\"" << value << "\">" << std::endl;
 
@@ -88,25 +88,25 @@ int main() {
         }
     };
 
-    auto XMLNamespaceHandler =
+    const auto XMLNamespaceHandler =
         [&](std::string_view prefix, std::string_view uri)->void {
             std::cout << prefix << "=\"" << uri << "\"" << std::endl;
          };
 
-    auto XMLCommentHandler =
+    const auto XMLCommentHandler =
         [&](std::string_view value)->void { };
 
-    auto CDATAHandler =
+    const auto CDATAHandler =
     [&](std::string_view characters)->void {
         
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
-    auto processingInstructionHandler =
+    const auto processingInstructionHandler =
         [&](std::string_view target, std::string_view data)->void { };
 
-    auto endDocumentHandler =
+    const auto endDocumentHandler =
         [&]()->void { };
 
     // parse XML
