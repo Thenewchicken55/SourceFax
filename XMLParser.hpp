@@ -114,9 +114,6 @@ private:
     // wrapper for .npos
     size_t npos();
 
-    // wrapper for compare()
-    int compareContent(int startingPosition, int lengthOfString, const std::string& compareToString);
-
     // data members
     std::string_view content;
 

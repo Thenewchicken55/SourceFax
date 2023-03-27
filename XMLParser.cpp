@@ -168,7 +168,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                 removePrefix(">"sv.size());
                 ++depth;
             } else if (isCharacter(0, '/') && isCharacter(1, '>')) {
-                assert(compareContent(0, "/>"sv.size(), "/>") == 0);
+                assert(content.compare(0, "/>"sv.size(), "/>") == 0);
                 removePrefix("/>"sv.size());
                 TRACE("END TAG", "qName", qName , "prefix", prefix , "localName", localName);
                 if (depth == 0)
@@ -691,7 +691,3 @@ size_t XMLParser::npos() {
     return content.npos;
 }
 
-// wrapper for compare()
-int XMLParser::compareContent(int position, int count, const std::string& string) {
-    return content.compare(position, count, string);
-}
