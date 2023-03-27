@@ -180,7 +180,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         }
     }
 
-    removePrefix(findFirstNotOf(WHITESPACE) == npos() ? sizeOfContent() : findFirstNotOf(WHITESPACE));
+    removePrefix(findFirstNotOf(WHITESPACE) == content.npos ? sizeOfContent() : findFirstNotOf(WHITESPACE));
     while (isComment()) {
         // parse XML comment
         parseComment(doneReading);
@@ -685,9 +685,3 @@ std::size_t XMLParser::findFirstNotOf(std::string_view string) {
 int XMLParser::sizeOfContent() {
     return content.size();
 }
-
-// wrapper for .npos
-size_t XMLParser::npos() {
-    return content.npos;
-}
-

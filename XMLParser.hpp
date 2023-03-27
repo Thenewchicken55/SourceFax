@@ -110,10 +110,6 @@ private:
     // wrapper for size()
     int sizeOfContent();
 
-
-    // wrapper for .npos
-    size_t npos();
-
     // data members
     std::string_view content;
 
