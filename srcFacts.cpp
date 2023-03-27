@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     std::string_view content;
     XMLParser parser = XMLParser(content);
 
-    auto startTagHandler =
+    const auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
         if (localName == "expr"sv) {
             ++exprCount;
@@ -65,18 +65,18 @@ int main(int argc, char* argv[]) {
         }
     };
 
-    auto characterEntityReferencesHandler =
+    const auto characterEntityReferencesHandler =
     [&textSize](std::string_view characters)->void {
         ++textSize;
     };
 
-    auto characterNonEntityReferencesHandler =
+    const auto characterNonEntityReferencesHandler =
     [&loc, &textSize](std::string_view characters)->void {
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         textSize += static_cast<int>(characters.size());
     };
 
-    auto attributeHandler =
+    const auto attributeHandler =
     [&url, &stringCount, &lineCommentCount](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
         if (localName == "url"sv) {
             url = value;
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
         }
     };
 
-    auto CDATAHandler =
+    const auto CDATAHandler =
     [&textSize, &loc](std::string_view characters)->void {
         textSize += static_cast<int>(characters.size());
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
