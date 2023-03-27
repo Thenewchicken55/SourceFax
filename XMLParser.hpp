@@ -107,9 +107,6 @@ private:
     // wrapper for find_first_not_of()
     std::size_t findFirstNotOf(std::string_view delimiters);
 
-    // wrapper for size()
-    int sizeOfContent();
-
     // data members
     std::string_view content;
 

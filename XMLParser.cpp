@@ -180,7 +180,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         }
     }
 
-    removePrefix(findFirstNotOf(WHITESPACE) == content.npos ? sizeOfContent() : findFirstNotOf(WHITESPACE));
+    removePrefix(findFirstNotOf(WHITESPACE) == content.npos ? content.size() : findFirstNotOf(WHITESPACE));
     while (isComment()) {
         // parse XML comment
         parseComment(doneReading);
@@ -188,7 +188,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             XMLCommentHandler(value);
         }
     }
-    if (sizeOfContent() != 0) {
+    if (content.size() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
         exit(1);
     }
@@ -681,7 +681,3 @@ std::size_t XMLParser::findFirstNotOf(std::string_view string) {
     return content.find_first_not_of(string);
 }
 
-// wrapper for size()
-int XMLParser::sizeOfContent() {
-    return content.size();
-}
