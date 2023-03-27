@@ -47,10 +47,10 @@ int main() {
         [&]()->void { ++startDocumentCount;};
 
     auto XMLDeclarationHandler =
-        [&](std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { ++XMLDeclarationCount;};
+        [&](std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { ++XMLDeclarationCount;};
 
     auto startTagHandler =
-    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
+    [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
         ++startTagCount;
 
         if (localName == "unit"sv) {
@@ -59,20 +59,20 @@ int main() {
     };
 
     auto endTagHandler =
-        [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void { ++endTagCount;};
+        [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void { ++endTagCount;};
 
     auto characterEntityReferencesHandler =
-        [&](std::string_view& characters)->void { ++charactersCount;};
+        [&](std::string_view characters)->void { ++charactersCount;};
 
     auto characterNonEntityReferencesHandler =
-    [&](std::string_view& characters)->void {
+    [&](std::string_view characters)->void {
         ++charactersCount;
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     auto attributeHandler =
-    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
+    [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
         ++attributeCount;
 
         if (localName == "url"sv) {
@@ -81,20 +81,20 @@ int main() {
     };
 
     auto XMLNamespaceHandler =
-        [&](std::string_view& prefix, std::string_view& uri)->void { ++XMLNamespaceCount;};
+        [&](std::string_view prefix, std::string_view uri)->void { ++XMLNamespaceCount;};
 
     auto XMLCommentHandler =
-        [&](std::string_view& value)->void { ++XMLCommentCount;};
+        [&](std::string_view value)->void { ++XMLCommentCount;};
 
     auto CDATAHandler =
-    [&](std::string_view& characters)->void {
+    [&](std::string_view characters)->void {
         ++CDATACount;
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     auto processingInstructionHandler =
-        [&](std::string_view& target, std::string_view& data)->void { ++processingInstructionCount;};
+        [&](std::string_view target, std::string_view data)->void { ++processingInstructionCount;};
 
     auto endDocumentHandler =
         [&]()->void { ++endDocumentCount;};

@@ -42,10 +42,10 @@ auto startDocumentHandler =
         [&]()->void { };
 
     auto XMLDeclarationHandler =
-        [&](std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { };
+        [&](std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { };
 
     auto startTagHandler =
-    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void {
+    [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
         
 
         if (localName == "unit"sv) {
@@ -54,20 +54,20 @@ auto startDocumentHandler =
     };
 
     auto endTagHandler =
-        [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName)->void { };
+        [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void { };
 
     auto characterEntityReferencesHandler =
-        [&](std::string_view& characters)->void { };
+        [&](std::string_view characters)->void { };
 
     auto characterNonEntityReferencesHandler =
-    [&](std::string_view& characters)->void {
+    [&](std::string_view characters)->void {
         
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     auto attributeHandler =
-    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
+    [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
         
 
         if (localName == "url"sv) {
@@ -76,20 +76,20 @@ auto startDocumentHandler =
     };
 
     auto XMLNamespaceHandler =
-        [&](std::string_view& prefix, std::string_view& uri)->void { };
+        [&](std::string_view prefix, std::string_view uri)->void { };
 
     auto XMLCommentHandler =
-        [&](std::string_view& value)->void { };
+        [&](std::string_view value)->void { };
 
     auto CDATAHandler =
-    [&](std::string_view& characters)->void {
+    [&](std::string_view characters)->void {
         
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     auto processingInstructionHandler =
-        [&](std::string_view& target, std::string_view& data)->void { };
+        [&](std::string_view target, std::string_view data)->void { };
 
     auto endDocumentHandler =
         [&]()->void { };
