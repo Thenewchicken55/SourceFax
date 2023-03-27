@@ -101,9 +101,6 @@ private:
     // Accessor::predicate to check if content has a specific character at a specific index
     bool isCharacter(int index, char character);
 
-    // wrapper for remove_prefix()
-    void removePrefix(int indexToRemove);
-
     // data members
     std::string_view content;
 

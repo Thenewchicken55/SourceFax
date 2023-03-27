@@ -107,7 +107,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         } else if (isComment()) {
             // parse XML comment
             parseComment(doneReading);
-            removePrefix("-->"sv.size());
+            content.remove_prefix("-->"sv.size());
             if (XMLCommentHandler) {
                 XMLCommentHandler(value);
             }
@@ -140,7 +140,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             if(startTagHandler) {
                 startTagHandler(qName, prefix, localName);
             }
-            removePrefix(content.find_first_not_of(WHITESPACE));
+            content.remove_prefix(content.find_first_not_of(WHITESPACE));
             while (xmlNameMask[content[0]]) {
                 if (isNamespace()) {
                     // parse XML namespace
@@ -160,16 +160,16 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         // use strtol() instead of atoi() since strtol() understands hex encoding of '0x0?'
                         [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }
-                    removePrefix("\""sv.size());
-                    removePrefix(content.find_first_not_of(WHITESPACE));
+                    content.remove_prefix("\""sv.size());
+                    content.remove_prefix(content.find_first_not_of(WHITESPACE));
                 }
             }
             if (isCharacter(0, '>')) {
-                removePrefix(">"sv.size());
+                content.remove_prefix(">"sv.size());
                 ++depth;
             } else if (isCharacter(0, '/') && isCharacter(1, '>')) {
                 assert(content.compare(0, "/>"sv.size(), "/>") == 0);
-                removePrefix("/>"sv.size());
+                content.remove_prefix("/>"sv.size());
                 TRACE("END TAG", "qName", qName , "prefix", prefix , "localName", localName);
                 if (depth == 0)
                     break;
@@ -180,7 +180,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         }
     }
 
-    removePrefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
+    content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
     while (isComment()) {
         // parse XML comment
         parseComment(doneReading);
@@ -669,9 +669,4 @@ bool XMLParser::isNamespace() {
 // Accessor::predicate to check if content has a specific character at a specific index
 bool XMLParser::isCharacter(int index, char character) {
         return content[index] == character;
-}
-
-// wrapper for remove_prefix()
-void XMLParser::removePrefix(int index) {
-    content.remove_prefix(index);
 }
