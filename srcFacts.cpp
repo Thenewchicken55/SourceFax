@@ -66,18 +66,18 @@ int main(int argc, char* argv[]) {
     };
 
     auto characterEntityReferencesHandler =
-    [&](std::string_view& characters)->void {
+    [&textSize](std::string_view& characters)->void {
         ++textSize;
     };
 
     auto characterNonEntityReferencesHandler =
-    [&](std::string_view& characters)->void {
+    [&loc, &textSize](std::string_view& characters)->void {
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         textSize += static_cast<int>(characters.size());
     };
 
     auto attributeHandler =
-    [&](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
+    [&url, &stringCount, &lineCommentCount](std::string_view& qName, std::string_view& prefix, std::string_view& localName, std::string_view& value)->void {
         if (localName == "url"sv) {
             url = value;
         } else if (localName == "literal"sv && value == "string"sv) {
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
     };
 
     auto CDATAHandler =
-    [&](std::string_view& characters)->void {
+    [&textSize, &loc](std::string_view& characters)->void {
         textSize += static_cast<int>(characters.size());
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
