@@ -32,6 +32,7 @@ using namespace std::literals::string_view_literals;
 constexpr auto WHITESPACE = " \n\t\r"sv;
 constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
 const int BLOCK_SIZE = 4096;
+const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111111111111111111111100000001111111111011000000000000000000000000000000000000000000000");
 
 
 // constructor
@@ -140,7 +141,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                 startTagHandler(qName, prefix, localName);
             }
             removePrefix(findFirstNotOf(WHITESPACE));
-            while (isMatchNameMask()) {
+            while (xmlNameMask[content[0]]) {
                 if (isNamespace()) {
                     // parse XML namespace
                     auto uri = parseNamespace();
@@ -693,10 +694,4 @@ size_t XMLParser::npos() {
 // wrapper for compare()
 int XMLParser::compareContent(int position, int count, const std::string& string) {
     return content.compare(position, count, string);
-}
-
-// uses xmlNameMask bitset to compare with the first char of content
-bool XMLParser::isMatchNameMask() {
-    const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111111111111111111111100000001111111111011000000000000000000000000000000000000000000000");
-    return xmlNameMask[content[0]];
 }
