@@ -38,15 +38,24 @@ int main() {
     std::string url;
     XMLParser parser = XMLParser(content);
 
-auto startDocumentHandler =
-        [&]()->void { };
-
     auto XMLDeclarationHandler =
-        [&](std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { };
+        [&](std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void {
+            std::cout << "<?xml version=\"" << version << "\" ";
+
+            if (encoding.has_value()) {
+                std::cout << "encoding=\"" << encoding.value() << "\" ";
+            }
+
+            if (standalone.has_value()) {
+                std::cout << "standalone=\"" << standalone.value() << "\" ";
+            }
+
+            std::cout << "?>" << std::endl;
+         };
 
     auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
-        
+        std::cout << "<" << qName << ">" << std::endl;
 
         if (localName == "unit"sv) {
             ++unitCount;
@@ -54,21 +63,25 @@ auto startDocumentHandler =
     };
 
     auto endTagHandler =
-        [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void { };
+        [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
+            std::cout << "</" <<  qName << ">" << std::endl;
+         };
 
     auto characterEntityReferencesHandler =
-        [&](std::string_view characters)->void { };
+        [&](std::string_view characters)->void {
+            std::cout << characters << std::endl; 
+         };
 
     auto characterNonEntityReferencesHandler =
     [&](std::string_view characters)->void {
-        
+        std::cout << characters << std::endl; 
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     auto attributeHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
-        
+        std::cout << "<" << qName << "=\"" << value << "\">" << std::endl;
 
         if (localName == "url"sv) {
             url = value;
@@ -76,7 +89,9 @@ auto startDocumentHandler =
     };
 
     auto XMLNamespaceHandler =
-        [&](std::string_view prefix, std::string_view uri)->void { };
+        [&](std::string_view prefix, std::string_view uri)->void {
+            std::cout << prefix << "=\"" << uri << "\"" << std::endl;
+         };
 
     auto XMLCommentHandler =
         [&](std::string_view value)->void { };
@@ -98,7 +113,7 @@ auto startDocumentHandler =
     parser.parse(
 
         // null Start Document handler
-        startDocumentHandler,
+        nullptr,
 
         // null XML declaration handler
         XMLDeclarationHandler,
@@ -138,14 +153,7 @@ auto startDocumentHandler =
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
     const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
-    const auto files = std::max(unitCount - 1, 1);
     std::cout.imbue(std::locale{""});
-    const auto valueWidth = std::max(5, static_cast<int>(log10(parser.getTotalBytes()) * 1.3 + 1));
-    std::cout << "# srcFacts: " << url << '\n';
-    std::cout << "| Measure      | " << std::setw(valueWidth + 3) << "Value |\n";
-    std::cout << "|:-------------|-" << std::setw(valueWidth + 3) << std::setfill('-') << ":|\n" << std::setfill(' ');
-    std::cout << "| LOC          | " << std::setw(valueWidth) << loc             << " |\n";
-    std::cout << "| Files        | " << std::setw(valueWidth) << files           << " |\n";
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';
