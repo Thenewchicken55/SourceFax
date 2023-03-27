@@ -140,7 +140,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             if(startTagHandler) {
                 startTagHandler(qName, prefix, localName);
             }
-            removePrefix(findFirstNotOf(WHITESPACE));
+            removePrefix(content.find_first_not_of(WHITESPACE));
             while (xmlNameMask[content[0]]) {
                 if (isNamespace()) {
                     // parse XML namespace
@@ -161,7 +161,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                         [[maybe_unused]] const auto escapeValue = (char)strtol(value.data(), NULL, 0);
                     }
                     removePrefix("\""sv.size());
-                    removePrefix(findFirstNotOf(WHITESPACE));
+                    removePrefix(content.find_first_not_of(WHITESPACE));
                 }
             }
             if (isCharacter(0, '>')) {
@@ -180,7 +180,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         }
     }
 
-    removePrefix(findFirstNotOf(WHITESPACE) == content.npos ? content.size() : findFirstNotOf(WHITESPACE));
+    removePrefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
     while (isComment()) {
         // parse XML comment
         parseComment(doneReading);
@@ -675,9 +675,3 @@ bool XMLParser::isCharacter(int index, char character) {
 void XMLParser::removePrefix(int index) {
     content.remove_prefix(index);
 }
-
-// wrapper for find_first_not_of()
-std::size_t XMLParser::findFirstNotOf(std::string_view string) {
-    return content.find_first_not_of(string);
-}
-

@@ -104,9 +104,6 @@ private:
     // wrapper for remove_prefix()
     void removePrefix(int indexToRemove);
 
-    // wrapper for find_first_not_of()
-    std::size_t findFirstNotOf(std::string_view delimiters);
-
     // data members
     std::string_view content;
 
