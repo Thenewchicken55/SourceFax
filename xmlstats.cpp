@@ -148,7 +148,6 @@ int main() {
     std::cout << "# xmlStats: " << url << '\n';
     std::cout << "| Measure                 | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:------------------------|-" << std::setw(valueWidth + 3) << std::setfill('-')       << ":|\n" << std::setfill(' ');
-    std::cout << "| LOC                     | " << std::setw(valueWidth) << loc                         << " |\n";
     std::cout << "| Files                   | " << std::setw(valueWidth) << files                       << " |\n";
     std::cout << "| Start Document          | " << std::setw(valueWidth) << startDocumentCount          << " |\n";
     std::cout << "| XML Declarations        | " << std::setw(valueWidth) << XMLDeclarationCount         << " |\n";
