@@ -55,8 +55,8 @@ int main() {
 
     const auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
-        std::cout << "<" << qName << ">" << std::endl;
-
+        std::cout << "<" << qName;
+        
         if (localName == "unit"sv) {
             ++unitCount;
         }
@@ -74,14 +74,14 @@ int main() {
 
     const auto characterNonEntityReferencesHandler =
     [&](std::string_view characters)->void {
-        std::cout << characters << std::endl; 
+        std::cout << characters << " "; 
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     const auto attributeHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
-        std::cout << "<" << qName << "=\"" << value << "\">" << std::endl;
+        std::cout << " " << qName << "=\"" << value << "\">";
 
         if (localName == "url"sv) {
             url = value;
@@ -90,24 +90,29 @@ int main() {
 
     const auto XMLNamespaceHandler =
         [&](std::string_view prefix, std::string_view uri)->void {
-            std::cout << prefix << "=\"" << uri << "\"" << std::endl;
+            std::cout << " xmlns";
+            if (!prefix.empty()) {
+                std::cout << ":" << prefix;
+            }
+            std::cout << "=\"" << uri << "\"";
          };
 
     const auto XMLCommentHandler =
-        [&](std::string_view value)->void { };
+        [&](std::string_view value)->void { 
+            std::cout << "<!--" << value << "-->" << std::endl;
+        };
 
     const auto CDATAHandler =
     [&](std::string_view characters)->void {
-        
+        std::cout << "<![CDATA[" << characters << "]]>";
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     const auto processingInstructionHandler =
-        [&](std::string_view target, std::string_view data)->void { };
-
-    const auto endDocumentHandler =
-        [&]()->void { };
+        [&](std::string_view target, std::string_view data)->void {
+            std::cout << "<?" << target << " " << data << "?>" << std::endl;
+         };
 
     // parse XML
     parser.parse(
@@ -146,7 +151,7 @@ int main() {
         processingInstructionHandler,
 
         // null end document handler
-        endDocumentHandler
+        nullptr
 
         );
 
