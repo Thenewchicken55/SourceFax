@@ -1,15 +1,15 @@
 /*
     identity.cpp
 
-    Create the application identity which is an identity 
+    Create the application identity which is an identity
     transformation. A transformation is a program that converts
-    data in one format to data in a related format, typically 
-    the same format. In this case, it converts from XML to XML. 
-    It is an identity transformation because the output XML 
+    data in one format to data in a related format, typically
+    the same format. In this case, it converts from XML to XML.
+    It is an identity transformation because the output XML
     should be the same (as much as possible) as the input XML.
     The XMLParser will parse the input, and your callbacks will
-    output the XML format. You can assume that there are no 
-    CDATA parts, but you must escape all >, <, and & in 
+    output the XML format. You can assume that there are no
+    CDATA parts, but you must escape all >, <, and & in
     Character and CDATA content.
 
 */
@@ -29,6 +29,23 @@ using namespace std::literals::string_view_literals;
 
 constexpr auto WHITESPACE = " \n\t\r"sv;
 [[maybe_unused]] constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
+
+std::string escape(std::string_view unescaped) {
+    std::string unescapedString(unescaped);
+    std::string escapedString = "";
+    for(auto c: unescapedString) {
+        if(c == '<') {
+            escapedString += "&lt";
+        } else if (c == '>') {
+            escapedString += "&gt";
+        } else if (c == '&') {
+            escapedString += "&amp";
+        } else {
+            escapedString += c;
+        }
+    }
+    return escapedString;
+}
 
 int main() {
     const auto startTime = std::chrono::steady_clock::now();
@@ -56,7 +73,7 @@ int main() {
     const auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
         std::cout << "<" << qName;
-        
+
         if (localName == "unit"sv) {
             ++unitCount;
         }
@@ -69,12 +86,12 @@ int main() {
 
     const auto characterEntityReferencesHandler =
         [&](std::string_view characters)->void {
-            std::cout << characters << std::endl; 
+            std::cout << escape(characters) << std::endl;
          };
 
     const auto characterNonEntityReferencesHandler =
     [&](std::string_view characters)->void {
-        std::cout << characters << " "; 
+        std::cout << escape(characters) << " ";
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
@@ -98,13 +115,13 @@ int main() {
          };
 
     const auto XMLCommentHandler =
-        [&](std::string_view value)->void { 
+        [&](std::string_view value)->void {
             std::cout << "<!--" << value << "-->" << std::endl;
         };
 
     const auto CDATAHandler =
     [&](std::string_view characters)->void {
-        std::cout << "<![CDATA[" << characters << "]]>";
+        std::cout << "<![CDATA[" << escape(characters) << "]]>";
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
