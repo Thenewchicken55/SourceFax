@@ -144,7 +144,9 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             while (xmlNameMask[content[0]]) {
                 if (isNamespace()) {
                     // parse XML namespace
-                    auto uri = parseNamespace();
+                    auto result = parseNamespace();
+                    auto prefix = result.first;
+                    auto uri = result.second;
                     if (XMLNamespaceHandler) {
                         XMLNamespaceHandler(prefix, uri);
                     }
@@ -556,7 +558,7 @@ void XMLParser::parseStartTag(std::string_view& qName, std::string_view& prefix,
 }
 
 // parse XML namespace
-std::string_view XMLParser::parseNamespace() {
+std::pair<std::string_view, std::string_view> XMLParser::parseNamespace() {
     assert(content.compare(0, "xmlns"sv.size(), "xmlns"sv) == 0);
     content.remove_prefix("xmlns"sv.size());
     auto nameEndPosition = content.find('=');
@@ -595,7 +597,7 @@ std::string_view XMLParser::parseNamespace() {
     assert(content.compare(0, "\""sv.size(), "\""sv) == 0);
     content.remove_prefix("\""sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
-    return uri;
+    return std::make_pair(prefix, uri);
 }
 
 // parse attribute

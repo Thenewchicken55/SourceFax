@@ -75,7 +75,7 @@ private:
     void parseStartTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName);
 
     // parse XML namespace
-    std::string_view parseNamespace();
+    std::pair<std::string_view, std::string_view> parseNamespace();
 
     // parse attribute
     std::string_view parseAttribute();
