@@ -60,7 +60,7 @@ private:
     void parseCharacterNotEntityReference(std::string_view& characters);
 
     // parse XML comment
-    void parseComment(bool& doneReading);
+    std::string_view parseComment(bool& doneReading);
 
     // parse CDATA
     void parseCDATA(bool& doneReading, std::string_view& characters);

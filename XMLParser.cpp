@@ -106,7 +106,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             }
         } else if (isComment()) {
             // parse XML comment
-            parseComment(doneReading);
+            value = parseComment(doneReading);
             content.remove_prefix("-->"sv.size());
             if (XMLCommentHandler) {
                 XMLCommentHandler(value);
@@ -185,7 +185,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
     content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
     while (isComment()) {
         // parse XML comment
-        parseComment(doneReading);
+        value = parseComment(doneReading);
         if (XMLCommentHandler) {
             XMLCommentHandler(value);
         }
@@ -434,7 +434,7 @@ void XMLParser::parseCharacterNotEntityReference(std::string_view& characters) {
 }
 
 // parse XML comment
-void XMLParser::parseComment(bool& doneReading) {
+std::string_view XMLParser::parseComment(bool& doneReading) {
     assert(content.compare(0, "<!--"sv.size(), "<!--"sv) == 0);
     content.remove_prefix("<!--"sv.size());
     auto tagEndPosition = content.find("-->"sv);
@@ -453,6 +453,7 @@ void XMLParser::parseComment(bool& doneReading) {
     assert(content.compare(0, "-->"sv.size(), "-->"sv) == 0);
     content.remove_prefix("-->"sv.size());
     content.remove_prefix(content.find_first_not_of(WHITESPACE) == content.npos ? content.size() : content.find_first_not_of(WHITESPACE));
+    return comment;
 }
 
 // parse CDATA
