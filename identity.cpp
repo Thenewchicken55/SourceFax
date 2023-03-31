@@ -51,6 +51,7 @@ int main() {
     const auto startTime = std::chrono::steady_clock::now();
     int unitCount = 0;
     int loc = 0;
+    int unclosedBrackets = 0;
     std::string_view content;
     std::string url;
     XMLParser parser = XMLParser(content);
@@ -72,8 +73,12 @@ int main() {
 
     const auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
-        std::cout << "> <" << qName;
-
+        if (unclosedBrackets > 0) {
+                --unclosedBrackets;
+                std::cout << ">";
+        }
+        std::cout << "<" << qName;
+        ++unclosedBrackets;
         if (localName == "unit"sv) {
             ++unitCount;
         }
@@ -91,7 +96,11 @@ int main() {
 
     const auto characterNonEntityReferencesHandler =
     [&](std::string_view characters)->void {
-        std::cout << "" << escape(characters) << " ";
+        if (unclosedBrackets > 0) {
+                --unclosedBrackets;
+                std::cout << ">";
+        }
+        std::cout << escape(characters) << " ";
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
