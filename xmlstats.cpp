@@ -169,7 +169,7 @@ int main() {
     std::cout << "| End Tags                | " << std::setw(valueWidth) << endTagCount                 << " |\n";
     std::cout << "| Characters              | " << std::setw(valueWidth) << charactersCount             << " |\n";
     std::cout << "| Attributes              | " << std::setw(valueWidth) << attributeCount              << " |\n";
-    std::cout << "| XML Namespaces          | " << std::setw(valueWidth) << XMLNamespaceCount           << " |\n";
+    std::cout << "| XML Namespaces           | " << std::setw(valueWidth) << XMLNamespaceCount           << " |\n";
     std::cout << "| XML Comments            | " << std::setw(valueWidth) << XMLCommentCount             << " |\n";
     std::cout << "| CDATA                   | " << std::setw(valueWidth) << CDATACount                  << " |\n";
     std::cout << "| Processing Instructions | " << std::setw(valueWidth) << processingInstructionCount  << " |\n";

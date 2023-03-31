@@ -65,7 +65,7 @@ int main() {
             }
 
             if (standalone.has_value()) {
-                std::cout << "standalone=\"" << standalone.value() << "\" ";
+                std::cout << "standalone=\"" << standalone.value() << "\"";
             }
 
             std::cout << "?>" << std::endl;
@@ -111,7 +111,7 @@ int main() {
 
     const auto attributeHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
-        std::cout << qName << "=\"" << value << "\"";
+        std::cout << " " << qName << "=\"" << value << "\"";
 
         if (localName == "url"sv) {
             url = value;
