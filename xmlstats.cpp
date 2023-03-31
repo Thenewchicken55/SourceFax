@@ -44,10 +44,14 @@ int main() {
     XMLParser parser = XMLParser(content);
 
     const auto startDocumentHandler =
-        [&]()->void { ++startDocumentCount;};
+    [&]()->void {
+        ++startDocumentCount;
+    };
 
     const auto XMLDeclarationHandler =
-        [&](std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void { ++XMLDeclarationCount;};
+    [&](std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)->void {
+        ++XMLDeclarationCount;
+    };
 
     const auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
@@ -59,10 +63,14 @@ int main() {
     };
 
     const auto endTagHandler =
-        [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void { ++endTagCount;};
+    [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
+        ++endTagCount;
+    };
 
     const auto characterEntityReferencesHandler =
-        [&](std::string_view characters)->void { ++charactersCount;};
+    [&](std::string_view characters)->void {
+        ++charactersCount;
+    };
 
     const auto characterNonEntityReferencesHandler =
     [&](std::string_view characters)->void {
@@ -81,10 +89,14 @@ int main() {
     };
 
     const auto XMLNamespaceHandler =
-        [&](std::string_view prefix, std::string_view uri)->void { ++XMLNamespaceCount;};
+    [&](std::string_view prefix, std::string_view uri)->void {
+        ++XMLNamespaceCount;
+    };
 
     const auto XMLCommentHandler =
-        [&](std::string_view value)->void { ++XMLCommentCount;};
+    [&](std::string_view value)->void {
+        ++XMLCommentCount;
+    };
 
     const auto CDATAHandler =
     [&](std::string_view characters)->void {
@@ -94,10 +106,14 @@ int main() {
     };
 
     const auto processingInstructionHandler =
-        [&](std::string_view target, std::string_view data)->void { ++processingInstructionCount;};
+    [&](std::string_view target, std::string_view data)->void {
+        ++processingInstructionCount;
+    };
 
     const auto endDocumentHandler =
-        [&]()->void { ++endDocumentCount;};
+    [&]()->void {
+        ++endDocumentCount;
+    };
 
     // parse XML
     parser.parse(
