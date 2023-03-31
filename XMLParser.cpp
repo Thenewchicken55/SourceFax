@@ -127,7 +127,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             }
         } else if (isCharacter(1, '/') /* && isCharacter(0, '<') */) {
             // parse end tag
-            parseEndTag();
+            parseEndTag(qName, prefix, localName);
             if(endTagHandler) {
                 endTagHandler(qName, prefix, localName);
             }
@@ -500,7 +500,7 @@ std::pair<std::string_view, std::string_view> XMLParser::parseProcessing() {
 }
 
 // parse end tag
-void XMLParser::parseEndTag() {
+void XMLParser::parseEndTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName) {
     assert(content.compare(0, "</"sv.size(), "</"sv) == 0);
     content.remove_prefix("</"sv.size());
     if (content[0] == ':') {
@@ -517,13 +517,13 @@ void XMLParser::parseEndTag() {
         colonPosition = nameEndPosition;
         nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
     }
-    const auto qName(content.substr(0, nameEndPosition));
+    qName = content.substr(0, nameEndPosition);
     if (qName.empty()) {
         std::cerr << "parser error: EndTag: invalid element name\n";
         exit(1);
     }
-    [[maybe_unused]] const auto prefix(qName.substr(0, colonPosition));
-    [[maybe_unused]] const auto localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
+    prefix = qName.substr(0, colonPosition);
+    localName = qName.substr(colonPosition ? colonPosition + 1 : 0);
     TRACE("END TAG", "qName", qName, "prefix", prefix, "localName", localName);
     content.remove_prefix(nameEndPosition);
     content.remove_prefix(content.find_first_not_of(WHITESPACE));

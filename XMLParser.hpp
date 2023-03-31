@@ -69,7 +69,7 @@ private:
     std::pair<std::string_view, std::string_view> parseProcessing();
 
     // parse end tag
-    void parseEndTag();
+    void parseEndTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName);
 
     // parse start tag
     void parseStartTag(std::string_view& qName, std::string_view& prefix, std::string_view& localName);
