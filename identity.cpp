@@ -86,12 +86,12 @@ int main() {
 
     const auto endTagHandler =
         [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
-            std::cout << "</" <<  qName << ">" << std::endl;
+            std::cout << "</" <<  qName << ">";
          };
 
     const auto characterEntityReferencesHandler =
         [&](std::string_view characters)->void {
-            std::cout << escape(characters) << std::endl;
+            std::cout << escape(characters);
          };
 
     const auto characterNonEntityReferencesHandler =
