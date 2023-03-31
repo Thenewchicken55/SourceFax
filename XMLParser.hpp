@@ -57,7 +57,7 @@ private:
     std::string_view parseCharacterEntityReference();
 
     // parse character non-entity references
-    void parseCharacterNotEntityReference(std::string_view& characters);
+    std::string_view parseCharacterNotEntityReference();
 
     // parse XML comment
     std::string_view parseComment(bool& doneReading);

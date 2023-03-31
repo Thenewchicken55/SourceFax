@@ -100,7 +100,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             }
         } else if (!isCharacter(0 ,'<')) {
             // parse character non-entity references
-            parseCharacterNotEntityReference(characters);
+            characters = parseCharacterNotEntityReference();
             if (characterNonEntityReferencesHandler) {
                 characterNonEntityReferencesHandler(characters);
             }
@@ -425,12 +425,13 @@ std::string_view XMLParser::parseCharacterEntityReference() {
 }
 
 // parse character non-entity references
-void XMLParser::parseCharacterNotEntityReference(std::string_view& characters) {
+std::string_view XMLParser::parseCharacterNotEntityReference() {
     assert(content[0] != '<' && content[0] != '&');
     const auto characterEndPosition = content.find_first_of("<&");
-    characters = (content.substr(0, characterEndPosition));\
+    const auto characters = (content.substr(0, characterEndPosition));\
     TRACE("CHARACTERS", "characters", characters);
     content.remove_prefix(characters.size());
+    return characters;
 }
 
 // parse XML comment
