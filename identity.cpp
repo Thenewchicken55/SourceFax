@@ -35,11 +35,11 @@ std::string escape(std::string_view unescaped) {
     std::string escapedString = "";
     for(auto c: unescapedString) {
         if(c == '<') {
-            escapedString += "&lt";
+            escapedString += "&lt;";
         } else if (c == '>') {
-            escapedString += "&gt";
+            escapedString += "&gt;";
         } else if (c == '&') {
-            escapedString += "&amp";
+            escapedString += "&amp;";
         } else {
             escapedString += c;
         }
