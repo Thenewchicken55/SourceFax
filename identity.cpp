@@ -91,6 +91,10 @@ int main() {
 
     const auto characterEntityReferencesHandler =
         [&](std::string_view characters)->void {
+            if (unclosedBrackets > 0) {
+                --unclosedBrackets;
+                std::cout << ">";
+            }
             std::cout << escape(characters);
          };
 
@@ -100,14 +104,14 @@ int main() {
                 --unclosedBrackets;
                 std::cout << ">";
         }
-        std::cout << escape(characters) << " ";
+        std::cout << escape(characters);
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     const auto attributeHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
-        std::cout << " " << qName << "=\"" << value << "\"";
+        std::cout << qName << "=\"" << value << "\"";
 
         if (localName == "url"sv) {
             url = value;
