@@ -72,7 +72,7 @@ int main() {
 
     const auto startTagHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
-        std::cout << "<" << qName;
+        std::cout << "> <" << qName;
 
         if (localName == "unit"sv) {
             ++unitCount;
@@ -91,14 +91,14 @@ int main() {
 
     const auto characterNonEntityReferencesHandler =
     [&](std::string_view characters)->void {
-        std::cout << escape(characters) << " ";
+        std::cout << "" << escape(characters) << " ";
 
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     };
 
     const auto attributeHandler =
     [&](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
-        std::cout << " " << qName << "=\"" << value << "\">";
+        std::cout << " " << qName << "=\"" << value << "\"";
 
         if (localName == "url"sv) {
             url = value;
