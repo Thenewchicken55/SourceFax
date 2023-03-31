@@ -94,7 +94,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         }
         if (isCharacter(0, '&')) {
             // parse character entity references
-            parseCharacterEntityReference();
+            characters = parseCharacterEntityReference();
             if (characterEntityReferencesHandler) {
                 characterEntityReferencesHandler(characters);
             }
@@ -403,7 +403,7 @@ void XMLParser::refillPreserve(bool& doneReading) {
 }
 
 // parse character entity references
-void XMLParser::parseCharacterEntityReference() {
+std::string_view XMLParser::parseCharacterEntityReference() {
     if (content[1] == 'l' && content[2] == 't' && content[3] == ';') {
         unescapedCharacter = "<";
         escapedCharacter = "&lt;"sv;
@@ -421,6 +421,7 @@ void XMLParser::parseCharacterEntityReference() {
     content.remove_prefix(escapedCharacter.size());
     [[maybe_unused]] const auto characters(unescapedCharacter);
     TRACE("CHARACTERS", "characters", characters);
+    return characters;
 }
 
 // parse character non-entity references

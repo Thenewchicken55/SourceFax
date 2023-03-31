@@ -54,7 +54,7 @@ private:
     void refillPreserve(bool& doneReading);
 
     // parse character entity references
-    void parseCharacterEntityReference();
+    std::string_view parseCharacterEntityReference();
 
     // parse character non-entity references
     void parseCharacterNotEntityReference(std::string_view& characters);
