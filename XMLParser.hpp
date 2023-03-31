@@ -78,7 +78,7 @@ private:
     std::pair<std::string_view, std::string_view> parseNamespace();
 
     // parse attribute
-    std::string_view parseAttribute();
+    std::string_view parseAttribute(std::string_view qName, [[maybe_unused]] std::string_view prefix, std::string_view localName);
 
     // Accessor::predicate to test if the tag is a XML declaration
     bool isXML();

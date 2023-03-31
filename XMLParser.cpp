@@ -152,7 +152,7 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                     }
                 } else {
                     // parse attribute
-                    value = parseAttribute();
+                    value = parseAttribute(qName, prefix, localName);
                     if(attributeHandler) {
                         attributeHandler(qName, prefix, localName, value);
                     }
@@ -604,7 +604,7 @@ std::pair<std::string_view, std::string_view> XMLParser::parseNamespace() {
 }
 
 // parse attribute
-std::string_view XMLParser::parseAttribute() {
+std::string_view XMLParser::parseAttribute(std::string_view qName, [[maybe_unused]] std::string_view prefix, std::string_view localName) {
     auto nameEndPosition = content.find_first_of(NAMEEND);
     if (nameEndPosition == content.size()) {
         std::cerr << "parser error : Empty attribute name" << '\n';
@@ -615,9 +615,9 @@ std::string_view XMLParser::parseAttribute() {
         colonPosition = nameEndPosition;
         nameEndPosition = content.find_first_of(NAMEEND, nameEndPosition + 1);
     }
-    const auto qName(content.substr(0, nameEndPosition));
-    [[maybe_unused]] const auto prefix(qName.substr(0, colonPosition));
-    [[maybe_unused]] const auto localName(qName.substr(colonPosition ? colonPosition + 1 : 0));
+    qName = content.substr(0, nameEndPosition);
+    prefix = qName.substr(0, colonPosition);
+    localName = qName.substr(colonPosition ? colonPosition + 1 : 0);
     content.remove_prefix(nameEndPosition);
     content.remove_prefix(content.find_first_not_of(WHITESPACE));
     if (content.empty()) {
@@ -643,6 +643,7 @@ std::string_view XMLParser::parseAttribute() {
     }
     const std::string_view value(content.substr(0, valueEndPosition));
     content.remove_prefix(valueEndPosition);
+    TRACE("ATTRIBUTE", "qname", qName, "prefix", prefix, "localName", localName, "value", value);
     return value;
 }
 
