@@ -158,13 +158,11 @@ int main() {
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
     const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
-    const auto files = std::max(unitCount - 1, 1);
     std::cout.imbue(std::locale{""});
     const auto valueWidth = std::max(5, static_cast<int>(log10(parser.getTotalBytes()) * 1.3 + 1));
     std::cout << "# xmlStats: " << url << '\n';
     std::cout << "| Measure                 | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:------------------------|-" << std::setw(valueWidth + 3) << std::setfill('-')       << ":|\n" << std::setfill(' ');
-    std::cout << "| Files                   | " << std::setw(valueWidth) << files                       << " |\n";
     std::cout << "| Start Document          | " << std::setw(valueWidth) << startDocumentCount          << " |\n";
     std::cout << "| XML Declarations        | " << std::setw(valueWidth) << XMLDeclarationCount         << " |\n";
     std::cout << "| Start Tags              | " << std::setw(valueWidth) << startTagCount               << " |\n";
