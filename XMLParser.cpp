@@ -604,7 +604,7 @@ std::pair<std::string_view, std::string_view> XMLParser::parseNamespace() {
 }
 
 // parse attribute
-std::string_view XMLParser::parseAttribute(std::string_view qName, [[maybe_unused]] std::string_view prefix, std::string_view localName) {
+std::string_view XMLParser::parseAttribute(std::string_view& qName, [[maybe_unused]] std::string_view& prefix, std::string_view& localName) {
     auto nameEndPosition = content.find_first_of(NAMEEND);
     if (nameEndPosition == content.size()) {
         std::cerr << "parser error : Empty attribute name" << '\n';

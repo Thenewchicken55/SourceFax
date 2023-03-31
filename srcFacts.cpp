@@ -78,13 +78,12 @@ int main(int argc, char* argv[]) {
 
     const auto attributeHandler =
     [&url, &stringCount, &lineCommentCount](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
-        std::cerr <<  " qname "  << qName <<  " prefix "  << prefix <<  " localName "  << localName <<  " value "  << value << std::endl;
         
         if (localName == "url"sv) {
             url = value;
-        } else if (localName == "literal"sv && value == "string"sv) {
+        } else if (localName == "type"sv && value == "string"sv) {
             ++stringCount;
-        } else if (localName == "comment"sv && value == "line") {
+        } else if (localName == "type"sv && value == "line") {
             ++lineCommentCount;
         }
     };
