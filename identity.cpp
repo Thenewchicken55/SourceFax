@@ -89,16 +89,7 @@ int main() {
             std::cout << "</" <<  qName << ">";
          };
 
-    const auto characterEntityReferencesHandler =
-        [&](std::string_view characters)->void {
-            if (unclosedBrackets > 0) {
-                --unclosedBrackets;
-                std::cout << ">";
-            }
-            std::cout << escape(characters);
-         };
-
-    const auto characterNonEntityReferencesHandler =
+    const auto characterHandler =
     [&](std::string_view characters)->void {
         if (unclosedBrackets > 0) {
                 --unclosedBrackets;
@@ -159,11 +150,8 @@ int main() {
         // null End tag handler
         endTagHandler,
 
-        // character entity references handler
-        characterEntityReferencesHandler,
-
         // character non-entity references handler
-        characterNonEntityReferencesHandler,
+        characterHandler,
 
         // attribute handler
         attributeHandler,
