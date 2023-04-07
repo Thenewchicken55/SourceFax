@@ -67,12 +67,7 @@ int main() {
         ++endTagCount;
     };
 
-    const auto characterEntityReferencesHandler =
-    [&](std::string_view characters)->void {
-        ++charactersCount;
-    };
-
-    const auto characterNonEntityReferencesHandler =
+    const auto characterHandler =
     [&](std::string_view characters)->void {
         ++charactersCount;
 
@@ -130,11 +125,8 @@ int main() {
         // null End tag handler
         endTagHandler,
 
-        // character entity references handler
-        characterEntityReferencesHandler,
-
-        // character non-entity references handler
-        characterNonEntityReferencesHandler,
+        // character handler
+        characterHandler,
 
         // attribute handler
         attributeHandler,

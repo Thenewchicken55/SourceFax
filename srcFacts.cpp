@@ -65,12 +65,7 @@ int main(int argc, char* argv[]) {
         }
     };
 
-    const auto characterEntityReferencesHandler =
-    [&textSize](std::string_view characters)->void {
-        ++textSize;
-    };
-
-    const auto characterNonEntityReferencesHandler =
+    const auto characterHandler =
     [&loc, &textSize](std::string_view characters)->void {
         loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
         textSize += static_cast<int>(characters.size());
@@ -109,11 +104,8 @@ int main(int argc, char* argv[]) {
         // null End tag handler
         nullptr,
 
-        // character entity references handler
-        characterEntityReferencesHandler,
-
-        // character non-entity references handler
-        characterNonEntityReferencesHandler,
+        // character handler
+        characterHandler,
 
         // attribute handler
         attributeHandler,
