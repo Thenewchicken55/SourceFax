@@ -1,0 +1,5 @@
+/*
+    IdentityParser.cpp
+
+    Concrete class specific to Identity inheriting from the abstract class XMLParser
+*/

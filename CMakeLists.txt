@@ -22,7 +22,7 @@ endif()
 add_executable(srcfacts)
 
 # srcfacts sources
-target_sources(srcfacts PRIVATE srcFacts.cpp refillContent.cpp XMLParser.cpp xml_parser.cpp)
+target_sources(srcfacts PRIVATE srcFacts.cpp refillContent.cpp XMLParser.cpp xml_parser.cpp srcFactsParser.cpp)
 
 # cmake . -DTRACE=ON|OFF
 if(DEFINED TRACE)
@@ -105,7 +105,7 @@ add_custom_target(run
 add_executable(xmlstats)
 
 # xmlstats sources
-target_sources(xmlstats PRIVATE xmlstats.cpp XMLParser.cpp refillContent.cpp xml_parser.cpp)
+target_sources(xmlstats PRIVATE xmlstats.cpp XMLParser.cpp refillContent.cpp xml_parser.cpp XMLStatsParser.cpp)
 
 # Turn on warnings
 target_compile_options(xmlstats PRIVATE
@@ -126,7 +126,7 @@ add_custom_target(run_xmlstats
 add_executable(identity)
 
 # identity sources
-target_sources(identity PRIVATE identity.cpp XMLParser.cpp refillContent.cpp xml_parser.cpp)
+target_sources(identity PRIVATE identity.cpp XMLParser.cpp refillContent.cpp xml_parser.cpp IdentityParser.cpp)
 
 # Turn on warnings
 target_compile_options(identity PRIVATE

@@ -1,0 +1,5 @@
+/*
+    XMLStatsParser.cpp
+
+    Implementation file for the concrete class specific to XML Stats inheriting from the abstract class XMLParser
+*/
