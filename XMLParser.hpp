@@ -17,17 +17,18 @@ public:
     XMLParser(std::string_view content);
 
     // parse XML
-    void parse( std::function<void()> startDocumentHandler,
-                std::function<void(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
-                std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> elementStartTagHandler,
-                std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> elementEndTagHandler,
-                std::function<void(std::string_view characters)> character,
-                std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)> attributeHandler,
-                std::function<void(std::string_view prefix, std::string_view uri)> XMLNamespaceHandler,
-                std::function<void(std::string_view value)> XMLCommentHandler,
-                std::function<void(std::string_view characters)> CDATAHandler,
-                std::function<void(std::string_view target, std::string_view data)> processingInstructionHandler,
-                std::function<void()> endDocumentHandler);
+    void parse(  std::function<void()> handleStartDocument,
+                        std::function<void(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> handleXMLDeclaration,
+                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> handleStartTag,
+                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> handleEndTag,
+                        std::function<void(std::string_view characters)> character,
+                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)> handleAttribute,
+                        std::function<void(std::string_view prefix, std::string_view uri)> handleXMLNamespace,
+                        std::function<void(std::string_view value)> handleXMLComment,
+                        std::function<void(std::string_view characters)> handleCDATA,
+                        std::function<void(std::string_view target, std::string_view data)> handleProcessingInstruction,
+                        std::function<void()> handleEndDocument
+                        );
 
     // get totalBytes
     long getTotalBytes();

@@ -41,23 +41,23 @@ XMLParser::XMLParser(std::string_view content)
     {}
 
 // parse XML
-void XMLParser::parse(  std::function<void()> startDocumentHandler,
-                        std::function<void(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> XMLDeclarationHandler,
-                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> startTagHandler,
-                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> endTagHandler,
+void XMLParser::parse(  std::function<void()> handleStartDocument,
+                        std::function<void(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> handleXMLDeclaration,
+                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> handleStartTag,
+                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> handleEndTag,
                         std::function<void(std::string_view characters)> character,
-                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)> attributeHandler,
-                        std::function<void(std::string_view prefix, std::string_view uri)> XMLNamespaceHandler,
-                        std::function<void(std::string_view value)> XMLCommentHandler,
-                        std::function<void(std::string_view characters)> CDATAHandler,
-                        std::function<void(std::string_view target, std::string_view data)> processingInstructionHandler,
-                        std::function<void()> endDocumentHandler
+                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)> handleAttribute,
+                        std::function<void(std::string_view prefix, std::string_view uri)> handleXMLNamespace,
+                        std::function<void(std::string_view value)> handleXMLComment,
+                        std::function<void(std::string_view characters)> handleCDATA,
+                        std::function<void(std::string_view target, std::string_view data)> handleProcessingInstruction,
+                        std::function<void()> handleEndDocument
                         ) {
 
     // parse file from the start
     parseBegin();
-    if (startDocumentHandler) {
-    startDocumentHandler();
+    if (handleStartDocument) {
+    handleStartDocument();
     }
 
     std::string_view version;
@@ -67,8 +67,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
     if (isXML()) {
         // parse XML Declaration
         parseXMLDeclaration(version, encoding, standalone);
-        if(XMLDeclarationHandler) {
-            XMLDeclarationHandler(version, encoding, standalone);
+        if(handleXMLDeclaration) {
+            handleXMLDeclaration(version, encoding, standalone);
         }
     }
     if (isDOCTYPE()) {
@@ -107,28 +107,28 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
             // parse XML comment
             value = parseComment(doneReading);
             content.remove_prefix("-->"sv.size());
-            if (XMLCommentHandler) {
-                XMLCommentHandler(value);
+            if (handleXMLComment) {
+                handleXMLComment(value);
             }
         } else if (isCDATA()) {
             // parse CDATA
             parseCDATA(doneReading, characters);
-            if (CDATAHandler) {
-                CDATAHandler(characters);
+            if (handleCDATA) {
+                handleCDATA(characters);
             }
         } else if (isCharacter(1, '?') /* && isCharacter(0, '<') */) {
             // parse processing instruction
             auto result = parseProcessing();
             auto target = result.first;
             auto data = result.second;
-            if (processingInstructionHandler) {
-                processingInstructionHandler(target, data);
+            if (handleProcessingInstruction) {
+                handleProcessingInstruction(target, data);
             }
         } else if (isCharacter(1, '/') /* && isCharacter(0, '<') */) {
             // parse end tag
             parseEndTag(qName, prefix, localName);
-            if(endTagHandler) {
-                endTagHandler(qName, prefix, localName);
+            if(handleEndTag) {
+                handleEndTag(qName, prefix, localName);
             }
             --depth;
             if (depth == 0)
@@ -136,8 +136,8 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
         } else if (isCharacter(0, '<')) {
             // parse start tag
             parseStartTag(qName, prefix, localName);
-            if(startTagHandler) {
-                startTagHandler(qName, prefix, localName);
+            if(handleStartTag) {
+                handleStartTag(qName, prefix, localName);
             }
             content.remove_prefix(content.find_first_not_of(WHITESPACE));
             while (xmlNameMask[content[0]]) {
@@ -146,14 +146,14 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
                     auto result = parseNamespace();
                     auto prefix = result.first;
                     auto uri = result.second;
-                    if (XMLNamespaceHandler) {
-                        XMLNamespaceHandler(prefix, uri);
+                    if (handleXMLNamespace) {
+                        handleXMLNamespace(prefix, uri);
                     }
                 } else {
                     // parse attribute
                     value = parseAttribute(qName, prefix, localName);
-                    if(attributeHandler) {
-                        attributeHandler(qName, prefix, localName, value);
+                    if(handleAttribute) {
+                        handleAttribute(qName, prefix, localName, value);
                     }
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix , "localName", localName, "value", value);
                     // convert special srcML escaped element to characters
@@ -185,16 +185,16 @@ void XMLParser::parse(  std::function<void()> startDocumentHandler,
     while (isComment()) {
         // parse XML comment
         value = parseComment(doneReading);
-        if (XMLCommentHandler) {
-            XMLCommentHandler(value);
+        if (handleXMLComment) {
+            handleXMLComment(value);
         }
     }
     if (content.size() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
         exit(1);
     }
-    if (endDocumentHandler) {
-        endDocumentHandler();
+    if (handleEndDocument) {
+        handleEndDocument();
     }
     TRACE("END DOCUMENT");
 }
