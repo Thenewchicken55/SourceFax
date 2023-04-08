@@ -15,7 +15,7 @@ srcFactsParser::srcFactsParser(std::string_view content)
     textSize(0), loc(0), exprCount(0), functionCount(0),
     classCount(0), unitCount(0), declCount(0), commentCount(0),
     returnCount(0), lineCommentCount(0), stringCount(0)
-    {} 
+    {}
 
 // get urls
 std::string srcFactsParser::getUrl()
