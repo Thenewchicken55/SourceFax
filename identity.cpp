@@ -42,7 +42,6 @@ int main() {
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
     const auto MLOCPerSecond = parser.getLoc() / elapsedSeconds / 1000000;
-    std::cout.imbue(std::locale{""});
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';

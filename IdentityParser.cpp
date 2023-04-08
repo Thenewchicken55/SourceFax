@@ -31,7 +31,7 @@ std::string escape(std::string_view unescaped) {
 
 // constructor
 IdentityParser::IdentityParser(std::string_view content)
-    : XMLParser(content)
+    : XMLParser(content), loc(0)
     {}
 
 //get loc
