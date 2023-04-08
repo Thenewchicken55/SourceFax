@@ -17,24 +17,46 @@ public:
     XMLParser(std::string_view content);
 
     // parse XML
-    void parse(  std::function<void()> handleStartDocument,
-                        std::function<void(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone)> handleXMLDeclaration,
-                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> handleStartTag,
-                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName)> handleEndTag,
-                        std::function<void(std::string_view characters)> character,
-                        std::function<void(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)> handleAttribute,
-                        std::function<void(std::string_view prefix, std::string_view uri)> handleXMLNamespace,
-                        std::function<void(std::string_view value)> handleXMLComment,
-                        std::function<void(std::string_view characters)> handleCDATA,
-                        std::function<void(std::string_view target, std::string_view data)> handleProcessingInstruction,
-                        std::function<void()> handleEndDocument
-                        );
+    void parse();
 
     // get totalBytes
     long getTotalBytes();
 
-private:
+protected:
+    // start Document Handler
+    virtual void handleStartDocument() = 0;
+    
+    // XML Declaration Handler
+    virtual void handleXMLDeclaration(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone) = 0;
+    
+    // Start Tag Handler
+    virtual void handleStartTag(std::string_view qName, std::string_view prefix, std::string_view localName) = 0;
+    
+    // End Tag Handler
+    virtual void handleEndTag(std::string_view qName, std::string_view prefix, std::string_view localName) = 0;
+    
+    // Character Handler
+    virtual void handleCharacter(std::string_view characters) = 0; 
+    
+    // attribute Handler
+    virtual void handleAttribute(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value) = 0;
+    
+    // XML Namespace Handler
+    virtual void handleXMLNamespace(std::string_view prefix, std::string_view uri) = 0;
+    
+    // XML Comment Handler
+    virtual void handleXMLComment(std::string_view value) = 0;
+    
+    // CDATA Handler
+    virtual void handleCDATA(std::string_view characters) = 0;
+    
+    // processing Instruction Handler
+    virtual void handleProcessingInstruction(std::string_view target, std::string_view data) = 0;
+    
+    // end Document Handler
+    virtual void handleEndDocument() = 0;
 
+private:
     // parse XML declaration
     void parseXMLDeclaration(std::string_view& version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone);
 

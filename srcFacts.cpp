@@ -21,6 +21,7 @@
 #include <cassert>
 #include "refillContent.hpp"
 #include "XMLParser.hpp"
+#include "srcFactsParser.hpp"
 
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
@@ -31,122 +32,32 @@ constexpr auto WHITESPACE = " \n\t\r"sv;
 int main(int argc, char* argv[]) {
 
     const auto startTime = std::chrono::steady_clock::now();
-    std::string url;
-    int textSize = 0;
-    int loc = 0;
-    int exprCount = 0;
-    int functionCount = 0;
-    int classCount = 0;
-    int unitCount = 0;
-    int declCount = 0;
-    int commentCount = 0;
-    int returnCount = 0;
-    int lineCommentCount = 0;
-    int stringCount = 0;
     std::string_view content;
-    XMLParser parser = XMLParser(content);
-
-    const auto startTagHandler =
-    [&](std::string_view qName, std::string_view prefix, std::string_view localName)->void {
-        if (localName == "expr"sv) {
-            ++exprCount;
-        } else if (localName == "decl"sv) {
-            ++declCount;
-        } else if (localName == "comment"sv) {
-            ++commentCount;
-        } else if (localName == "function"sv) {
-            ++functionCount;
-        } else if (localName == "unit"sv) {
-            ++unitCount;
-        } else if (localName == "class"sv) {
-            ++classCount;
-        } else if (localName == "return"sv) {
-            ++returnCount;
-        }
-    };
-
-    const auto characterHandler =
-    [&loc, &textSize](std::string_view characters)->void {
-        loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-        textSize += static_cast<int>(characters.size());
-    };
-
-    const auto attributeHandler =
-    [&url, &stringCount, &lineCommentCount](std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value)->void {
-        
-        if (localName == "url"sv) {
-            url = value;
-        } else if (localName == "type"sv && value == "string"sv) {
-            ++stringCount;
-        } else if (localName == "type"sv && value == "line") {
-            ++lineCommentCount;
-        }
-    };
-
-    const auto CDATAHandler =
-    [&textSize, &loc](std::string_view characters)->void {
-        textSize += static_cast<int>(characters.size());
-        loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
-    };
+    srcFactsParser parser = srcFactsParser(content);
 
     // parse XML
-    parser.parse(
-
-        // null Start Document handler
-        nullptr,
-
-        // null XML declaration handler
-        nullptr,
-
-        // start tag handler
-        startTagHandler,
-
-        // null End tag handler
-        nullptr,
-
-        // character handler
-        characterHandler,
-
-        // attribute handler
-        attributeHandler,
-
-        // null XML namespace handler
-        nullptr,
-
-        // null XML Comment handler
-        nullptr,
-
-        // CDATA handler
-        CDATAHandler,
-
-        // null processing instruction handler
-        nullptr,
-
-        // null end document handler
-        nullptr
-
-        );
+    parser.parse();
 
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
-    const auto MLOCPerSecond = loc / elapsedSeconds / 1000000;
-    const auto files = std::max(unitCount - 1, 1);
+    const auto MLOCPerSecond = parser.getLoc() / elapsedSeconds / 1000000;
+    const auto files = std::max(parser.getUnitCount() - 1, 1);
     std::cout.imbue(std::locale{""});
     const auto valueWidth = std::max(5, static_cast<int>(log10(parser.getTotalBytes()) * 1.3 + 1));
-    std::cout << "# srcFacts: " << url << '\n';
+    std::cout << "# srcFacts: " << parser.getUrl() << '\n';
     std::cout << "| Measure      | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:-------------|-" << std::setw(valueWidth + 3) << std::setfill('-') << ":|\n" << std::setfill(' ');
-    std::cout << "| Characters   | " << std::setw(valueWidth) << textSize        << " |\n";
-    std::cout << "| LOC          | " << std::setw(valueWidth) << loc             << " |\n";
-    std::cout << "| Files        | " << std::setw(valueWidth) << files           << " |\n";
-    std::cout << "| Classes      | " << std::setw(valueWidth) << classCount      << " |\n";
-    std::cout << "| Functions    | " << std::setw(valueWidth) << functionCount   << " |\n";
-    std::cout << "| Declarations | " << std::setw(valueWidth) << declCount       << " |\n";
-    std::cout << "| Expressions  | " << std::setw(valueWidth) << exprCount       << " |\n";
-    std::cout << "| Comments     | " << std::setw(valueWidth) << commentCount    << " |\n";
-    std::cout << "| Returns      | " << std::setw(valueWidth) << returnCount     << " |\n";
-    std::cout << "| Line Comments| " << std::setw(valueWidth) << lineCommentCount<< " |\n";
-    std::cout << "| Strings      | " << std::setw(valueWidth) << stringCount     << " |\n";
+    std::cout << "| Characters   | " << std::setw(valueWidth) << parser.getTextSize()        << " |\n";
+    std::cout << "| LOC          | " << std::setw(valueWidth) << parser.getLoc()             << " |\n";
+    std::cout << "| Files        | " << std::setw(valueWidth) << files                       << " |\n";
+    std::cout << "| Classes      | " << std::setw(valueWidth) << parser.getClassCount()      << " |\n";
+    std::cout << "| Functions    | " << std::setw(valueWidth) << parser.getFunctionCount()   << " |\n";
+    std::cout << "| Declarations | " << std::setw(valueWidth) << parser.getDeclCount()       << " |\n";
+    std::cout << "| Expressions  | " << std::setw(valueWidth) << parser.getExprCount()       << " |\n";
+    std::cout << "| Comments     | " << std::setw(valueWidth) << parser.getCommentCount()    << " |\n";
+    std::cout << "| Returns      | " << std::setw(valueWidth) << parser.getReturnCount()     << " |\n";
+    std::cout << "| Line Comments| " << std::setw(valueWidth) << parser.getLineCommentCount()<< " |\n";
+    std::cout << "| Strings      | " << std::setw(valueWidth) << parser.getStringCount()     << " |\n";
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';
