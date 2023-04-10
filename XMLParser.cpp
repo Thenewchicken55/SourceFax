@@ -367,6 +367,8 @@ void XMLParser::refillPreserve(bool& doneReading) {
 
 // parse character entity references
 std::string_view XMLParser::parseCharacterEntityReference() {
+    std::string_view unescapedCharacter;
+    std::string_view escapedCharacter;
     if (content[1] == 'l' && content[2] == 't' && content[3] == ';') {
         unescapedCharacter = "<";
         escapedCharacter = "&lt;"sv;

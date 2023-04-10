@@ -127,8 +127,5 @@ private:
     std::string_view content;
 
     long totalBytes;
-
-    std::string_view unescapedCharacter;
-    std::string_view escapedCharacter;
 };
 #endif
