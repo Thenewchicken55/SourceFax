@@ -34,7 +34,7 @@ int main() {
     const auto MLOCPerSecond = parser.getLoc() / elapsedSeconds / 1000000;
     std::cout.imbue(std::locale{""});
     const auto valueWidth = std::max(5, static_cast<int>(log10(parser.getTotalBytes()) * 1.3 + 1));
-    std::cout << "# xmlStats: " << parser.getUrl() << '\n';
+    std::cout << "# xmlStats: " << '\n';
     std::cout << "| Measure                 | " << std::setw(valueWidth + 3) << "Value |\n";
     std::cout << "|:------------------------|-" << std::setw(valueWidth + 3) << std::setfill('-')       << ":|\n" << std::setfill(' ');
     std::cout << "| Start Document          | " << std::setw(valueWidth) << parser.getStartDocumentCount()          << " |\n";
