@@ -8,19 +8,13 @@
 
 // constructor
 XMLStatsParser::XMLStatsParser(std::string_view content) 
-: XMLParser(content), url(""), unitCount(0), loc(0), 
+: XMLParser(content), unitCount(0), loc(0),
 startDocumentCount(0), XMLDeclarationCount(0),
 startTagCount(0), endTagCount(0), charactersCount(0),
 attributeCount(0), XMLNamespaceCount(0),
 XMLCommentCount(0), CDATACount(0),
 processingInstructionCount(0), endDocumentCount(0)
 {}
-
-// get url
-std::string XMLStatsParser::getUrl()
-{
-    return url;
-}
 
 // get unitCount
 int XMLStatsParser::getUnitCount()
@@ -134,10 +128,6 @@ void XMLStatsParser::handleCharacter(std::string_view characters) {
 // attribute Handler
 void XMLStatsParser::handleAttribute(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value) {
     ++attributeCount;
-
-    if (localName == "url"sv) {
-        url = value;
-    }
 }
 
 // XML Namespace Handler

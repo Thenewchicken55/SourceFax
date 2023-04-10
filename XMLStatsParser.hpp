@@ -96,7 +96,6 @@ protected:
     void handleEndDocument() override;
 
 private:
-    std::string url;
     int unitCount;
     int loc;
     int startDocumentCount;
