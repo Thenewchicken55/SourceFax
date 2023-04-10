@@ -14,8 +14,6 @@
 #include <string_view>
 #include <cmath>
 #include <chrono>
-#include <cassert>
-#include "refillContent.hpp"
 #include "XMLStatsParser.hpp"
 
 // provides literal string operator""sv
