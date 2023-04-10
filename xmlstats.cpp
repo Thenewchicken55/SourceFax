@@ -54,5 +54,6 @@ int main() {
     std::clog << parser.getTotalBytes()  << " bytes\n";
     std::clog << elapsedSeconds << " sec\n";
     std::clog << MLOCPerSecond << " MLOC/sec\n";
+
     return 0;
 }
