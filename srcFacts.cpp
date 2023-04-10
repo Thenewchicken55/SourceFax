@@ -26,9 +26,6 @@
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
 
-constexpr auto WHITESPACE = " \n\t\r"sv;
-[[maybe_unused]] constexpr auto NAMEEND = "> /\":=\n\t\r"sv;
-
 int main(int argc, char* argv[]) {
 
     const auto startTime = std::chrono::steady_clock::now();
