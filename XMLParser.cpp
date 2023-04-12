@@ -6,6 +6,7 @@
 
 #include "XMLParser.hpp"
 #include "refillContent.hpp"
+#include "XMLParserHandler.hpp"
 #include <bitset>
 #include <cassert>
 #include <iostream>
@@ -36,8 +37,8 @@ const std::bitset<128> xmlNameMask("00000111111111111111111111111110100001111111
 
 
 // constructor
-XMLParser::XMLParser(std::string_view content)
-    : content(content), totalBytes(0)
+XMLParser::XMLParser(std::string_view content, XMLParserHandler& handler)
+    : content(content), totalBytes(0), handler(handler)
     {}
 
 // parse XML
@@ -45,7 +46,7 @@ void XMLParser::parse() {
 
     // parse file from the start
     parseBegin();
-    handleStartDocument();
+    handler.handleStartDocument();
 
     std::string_view version;
     std::optional<std::string_view> encoding;
@@ -54,7 +55,7 @@ void XMLParser::parse() {
     if (isXML()) {
         // parse XML Declaration
         parseXMLDeclaration(version, encoding, standalone);
-        handleXMLDeclaration(version, encoding, standalone);
+        handler.handleXMLDeclaration(version, encoding, standalone);
     }
     if (isDOCTYPE()) {
         // parse DOCTYPE
@@ -79,37 +80,37 @@ void XMLParser::parse() {
         if (isCharacter(0, '&')) {
             // parse character entity references
             characters = parseCharacterEntityReference();
-            handleCharacter(characters);
+            handler.handleCharacter(characters);
         } else if (!isCharacter(0 ,'<')) {
             // parse character non-entity references
             characters = parseCharacterNotEntityReference();
-            handleCharacter(characters);
+            handler.handleCharacter(characters);
         } else if (isComment()) {
             // parse XML comment
             value = parseComment(doneReading);
             content.remove_prefix("-->"sv.size());
-            handleXMLComment(value);
+            handler.handleXMLComment(value);
         } else if (isCDATA()) {
             // parse CDATA
             parseCDATA(doneReading, characters);
-            handleCDATA(characters);
+            handler.handleCDATA(characters);
         } else if (isCharacter(1, '?') /* && isCharacter(0, '<') */) {
             // parse processing instruction
             auto result = parseProcessing();
             auto target = result.first;
             auto data = result.second;
-            handleProcessingInstruction(target, data);
+            handler.handleProcessingInstruction(target, data);
         } else if (isCharacter(1, '/') /* && isCharacter(0, '<') */) {
             // parse end tag
             parseEndTag(qName, prefix, localName);
-            handleEndTag(qName, prefix, localName);
+            handler.handleEndTag(qName, prefix, localName);
             --depth;
             if (depth == 0)
                 break;
         } else if (isCharacter(0, '<')) {
             // parse start tag
             parseStartTag(qName, prefix, localName);
-            handleStartTag(qName, prefix, localName);
+            handler.handleStartTag(qName, prefix, localName);
 
             content.remove_prefix(content.find_first_not_of(WHITESPACE));
             while (xmlNameMask[content[0]]) {
@@ -118,11 +119,11 @@ void XMLParser::parse() {
                     auto result = parseNamespace();
                     auto prefix = result.first;
                     auto uri = result.second;
-                    handleXMLNamespace(prefix, uri);
+                    handler.handleXMLNamespace(prefix, uri);
                 } else {
                     // parse attribute
                     value = parseAttribute(qName, prefix, localName);
-                    handleAttribute(qName, prefix, localName, value);
+                    handler.handleAttribute(qName, prefix, localName, value);
                     TRACE("ATTRIBUTE", "qName", qName, "prefix", prefix , "localName", localName, "value", value);
                     // convert special srcML escaped element to characters
                     if (localName == "escape"sv && localName == "char"sv /* && inUnit */) {
@@ -153,14 +154,14 @@ void XMLParser::parse() {
     while (isComment()) {
         // parse XML comment
         value = parseComment(doneReading);
-        handleXMLComment(value);
+        handler.handleXMLComment(value);
     }
     if (content.size() != 0) {
         std::cerr << "parser error : extra content at end of document\n";
         exit(1);
     }
     TRACE("END DOCUMENT");
-    handleEndDocument();
+    handler.handleEndDocument();
 }
 
 // get totalBytes

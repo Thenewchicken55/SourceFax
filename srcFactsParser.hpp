@@ -7,12 +7,12 @@
 #define SRCFACTSPARSER_HPP
 
 #include <string>
-#include "XMLParser.hpp"
+#include "XMLParserHandler.hpp"
 
-class srcFactsParser : public XMLParser {
+class srcFactsParser : public XMLParserHandler {
 public:
     // constructor
-    srcFactsParser(std::string_view content);
+    srcFactsParser();
 
     // get url
     std::string getUrl();

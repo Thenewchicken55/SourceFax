@@ -5,13 +5,13 @@
 */
 
 #include "srcFactsParser.hpp"
+#include <algorithm>
 
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
 
 // constructor
-srcFactsParser::srcFactsParser(std::string_view content)
-    : XMLParser(content),
+srcFactsParser::srcFactsParser() :
     textSize(0), loc(0), exprCount(0), functionCount(0),
     classCount(0), unitCount(0), declCount(0), commentCount(0),
     returnCount(0), lineCommentCount(0), stringCount(0)
