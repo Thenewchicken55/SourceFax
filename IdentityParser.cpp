@@ -6,6 +6,7 @@
 
 #include "IdentityParser.hpp"
 #include <iostream>
+#include <algorithm>
 
 int unclosedBrackets = 0;
 
@@ -30,9 +31,7 @@ std::string escape(std::string_view unescaped) {
 }
 
 // constructor
-IdentityParser::IdentityParser(std::string_view content)
-    : XMLParser(content), loc(0)
-    {}
+IdentityParser::IdentityParser() = default;
 
 //get loc
 int IdentityParser::getLoc() {

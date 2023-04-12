@@ -31,14 +31,15 @@ using namespace std::literals::string_view_literals;
 int main() {
     const auto startTime = std::chrono::steady_clock::now();
     std::string_view content;
-    IdentityParser parser = IdentityParser(content);
+    IdentityParser handler;
+    XMLParser parser(content, handler);
 
     // parse XML
     parser.parse();
 
     const auto finishTime = std::chrono::steady_clock::now();
     const auto elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(finishTime - startTime).count();
-    const auto MLOCPerSecond = parser.getLoc() / elapsedSeconds / 1000000;
+    const auto MLOCPerSecond = handler.getLoc() / elapsedSeconds / 1000000;
     std::clog.imbue(std::locale{""});
     std::clog.precision(3);
     std::clog << '\n';

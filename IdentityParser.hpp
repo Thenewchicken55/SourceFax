@@ -7,13 +7,13 @@
 #ifndef IDENTITYPARSER_HPP
 #define IDENTITYPARSER_HPP
 
-#include "XMLParser.hpp"
+#include "XMLParserHandler.hpp"
 #include <string>
 
-class IdentityParser : public XMLParser {
+class IdentityParser : public XMLParserHandler {
 public:
     // constructor
-    IdentityParser(std::string_view content);
+    IdentityParser();
 
     //get loc
     int getLoc();
@@ -53,7 +53,7 @@ protected:
     void handleEndDocument() override;
 
 private:
-    int loc;
+    int loc = 0;
 };
 
 #endif
