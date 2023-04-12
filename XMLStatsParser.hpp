@@ -4,8 +4,8 @@
     Header file for the concrete class specific to XML Stats inheriting from the abstract class XMLParser
 */
 
-#ifndef SRC_FACTS_PARSER_HPP
-#define SRC_FACTS_PARSER_HPP
+#ifndef XMLSTATSPARSER_HPP
+#define XMLSTATSPARSER_HPP
 
 #include "XMLStatsParser.hpp"
 #include "XMLParser.hpp"
