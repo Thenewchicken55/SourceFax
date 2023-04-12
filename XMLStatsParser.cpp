@@ -5,16 +5,17 @@
 */
 
 #include "XMLStatsParser.hpp"
+#include <algorithm>
 
 // constructor
-XMLStatsParser::XMLStatsParser(std::string_view content) 
-: XMLParser(content), unitCount(0), loc(0),
-startDocumentCount(0), XMLDeclarationCount(0),
-startTagCount(0), endTagCount(0), charactersCount(0),
-attributeCount(0), XMLNamespaceCount(0),
-XMLCommentCount(0), CDATACount(0),
-processingInstructionCount(0), endDocumentCount(0)
-{}
+XMLStatsParser::XMLStatsParser() :
+    unitCount(0), loc(0),
+    startDocumentCount(0), XMLDeclarationCount(0),
+    startTagCount(0), endTagCount(0), charactersCount(0),
+    attributeCount(0), XMLNamespaceCount(0),
+    XMLCommentCount(0), CDATACount(0),
+    processingInstructionCount(0), endDocumentCount(0)
+    {}
 
 // get unitCount
 int XMLStatsParser::getUnitCount()

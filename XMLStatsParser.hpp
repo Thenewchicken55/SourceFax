@@ -8,16 +8,16 @@
 #define XMLSTATSPARSER_HPP
 
 #include "XMLStatsParser.hpp"
-#include "XMLParser.hpp"
+#include "XMLParserHandler.hpp"
 #include <string>
 
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
 
-class XMLStatsParser : public XMLParser {
+class XMLStatsParser : public XMLParserHandler {
 public:
     // constructor
-    XMLStatsParser(std::string_view content);
+    XMLStatsParser();
 
     // get url
     std::string getUrl();
