@@ -1,102 +1,102 @@
 /*
-    srcFactsParser.cpp
+    srcFactsHandler.cpp
 
     Concrete class specific to srcFacts inheriting from the abstract class XMLParser
 */
 
-#include "srcFactsParser.hpp"
+#include "srcFactsHandler.hpp"
 #include <algorithm>
 
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
 
 // constructor
-srcFactsParser::srcFactsParser() :
+srcFactsHandler::srcFactsHandler() :
     textSize(0), loc(0), exprCount(0), functionCount(0),
     classCount(0), unitCount(0), declCount(0), commentCount(0),
     returnCount(0), lineCommentCount(0), stringCount(0)
     {}
 
 // get urls
-std::string srcFactsParser::getUrl()
+std::string srcFactsHandler::getUrl()
 {
     return url;
 }
 
 // get textSizes
-int srcFactsParser::getTextSize()
+int srcFactsHandler::getTextSize()
 {
     return textSize;
 }
 
 // get locs
-int srcFactsParser::getLoc()
+int srcFactsHandler::getLoc()
 {
     return loc;
 }
 
 // get exprCounts
-int srcFactsParser::getExprCount()
+int srcFactsHandler::getExprCount()
 {
     return exprCount;
 }
 
 // get functionCounts
-int srcFactsParser::getFunctionCount()
+int srcFactsHandler::getFunctionCount()
 {
     return functionCount;
 }
 
 // get classCounts
-int srcFactsParser::getClassCount()
+int srcFactsHandler::getClassCount()
 {
     return classCount;
 }
 
 // get unitCounts
-int srcFactsParser::getUnitCount()
+int srcFactsHandler::getUnitCount()
 {
     return unitCount;
 }
 
 // get declCounts
-int srcFactsParser::getDeclCount()
+int srcFactsHandler::getDeclCount()
 {
     return declCount;
 }
 
 // get commentCounts
-int srcFactsParser::getCommentCount()
+int srcFactsHandler::getCommentCount()
 {
     return commentCount;
 }
 
 // get returnCounts
-int srcFactsParser::getReturnCount()
+int srcFactsHandler::getReturnCount()
 {
     return returnCount;
 }
 
 // get lineCommentCounts
-int srcFactsParser::getLineCommentCount()
+int srcFactsHandler::getLineCommentCount()
 {
     return lineCommentCount;
 }
 
 // get stringCounts
-int srcFactsParser::getStringCount()
+int srcFactsHandler::getStringCount()
 {
     return stringCount;
 }
 
 // start Document Handler
-void srcFactsParser::handleStartDocument() {}
+void srcFactsHandler::handleStartDocument() {}
 
 // XML Declaration Handler
-void srcFactsParser::handleXMLDeclaration(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone) {}
+void srcFactsHandler::handleXMLDeclaration(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone) {}
 
 // Start Tag Handler
-void srcFactsParser::handleStartTag(std::string_view qName, std::string_view prefix, std::string_view localName) {
+void srcFactsHandler::handleStartTag(std::string_view qName, std::string_view prefix, std::string_view localName) {
     if (localName == "expr"sv) {
         ++exprCount;
     } else if (localName == "decl"sv) {
@@ -115,16 +115,16 @@ void srcFactsParser::handleStartTag(std::string_view qName, std::string_view pre
 }
 
 // End Tag Handler
-void srcFactsParser::handleEndTag(std::string_view qName, std::string_view prefix, std::string_view localName) {}
+void srcFactsHandler::handleEndTag(std::string_view qName, std::string_view prefix, std::string_view localName) {}
 
 // Character Handler
-void srcFactsParser::handleCharacter(std::string_view characters) {
+void srcFactsHandler::handleCharacter(std::string_view characters) {
     loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
     textSize += static_cast<int>(characters.size());
 }
 
 // attribute Handler
-void srcFactsParser::handleAttribute(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value) {
+void srcFactsHandler::handleAttribute(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value) {
     if (localName == "url"sv) {
         url = value;
     } else if (localName == "type"sv && value == "string"sv) {
@@ -135,19 +135,19 @@ void srcFactsParser::handleAttribute(std::string_view qName, std::string_view pr
 }
 
 // XML Namespace Handler
-void srcFactsParser::handleXMLNamespace(std::string_view prefix, std::string_view uri) {}
+void srcFactsHandler::handleXMLNamespace(std::string_view prefix, std::string_view uri) {}
 
 // XML Comment Handler
-void srcFactsParser::handleXMLComment(std::string_view value) {}
+void srcFactsHandler::handleXMLComment(std::string_view value) {}
 
 // CDATA Handler
-void srcFactsParser::handleCDATA(std::string_view characters) {
+void srcFactsHandler::handleCDATA(std::string_view characters) {
     textSize += static_cast<int>(characters.size());
     loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
 }
 
 // processing Instruction Handler
-void srcFactsParser::handleProcessingInstruction(std::string_view target, std::string_view data) {}
+void srcFactsHandler::handleProcessingInstruction(std::string_view target, std::string_view data) {}
 
 // end Document Handler
-void srcFactsParser::handleEndDocument() {}
+void srcFactsHandler::handleEndDocument() {}

@@ -23,7 +23,7 @@
 #include <cassert>
 #include "refillContent.hpp"
 #include "XMLParser.hpp"
-#include "IdentityParser.hpp"
+#include "IdentityHandler.hpp"
 
 // provides literal string operator""sv
 using namespace std::literals::string_view_literals;
@@ -31,7 +31,7 @@ using namespace std::literals::string_view_literals;
 int main() {
     const auto startTime = std::chrono::steady_clock::now();
     std::string_view content;
-    IdentityParser handler;
+    IdentityHandler handler;
     XMLParser parser(content, handler);
 
     // parse XML

@@ -14,7 +14,7 @@
 #include <string_view>
 #include <cmath>
 #include <chrono>
-#include "XMLStatsParser.hpp"
+#include "XMLStatsHandler.hpp"
 #include "XMLParser.hpp"
 
 // provides literal string operator""sv
@@ -23,7 +23,7 @@ using namespace std::literals::string_view_literals;
 int main() {
     const auto startTime = std::chrono::steady_clock::now();
     std::string_view content;
-    XMLStatsParser handler;
+    XMLStatsHandler handler;
     XMLParser parser(content, handler);
 
     // parse XML

@@ -1,22 +1,54 @@
 /*
-    IdentityParser.hpp
+    srcFactsHandler.hpp
 
-    Concrete class specific to Identity inheriting from the abstract class XMLParser
+    Concrete class specific to srcFacts inheriting from the abstract class XMLParser
 */
+#ifndef SRCFACTSHANDLER_HPP
+#define SRCFACTSHANDLER_HPP
 
-#ifndef IDENTITYPARSER_HPP
-#define IDENTITYPARSER_HPP
-
-#include "XMLParserHandler.hpp"
 #include <string>
+#include "XMLParserHandler.hpp"
 
-class IdentityParser : public XMLParserHandler {
+class srcFactsHandler : public XMLParserHandler {
 public:
     // constructor
-    IdentityParser();
+    srcFactsHandler();
 
-    //get loc
+    // get url
+    std::string getUrl();
+
+    // get textSize
+    int getTextSize();
+
+    // get loc
     int getLoc();
+
+    // get exprCount
+    int getExprCount();
+
+    // get functionCount
+    int getFunctionCount();
+
+    // get classCount
+    int getClassCount();
+
+    // get unitCount
+    int getUnitCount();
+
+    // get declCount
+    int getDeclCount();
+
+    // get commentCount
+    int getCommentCount();
+
+    // get returnCount
+    int getReturnCount();
+
+    // get lineCommentCount
+    int getLineCommentCount();
+
+    // get stringCount
+    int getStringCount();
 
 protected:
     // start Document Handler
@@ -53,7 +85,18 @@ protected:
     void handleEndDocument() override;
 
 private:
-    int loc = 0;
+    std::string url;
+    int textSize;
+    int loc;
+    int exprCount;
+    int functionCount;
+    int classCount;
+    int unitCount;
+    int declCount;
+    int commentCount;
+    int returnCount;
+    int lineCommentCount;
+    int stringCount;
 };
 
 #endif

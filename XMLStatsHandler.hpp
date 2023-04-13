@@ -1,54 +1,65 @@
 /*
-    srcFactsParser.hpp
+    XMLStatsHandler.hpp
 
-    Concrete class specific to srcFacts inheriting from the abstract class XMLParser
+    Header file for the concrete class specific to XML Stats inheriting from the abstract class XMLParser
 */
-#ifndef SRCFACTSPARSER_HPP
-#define SRCFACTSPARSER_HPP
 
-#include <string>
+#ifndef XMLSTATSHANDLER_HPP
+#define XMLSTATSHANDLER_HPP
+
+#include "XMLStatsHandler.hpp"
 #include "XMLParserHandler.hpp"
+#include <string>
 
-class srcFactsParser : public XMLParserHandler {
+// provides literal string operator""sv
+using namespace std::literals::string_view_literals;
+
+class XMLStatsHandler : public XMLParserHandler {
 public:
     // constructor
-    srcFactsParser();
+    XMLStatsHandler();
 
     // get url
     std::string getUrl();
 
-    // get textSize
-    int getTextSize();
+    // get unitCount
+    int getUnitCount();
 
     // get loc
     int getLoc();
 
-    // get exprCount
-    int getExprCount();
+    // get startDocumentCount
+    int getStartDocumentCount();
 
-    // get functionCount
-    int getFunctionCount();
+    // get XMLDeclarationCount
+    int getXMLDeclarationCount();
 
-    // get classCount
-    int getClassCount();
+    // get startTagCount
+    int getStartTagCount();
 
-    // get unitCount
-    int getUnitCount();
+    // get endTagCount
+    int getEndTagCount();
 
-    // get declCount
-    int getDeclCount();
+    // get charactersCount
+    int getCharactersCount();
 
-    // get commentCount
-    int getCommentCount();
+    // get attributeCount
+    int getAttributeCount();
 
-    // get returnCount
-    int getReturnCount();
+    // get XMLNamespaceCount
+    int getXMLNamespaceCount();
 
-    // get lineCommentCount
-    int getLineCommentCount();
+    // get XMLCommentCount
+    int getXMLCommentCount();
 
-    // get stringCount
-    int getStringCount();
+    // get CDATACount
+    int getCDATACount();
+
+    // get processingInstructionCount
+    int getProcessingInstructionCount();
+
+    // get endDocumentCount
+    int getEndDocumentCount();
 
 protected:
     // start Document Handler
@@ -85,18 +96,19 @@ protected:
     void handleEndDocument() override;
 
 private:
-    std::string url;
-    int textSize;
-    int loc;
-    int exprCount;
-    int functionCount;
-    int classCount;
     int unitCount;
-    int declCount;
-    int commentCount;
-    int returnCount;
-    int lineCommentCount;
-    int stringCount;
+    int loc;
+    int startDocumentCount;
+    int XMLDeclarationCount;
+    int startTagCount;
+    int endTagCount;
+    int charactersCount;
+    int attributeCount;
+    int XMLNamespaceCount;
+    int XMLCommentCount;
+    int CDATACount;
+    int processingInstructionCount;
+    int endDocumentCount;
 };
 
 #endif

@@ -1,10 +1,10 @@
 /*
-    IdentityParser.cpp
+    IdentityHandler.cpp
 
     Concrete class specific to Identity inheriting from the abstract class XMLParser
 */
 
-#include "IdentityParser.hpp"
+#include "IdentityHandler.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -31,18 +31,18 @@ std::string escape(std::string_view unescaped) {
 }
 
 // constructor
-IdentityParser::IdentityParser() = default;
+IdentityHandler::IdentityHandler() = default;
 
 //get loc
-int IdentityParser::getLoc() {
+int IdentityHandler::getLoc() {
     return loc;
 }
 
 // start Document Handler
-void IdentityParser::handleStartDocument() {}
+void IdentityHandler::handleStartDocument() {}
 
 // XML Declaration Handler
-void IdentityParser::handleXMLDeclaration(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone) {
+void IdentityHandler::handleXMLDeclaration(std::string_view version, std::optional<std::string_view>& encoding, std::optional<std::string_view>& standalone) {
     std::cout << "<?xml version=\"" << version << "\" ";
 
     if (encoding.has_value()) {
@@ -57,7 +57,7 @@ void IdentityParser::handleXMLDeclaration(std::string_view version, std::optiona
 }
 
 // Start Tag Handler
-void IdentityParser::handleStartTag(std::string_view qName, std::string_view prefix, std::string_view localName) {
+void IdentityHandler::handleStartTag(std::string_view qName, std::string_view prefix, std::string_view localName) {
     if (unclosedBrackets > 0) {
             --unclosedBrackets;
             std::cout << ">";
@@ -67,12 +67,12 @@ void IdentityParser::handleStartTag(std::string_view qName, std::string_view pre
 }
 
 // End Tag Handler
-void IdentityParser::handleEndTag(std::string_view qName, std::string_view prefix, std::string_view localName) {
+void IdentityHandler::handleEndTag(std::string_view qName, std::string_view prefix, std::string_view localName) {
     std::cout << "</" <<  qName << ">";
 }
 
 // Character Handler
-void IdentityParser::handleCharacter(std::string_view characters) {
+void IdentityHandler::handleCharacter(std::string_view characters) {
     if (unclosedBrackets > 0) {
             --unclosedBrackets;
             std::cout << ">";
@@ -83,12 +83,12 @@ void IdentityParser::handleCharacter(std::string_view characters) {
 }
 
 // attribute Handler
-void IdentityParser::handleAttribute(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value) {
+void IdentityHandler::handleAttribute(std::string_view qName, std::string_view prefix, std::string_view localName, std::string_view value) {
     std::cout << " " << qName << "=\"" << value << "\"";
 }
 
 // XML Namespace Handler
-void IdentityParser::handleXMLNamespace(std::string_view prefix, std::string_view uri) {
+void IdentityHandler::handleXMLNamespace(std::string_view prefix, std::string_view uri) {
     std::cout << " xmlns";
     if (!prefix.empty()) {
         std::cout << ":" << prefix;
@@ -97,21 +97,21 @@ void IdentityParser::handleXMLNamespace(std::string_view prefix, std::string_vie
 }
 
 // XML Comment Handler
-void IdentityParser::handleXMLComment(std::string_view value) {
+void IdentityHandler::handleXMLComment(std::string_view value) {
     std::cout << "<!--" << value << "-->" << std::endl;
 }
 
 // CDATA Handler
-void IdentityParser::handleCDATA(std::string_view characters) {
+void IdentityHandler::handleCDATA(std::string_view characters) {
     std::cout << "<![CDATA[" << escape(characters) << "]]>";
 
     loc += static_cast<int>(std::count(characters.cbegin(), characters.cend(), '\n'));
 }
 
 // processing Instruction Handler
-void IdentityParser::handleProcessingInstruction(std::string_view target, std::string_view data) {
+void IdentityHandler::handleProcessingInstruction(std::string_view target, std::string_view data) {
     std::cout << "<?" << target << " " << data << "?>" << std::endl;
 }
 
 // end Document Handler
-void IdentityParser::handleEndDocument() {}
+void IdentityHandler::handleEndDocument() {}
